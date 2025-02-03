@@ -1,10 +1,14 @@
 import React from "react"
 import Navbar from "@/components/Navbar"
+import HomePage from "@/components/blocks/HomePage"
 
 export default function Home() {
     return (
-        <div className="dark:bg-darkBg bg-white min-h-screen">
-            <Navbar />
+        <div className="flex flex-col items-center dark:bg-purple-500/5 bg-white min-h-screen">
+            <div className="flex items-center w-full px-4 md:px-0 md:w-1/3 pt-16 pb-12">
+                <Navbar />
+                <HomePage />
+            </div>
         </div>
     )
 }

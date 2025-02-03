@@ -15,7 +15,7 @@ const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const { scrollY } = useScroll();
 
-    const width = useTransform(scrollY, [0, 100], ['48rem', '40rem']);
+    const width = useTransform(scrollY, [0, 100], ['44rem', '40rem']);
     const height = useTransform(scrollY, [0, 100], [80, 60]);
     const opacity = useTransform(scrollY, [0, 100], [0.5, 0.8]);
     const scale = useTransform(scrollY, [0, 100], [1, 0.95]);
@@ -35,10 +35,10 @@ const Navbar = () => {
     return (
         <div className="fixed top-0 left-0 right-0 z-50 flex justify-center">
             <motion.nav
-            style={{ width, height, scale }}
-            className={`transition-all duration-300 ${
-              isScrolled ? 'backdrop-blur-md bg-black/30' : 'backdrop-blur-sm bg-black/20'
-            } rounded-b-2xl`}
+                style={{ width, height, scale }}
+                className={`transition-all duration-300 ${
+                  isScrolled ? 'backdrop-blur-md bg-black/30' : 'backdrop-blur-sm bg-black/20'
+                } rounded-b-2xl w-1/3`}
             >
                 <motion.div 
                   style={{ opacity }}
