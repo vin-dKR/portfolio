@@ -5,9 +5,6 @@ export default function Home() {
     return (
         <div className="dark:bg-darkBg bg-white min-h-screen">
             <Navbar />
-            lkdsjflkjsd
-
-            sdfjklasjd
         </div>
     )
 }
