@@ -19,40 +19,24 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
-::view-transition-new(root) {
-    mask: url('/images/logo.svg') center / 150% no-repeat;
-    animation: smokeExpand 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
 
-@keyframes smokeExpand {
-    from {
-        mask-size: 0%;
-        mask-position: center;
-    }
-    to {
-        mask-size: 200%;
-        mask-position: center;
-    }
+::view-transition-new(root) {
+  mask: url('/images/batman.svg') center / 0 no-repeat;
+  animation: scale 2s;
 }
 
 ::view-transition-old(root),
 .dark::view-transition-old(root) {
-    animation: none;
-    z-index: -1;
+  animation: none;
+  z-index: -1;
 }
 
 .dark::view-transition-new(root) {
-    animation: smokeExpand 2s ease-in-out forwards;
-    background-color: #0000;
+  animation: scale 2s;
 }
 
-@keyframes smokeShrink {
-    from {
-        mask-size: 300%;
-        mask-position: center;
-    }
-    to {
-        mask-size: 0%;
-        mask-position: center;
-    }
+@keyframes scale {
+  to {
+    mask-size: 1000vmax;
+  }
 }

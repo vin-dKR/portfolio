@@ -29,4 +29,11 @@ declare global {
         wakaTimeStats: WakaTimeStats;
         currentTrack: SpotifyTrack | null;
     }
+
+
+    interface MobileDropdownProps {
+        isOpen: boolean;
+        setIsOpen: (value: boolean) => void;
+    }
+
 }
