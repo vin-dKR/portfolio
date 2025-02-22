@@ -6,6 +6,7 @@ import SwitchTheme from './reusable/SwitchTheme';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import MobileDropDown from './reusable/navbar/MobileDropDown';
+import { DesktopNav } from './reusable/navbar/DesktopNav';
 
 const Navbar = () => {
     const { resolvedTheme } = useTheme();
@@ -49,6 +50,7 @@ const Navbar = () => {
                         width={70}
                         height={40}
                     />
+                    <DesktopNav />
                     <div className='flex items-center justify-center space-x-4'>
                         <SwitchTheme />
                         <MobileDropDown isOpen={ isOpen } setIsOpen={ setIsOpen } />
