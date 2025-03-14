@@ -1,39 +1,62 @@
 export {}
 
 declare global {
-    type GithubStats = {
-        followers: number;
-        following: number;
-        stars: number;
-        issues: number;
-        prs: number;
+    interface GithubStatsProps {
+        githubStats: {
+            following: number;
+            followers: number;
+            stars: number;
+            issues: number;
+            prs: number;
+        }
     }
-
-    type WakaTimeStats = {
-        totalHours: number;
-        languages: {
+    interface WakaTimeStatsProps {
+        wakaTimeStats: {
+            totalHours: number;
+            languages: Array<{
+                name: string;
+                percentage: number;
+            }>
+        }
+    }
+    interface SpotifyStatsProps {
+        currentTrack: {
             name: string;
-            percentage: number;
-        }[];
-    }
-
-    type SpotifyTrack = {
-        name: string;
-        artist: string;
-        albumArt: string;
-        url: string;
+            artist: string;
+            albumArt: string;
+        } | null;
     }
 
     interface BentoGridProps {
-        githubStats: GithubStats;
-        wakaTimeStats: WakaTimeStats;
-        currentTrack: SpotifyTrack | null;
+        wakaTimeStats: WakaTimeStatsProps['wakaTimeStats'];
+        githubStats: GithubStatsProps['githubStats'];
+        currentTrack: SpotifyStatsProps['currentTrack'];
+        techStacks: TechStackCardProps['techStacks'];
+        socialMedia: SocialMediaProps[];
     }
-
+    interface BentoCardProps {
+        children: React.ReactNode;
+        className?: string;
+        hoverable?: boolean;
+    }
 
     interface MobileDropdownProps {
         isOpen: boolean;
         setIsOpen: (value: boolean) => void;
     }
 
+    interface TechStackCardProps {
+        techStacks: {
+            [category: string]: {
+                color: string;
+                techs: string[];
+            }
+        }
+    }
+
+    interface SocialMediaProps {
+        name: string,
+        url: string,
+        icon?: React.ReactNode
+    }
 }

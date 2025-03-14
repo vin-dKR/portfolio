@@ -5,31 +5,60 @@ import HomeHeader from "./HomeHeader";
 import HomeBio from "./Bio";
 import BentoGrid from "./BentoGrid";
 
-const mockData: BentoGridProps = {
+const bentoData: BentoGridProps = {
     githubStats: {
-        followers: 2,
-        following: 21,
-        stars: 34,
-        issues: 2,
-        prs: 0,
+      followers: 120,
+      following: 50,
+      stars: 340,
+      issues: 15,
+      prs: 25
     },
     wakaTimeStats: {
-        totalHours: 23,
-        languages: [
-            { name: 'TypeScript', percentage: 45 },
-            { name: 'JavaScript', percentage: 30 },
-            { name: 'Python', percentage: 15 },
-        ],
+      totalHours: 256,
+      languages: [
+        { name: "JavaScript", percentage: 45 },
+        { name: "TypeScript", percentage: 30 },
+        { name: "CSS", percentage: 15 },
+        { name: "HTML", percentage: 10 }
+      ]
     },
-    currentTrack: null,
-};
-
+    currentTrack: {
+      name: "Song Name",
+      artist: "Artist Name",
+      albumArt: "/path/to/album-art.jpg"
+    },
+    socialMedia: [
+      { name: "GitHub", url: "https://github.com/username" },
+      { name: "Twitter", url: "https://twitter.com/username" },
+      { name: "LinkedIn", url: "https://linkedin.com/in/username" },
+      { name: "Discord", url: "https://discord.gg/yourdiscord" },
+      { name: "YouTube", url: "https://youtube.com/@yourchannel" }
+    ],
+    techStacks: {
+      "Frontend": {
+        color: "linear-gradient(to bottom, #f59e0b, #d97706)",
+        techs: ["HTML", "CSS", "JavaScript", "TypeScript", "React JS", "Next JS", "Tailwind CSS", "ShadCN"]
+      },
+      "Backend": {
+        color: "linear-gradient(to bottom, #3b82f6, #2563eb)",
+        techs: ["Node", "Express", "Prisma"]
+      },
+      "Database": {
+        color: "linear-gradient(to bottom, #10b981, #059669)",
+        techs: ["MongoDB", "PostgreSQL", "Firebase", "SQL"]
+      },
+      "DevOps": {
+        color: "linear-gradient(to bottom, #8b5cf6, #7c3aed)",
+        techs: ["Docker", "AWS"]
+      }
+    }
+  };
 const HomePage = () => {
     return (
         <div className="flex flex-col items-center w-full">
             <HomeHeader />
             <HomeBio />
-            <BentoGrid {...mockData} />        
+            <BentoGrid {...bentoData} />        
         </div>
     )
 }

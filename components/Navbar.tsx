@@ -33,10 +33,10 @@ const Navbar = () => {
     if (!mounted) return <div className='size-14' />;
 
     return (
-        <div className="fixed top-0 left-0 right-0 z-50 flex justify-center">
+        <div className="fixed top-0 left-0 right-0 flex justify-center z-[101]">
             <motion.nav
                 style={{ width, height, scale }}
-                className={`transition-all duration-300 ${
+                className={`transition-all duration-300 z-[100] ${
                     isScrolled ? 'backdrop-blur-md bg-black/30' : 'backdrop-blur-sm bg-black/20'
                 } rounded-b-2xl w-1/3`}
             >
@@ -49,6 +49,7 @@ const Navbar = () => {
                         alt="logo image"
                         width={70}
                         height={40}
+                        className='z-[100]'
                     />
                     <DesktopNav />
                     <div className='flex items-center justify-center space-x-4'>

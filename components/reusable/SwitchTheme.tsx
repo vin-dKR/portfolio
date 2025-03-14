@@ -30,7 +30,7 @@ const SwitchTheme = () => {
     return (
         <button 
           onClick={toggleTheme}
-          className="p-2 rounded-xl bg-zinc-800/50 hover:bg-zinc-700/50 transition-colors"
+          className="p-2 rounded-xl bg-zinc-800/50 hover:bg-zinc-700/50 transition-colors z-[100]"
         >
           {resolvedTheme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
         </button>

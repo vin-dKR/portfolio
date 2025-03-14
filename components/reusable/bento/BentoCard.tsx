@@ -1,16 +1,20 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-const BentoCard = ({ children, className = "" }: { children: React.ReactNode, className: string }) => (
+const BentoCard = ({ children, className, hoverable = true }: BentoCardProps) => {
+  
+  return (
     <motion.div
-        whileHover={{ scale: 1.02 }}
-        className={`relative group ${className}`}
+      className={`relative overflow-hidden rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900/30 backdrop-blur-sm z-0 ${
+        hoverable ? "transition-all duration-300 hover:scale-[0.98] hover:shadow-xl" : ""
+      } ${className}`}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
     >
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-xl blur-xl group-hover:blur-2xl transition-all duration-300" />
-        <div className="bg-zinc-900/50 backdrop-blur-sm rounded-xl p-4 relative">
-            {children}
-        </div>
+      {children}
     </motion.div>
-);
+  );
+}
 
-export default BentoCard;
+export default BentoCard

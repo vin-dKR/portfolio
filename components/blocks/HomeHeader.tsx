@@ -21,7 +21,7 @@ const HomeHeader = () => {
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="w-full mx-auto pt-16 md:pt-20 pb-6 "
+            className="w-full mx-auto pt-16 md:pt-20 pb-6"
         >
             <header className="relative">
                 <motion.div 
@@ -47,13 +47,13 @@ const HomeHeader = () => {
                             transition={{ type: "spring", stiffness: 200, delay: 0.3 }}
                             className="relative group"
                         >
-                            <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full blur group-hover:blur-xl transition-all duration-300" />
+                            <div className="absolute inset-0 bg-gradient-to-r z-0 from-purple-500 to-blue-500 rounded-full blur group-hover:blur-xl transition-all duration-300" />
                             <Image 
                                 src="/images/dp.jpeg"
                                 alt="profile pic"
                                 width={400}
                                 height={400}
-                                className="w-16 h-16 rounded-full object-cover relative border-2 border-white/10"
+                                className="w-16 h-16 rounded-full z-0 object-cover relative border-2 border-white/10"
                             />
                         </motion.div>
                     </div>
