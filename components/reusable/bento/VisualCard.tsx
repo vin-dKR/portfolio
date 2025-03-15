@@ -7,7 +7,7 @@ const VisualCard = () => {
   return (
     <BentoCard className="col-span-2 p-0 overflow-hidden group/visual">
       <motion.div
-        initial={{ filter: "blur(10px)", scale: 2 }}
+        initial={{ filter: "blur(10px)", scale: 1.5 }}
         animate={{ filter: "blur(0px)", scale: 1 }}
         transition={{ duration: 1.5 }}
         className="absolute inset-0 size-full"
@@ -15,7 +15,7 @@ const VisualCard = () => {
         <img
           src="/images/batman.webp"
           alt="Visual element"
-          className="w-full h-full object-cover transition-all duration-700 group-hover/visual:scale-110"
+          className="w-full h-full object-cover transition-all duration-700 group-hover/visual:scale-150"
         />
       </motion.div>
       

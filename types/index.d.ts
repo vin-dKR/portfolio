@@ -2,13 +2,16 @@ export {}
 
 declare global {
     interface GithubStatsProps {
-        githubStats: {
-            following: number;
-            followers: number;
-            stars: number;
-            issues: number;
-            prs: number;
-        }
+        followers: number;
+        following: number;
+        stars: number;
+        issues: number;
+        prs: number;
+        username: string;
+        avatar: string;
+        bio: string
+        loading: boolean
+        error: string | null
     }
     interface WakaTimeStatsProps {
         wakaTimeStats: {
@@ -29,7 +32,6 @@ declare global {
 
     interface BentoGridProps {
         wakaTimeStats: WakaTimeStatsProps['wakaTimeStats'];
-        githubStats: GithubStatsProps['githubStats'];
         currentTrack: SpotifyStatsProps['currentTrack'];
         techStacks: TechStackCardProps['techStacks'];
         socialMedia: SocialMediaProps[];

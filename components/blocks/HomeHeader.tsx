@@ -36,7 +36,7 @@ const HomeHeader = () => {
                             <motion.h1 
                                 initial={{ x: -20, opacity: 0 }}
                                 animate={{ x: 0, opacity: 1 }}
-                                className={`text-4xl font-bold ${resolvedTheme === 'dark' ? 'bg-gradient-to-r from-white to-gray-500' : 'bg-gradient-to-r from-black to-gray-700'} bg-clip-text text-transparent`}
+                                className={`text-4xl font-sans font-bold ${resolvedTheme === 'dark' ? 'bg-gradient-to-r from-white to-gray-500' : 'bg-gradient-to-r from-black to-gray-700'} bg-clip-text text-transparent`}
                             >
                                 Vinod KR
                             </motion.h1>
