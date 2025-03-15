@@ -6,7 +6,7 @@ import ProjectModal from "./ProjectModal";
 import { getTechColor, getTextColor } from "@/constant/ProjectsData";
 
 const Project = (props: ProjectsData) => {
-    const { name, desc, img, timeline, techStacks, sourceCode, liveOn } = props;
+    const { name, desc, img, timeline, techStacks } = props;
     const [showModal, setShowModal] = useState(false);
 
     const handleCardClick = () => {
@@ -19,15 +19,15 @@ const Project = (props: ProjectsData) => {
 
     return (
         <>
-          <div className={`flex flex-col lg:flex-row gap-0 items-center dark:bg-gray-800 bg-white rounded-lg shadow-md hover:shadow-lg`}>
+          <div className={`flex flex-col lg:flex-row gap-0 items-center dark:bg-gray-950 bg-white rounded-lg shadow-md hover:shadow-lg`}>
               {/* Project Image with Mac-style frame */}
               <div className="w-full lg:w-4/5 m-4 relative">
                   <div 
-                    className="relative overflow-hidden rounded-lg shadow-xl transition-all duration-300 hover:shadow-2xl group cursor-pointer transform hover:-translate-y-1"
+                    className="relative overflow-hidden border rounded-lg shadow-xl transition-all duration-300 hover:shadow-2xl group cursor-pointer transform hover:-translate-y-1"
                     onClick={handleCardClick}
                   >
                       {/* Mac-style header */}
-                      <div className="absolute top-0 left-0 right-0 h-8 bg-gray-100 dark:bg-gray-700 flex items-center px-3 z-10">
+                      <div className="absolute top-0 left-0 right-0 h-8 bg-gray-100 dark:bg-slate-950 flex items-center px-3 z-10">
                           <div className="flex space-x-2">
                               <div className="w-3 h-3 rounded-full bg-red-500"></div>
                               <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
@@ -96,7 +96,6 @@ const Project = (props: ProjectsData) => {
               </div>
           </div>
           
-          {/* Modal Dialog */}
           {showModal && <ProjectModal project={props} onClose={handleCloseModal} />}
         </>
     );

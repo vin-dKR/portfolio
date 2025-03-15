@@ -6,13 +6,6 @@ import HomeBio from "./Bio";
 import BentoGrid from "./BentoGrid";
 
 const bentoData: BentoGridProps = {
-    githubStats: {
-      followers: 120,
-      following: 50,
-      stars: 340,
-      issues: 15,
-      prs: 25
-    },
     wakaTimeStats: {
       totalHours: 256,
       languages: [

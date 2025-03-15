@@ -20,21 +20,19 @@ export const projectsData: ProjectsData[] = [
 ]
 
 
-// Function to generate a random pastel color
 export const getTechColor = (tech: string) => {
-  const seed = tech.charCodeAt(0) + tech.length;
-  const randomSeed = Math.sin(seed) * 10000;
-  const hue = Math.floor((randomSeed - Math.floor(randomSeed)) * 360);
-  return `hsl(${hue}, 40%, 75%)`;
+    const seed = tech.charCodeAt(0) + tech.length;
+    const randomSeed = Math.sin(seed) * 10000;
+    const hue = Math.floor((randomSeed - Math.floor(randomSeed)) * 360);
+    return `hsl(${hue}, 40%, 75%)`;
 };
 
-// Function to determine if text should be dark or light based on background
 export const getTextColor = (backgroundColor: string) => {
-  // Extract HSL values - this is a simple approximation
-  const match = backgroundColor.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
-  if (!match) return "text-gray-800";
-  
-  const lightness = parseInt(match[3]);
-  // Use dark text on light backgrounds and vice versa
-  return lightness > 60 ? "text-gray-800" : "text-gray-100";
+    // Extract HSL values - this is a simple approximation
+    const match = backgroundColor.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+    if (!match) return "text-gray-800";
+
+    const lightness = parseInt(match[3]);
+    // Use dark text on light backgrounds and vice versa
+    return lightness > 60 ? "text-gray-800" : "text-gray-100";
 };

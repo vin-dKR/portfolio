@@ -70,5 +70,14 @@ declare global {
         techStacks: string[]
         sourceCode: string
         liveOn: string
+        features?: string[]
+        challenges?: string
+
     }
+
+    interface ProjectModalProps {
+        project: ProjectsData,
+        onClose: () => void
+    }
+
 }
