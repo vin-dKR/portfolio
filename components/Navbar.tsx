@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import MobileDropDown from './reusable/navbar/MobileDropDown';
 import { DesktopNav } from './reusable/navbar/DesktopNav';
+import Link from 'next/link';
 
 const Navbar = () => {
     const { resolvedTheme } = useTheme();
@@ -44,6 +45,7 @@ const Navbar = () => {
                     style={{ opacity }}
                     className="h-full flex items-center justify-between px-8"
                 >
+                    <Link href={"/"}>
                     <Image 
                         src={resolvedTheme === "light" ? "/images/logo-dark.svg" : "/images/logo-light.svg"}
                         alt="logo image"
@@ -51,6 +53,7 @@ const Navbar = () => {
                         height={40}
                         className='z-[100]'
                     />
+                    </Link>
                     <DesktopNav />
                     <div className='flex items-center justify-center space-x-4'>
                         <SwitchTheme />

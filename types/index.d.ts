@@ -61,4 +61,14 @@ declare global {
         url: string,
         icon?: React.ReactNode
     }
+
+    interface ProjectsData {
+        name: string
+        desc: string
+        img: string
+        timeline: string
+        techStacks: string[]
+        sourceCode: string
+        liveOn: string
+    }
 }
