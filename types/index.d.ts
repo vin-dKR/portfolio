@@ -108,6 +108,7 @@ declare global {
       albumArt: string;
       isPlaying: boolean;
       spotifyUrl: string;
+      lastPlayed?: string
     }
 
     interface SpotifyContextType {
@@ -115,5 +116,13 @@ declare global {
         isLoading: boolean;
         error: string | null;
         refreshTrack: () => Promise<void>;
+    }
+
+    interface SpotifyTokenResponse {
+        access_token: string;
+        token_type: string;
+        expires_in: number;
+        refresh_token: string;
+        scope: string;
     }
 }

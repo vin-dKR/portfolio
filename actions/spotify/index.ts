@@ -1,13 +1,19 @@
-"use server"
+'use server'
 
-import { getCurrentTrack } from "@/lib/spotify"
+import { cache } from 'react';
+import { refreshAccessToken, getCurrentTrack } from '@/lib/spotify';
 
-export const fetchCurrentTrack = async (): Promise<{track: CurrentTrackType | null, error?: string }> => {
+// Cache the result for 30 seconds to reduce API calls
+export const fetchSpotifyTrack = cache(async (): Promise<{ track: CurrentTrackType | null; error?: string }> => {
     try {
-        const track = await getCurrentTrack()
-        return {track}
-    } catch(error) {
-        console.error('Error fetching current track:', error);
-        return { track: null, error: 'Failed to fetch current track' };
+        // Get access token using the stored refresh token
+        const accessToken = await refreshAccessToken();
+
+        // Fetch the current track
+        const track = await getCurrentTrack(accessToken)
+        return { track }
+    } catch (error) {
+        console.error('Error fetching track:', error)
+        return { track: null, error: error instanceof Error ? error.message : 'Failed to fetch track' }
     }
-}
+})

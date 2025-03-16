@@ -1,52 +1,83 @@
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID!;
 const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET!;
-const REFRESH_TOKEN = process.env.SPOTIFY_REFRESH_TOKEN!;
+const STORED_REFRESH_TOKEN = process.env.SPOTIFY_REFRESH_TOKEN!;
 
+export async function refreshAccessToken(): Promise<string> {
+    if (!STORED_REFRESH_TOKEN) {
+        throw new Error('No refresh token available');
+    }
 
-export async function getClientCredentialsToken(): Promise<string> {
-    const res = await fetch('https://accounts.spotify.com/api/token', {
+    const response = await fetch('https://accounts.spotify.com/api/token', {
+        method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: `Basic ${Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64')}`,
+            'Authorization': `Basic ${Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64')}`,
         },
         body: new URLSearchParams({
-            grant_type: 'client_credentials',
+            grant_type: 'refresh_token',
+            refresh_token: STORED_REFRESH_TOKEN,
         }),
-        cache: 'no-store'
-    })
+    });
 
-    if (!res.ok) {
-        throw new Error(`Failed to get token: ${res.statusText}`);
+    if (!response.ok) {
+        throw new Error(`Failed to refresh token: ${response.statusText}`);
     }
 
-    const data = await res.json()
-    return data.access_token
-}
+    const data: SpotifyTokenResponse = await response.json();
+        return data.access_token;
+    }
 
 
-export const getCurrentTrack = async (): Promise<CurrentTrackType | null> => {
-    const accessToken = await getClientCredentialsToken()
-
-    const res = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+    export async function getRecentlyPlayed(accessToken: string): Promise<CurrentTrackType | null> {
+    const response = await fetch('https://api.spotify.com/v1/me/player/recently-played?limit=1', {
         headers: {
-            Authorization: `Bearer ${accessToken}`,
+            'Authorization': `Bearer ${accessToken}`,
         },
-        cache: 'no-store',
-        next: { revalidate: 30 },
-    })
+    });
 
-    if (res.status === 204) {
-        return null
+    if (!response.ok) {
+        throw new Error(`Failed to fetch recently played: ${response.statusText}`);
     }
 
-    if (!res.ok) {
-        throw new Error(`Failed to fetch current track: ${res.statusText}`);
+    const data = await response.json();
+
+    if (!data.items || data.items.length === 0) {
+        return null;
     }
 
-    const data = await res.json()
+    const track = data.items[0].track;
+        return {
+            name: track.name,
+            artist: track.artists.map((artist: any) => artist.name).join(', '),
+            albumArt: track.album.images[0]?.url,
+            isPlaying: false,
+            spotifyUrl: track.external_urls.spotify,
+            lastPlayed: data.items[0].played_at,
+        };
+    }
+
+
+    export async function getCurrentTrack(accessToken: string): Promise<CurrentTrackType | null> {
+    // Try to get currently playing track
+    const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+        },
+    });
+
+    // No track playing, try recently played instead
+    if (response.status === 204) {
+        return getRecentlyPlayed(accessToken);
+    }
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch current track: ${response.statusText}`);
+    }
+
+    const data = await response.json();
 
     if (!data.is_playing || !data.item) {
-        return null
+        return getRecentlyPlayed(accessToken);
     }
 
     return {
