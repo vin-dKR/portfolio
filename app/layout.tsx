@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeProvider";
 import { GithubProvider } from "@/context/GithubContext";
 import { WakatimeProvider } from "@/context/WakatimeContext";
+import { SpotifyProvider } from "@/context/SpotifyContext";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -37,7 +38,9 @@ export default function RootLayout({
                 >            
                     <GithubProvider>
                         <WakatimeProvider>
-                            {children}
+                            <SpotifyProvider>
+                                {children}
+                            </SpotifyProvider>
                         </WakatimeProvider>
                     </GithubProvider>
                 </ThemeProvider>

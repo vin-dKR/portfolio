@@ -100,4 +100,20 @@ declare global {
         children: React.ReactNode,
         initialState?: WakatimeStatsType
     }
+
+
+    interface CurrentTrackType {
+      name: string;
+      artist: string;
+      albumArt: string;
+      isPlaying: boolean;
+      spotifyUrl: string;
+    }
+
+    interface SpotifyContextType {
+        currentTrack: CurrentTrack;
+        isLoading: boolean;
+        error: string | null;
+        refreshTrack: () => Promise<void>;
+    }
 }
