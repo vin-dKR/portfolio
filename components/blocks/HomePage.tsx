@@ -6,15 +6,6 @@ import HomeBio from "./Bio";
 import BentoGrid from "./BentoGrid";
 
 const bentoData: BentoGridProps = {
-    wakaTimeStats: {
-      totalHours: 256,
-      languages: [
-        { name: "JavaScript", percentage: 45 },
-        { name: "TypeScript", percentage: 30 },
-        { name: "CSS", percentage: 15 },
-        { name: "HTML", percentage: 10 }
-      ]
-    },
     currentTrack: {
       name: "Song Name",
       artist: "Artist Name",

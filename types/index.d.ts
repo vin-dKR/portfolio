@@ -31,7 +31,6 @@ declare global {
     }
 
     interface BentoGridProps {
-        wakaTimeStats: WakaTimeStatsProps['wakaTimeStats'];
         currentTrack: SpotifyStatsProps['currentTrack'];
         techStacks: TechStackCardProps['techStacks'];
         socialMedia: SocialMediaProps[];
