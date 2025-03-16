@@ -1,4 +1,3 @@
-"use serer"
 
 export const wakatimeClient = {
     async fetch(endpoint: string) {

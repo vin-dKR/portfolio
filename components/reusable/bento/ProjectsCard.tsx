@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Code, ArrowUpRight } from "lucide-react";
 import { projectsData } from "@/constant/ProjectsData";
 import ProjectModal from "../projects/ProjectModal";
+import Link from "next/link";
 
 const ProjectsCard = () => {
     const [showModal, setShowModal] = useState(false);
@@ -54,7 +55,12 @@ const ProjectsCard = () => {
                 </div>
 
                 <div className="absolute bottom-2 right-2 opacity-50 group-hover/projects:opacity-100 transition-opacity duration-300">
-                    <ArrowUpRight className="w-4 h-4" />
+                    <Link 
+                        href="/projects"
+                        rel="noopener noreferrer"
+                    >
+                        <ArrowUpRight className="w-4 h-4 text-black dark:text-white" />
+                    </Link>
                 </div>
             </BentoCard>
             {showModal && selectedProject && <ProjectModal project={selectedProject} onClose={handleCloseModal} />}

@@ -1,8 +1,9 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { motion } from "framer-motion";
 import { ArrowUpRight, Github, Loader2 } from "lucide-react";
 import BentoCard from "./BentoCard";
 import { useGithubData } from "@/hooks/github";
+import Link from "next/link";
 
 interface GithubStatsProps {
     username: string
@@ -11,7 +12,7 @@ interface GithubStatsProps {
 const GithubStats = ({ username }: GithubStatsProps) => {
     
     const githubStats = useGithubData(username)
-    console.log(githubStats)
+    // console.log(githubStats)
 
     const statsItems = [
         { key: "followers", label: "Followers" },
@@ -68,9 +69,15 @@ const GithubStats = ({ username }: GithubStatsProps) => {
       )
       }
       
-      <div className="absolute bottom-2 right-2 opacity-50 group-hover/github:opacity-100 transition-opacity duration-300">
-        <ArrowUpRight className="w-4 h-4" />
-      </div>
+        <div className="absolute bottom-2 right-2 opacity-50 group-hover/github:opacity-100 transition-opacity duration-300">
+            <Link 
+                href="https://github.com/vin-dKR"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                <ArrowUpRight className="w-4 h-4 text-black dark:text-white" />
+            </Link>
+        </div>
     </BentoCard>
   );
 }

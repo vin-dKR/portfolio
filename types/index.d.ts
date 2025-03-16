@@ -89,4 +89,16 @@ declare global {
         totalHours: number
         languages: WakatimeLangType[]
     }
+
+    interface WakatimeContextType {
+        wakatimeStats: WakatimeStatsType
+        isLoading: boolean
+        errors: string | null
+        refreshStats: () => Promise<void>
+    }
+
+    interface WakatimeProviderProps {
+        children: React.ReactNode,
+        initialState?: WakatimeStatsType
+    }
 }

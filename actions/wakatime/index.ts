@@ -17,10 +17,10 @@ export const getWakatimeStats = cache(async (): Promise<WakatimeStatsType> => {
         const statsData = await wakatimeClient.fetch('stats/last_7_days')
 
         const languages = statsData.data.languages
-            .slice(0, 5)
+            .slice(0, 4)
             .map((lang: any) => ({
                 name: lang.name,
-                percentage: Math.round(lang.percentage * 10) / 10
+                percentage: Math.round(lang.percent)
             }))
 
         return {
@@ -35,4 +35,3 @@ export const getWakatimeStats = cache(async (): Promise<WakatimeStatsType> => {
         }
     }
 })
-
