@@ -80,4 +80,13 @@ declare global {
         onClose: () => void
     }
 
+    interface WakatimeLangType {
+        name: string
+        percentage: number
+    }
+
+    interface WakatimeStatsType {
+        totalHours: number
+        languages: WakatimeLangType[]
+    }
 }
