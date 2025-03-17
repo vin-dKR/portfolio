@@ -40,7 +40,7 @@ const SpotifyStats = () => {
                             className={`w-full h-32 object-cover rounded-lg mb-2 relative transition-all duration-300 ${!currentTrack.isPlaying ? "grayscale" : ""}`}
                         />
                     </motion.div>
-                    <p className="text-sm font-medium truncate mt-2">{currentTrack.name}</p>
+                    <p className="text-sm font-medium truncate mt-2 text-gray-900 dark:text-gray-100">{currentTrack.name}</p>
                     <p className="text-xs text-gray-400 truncate">
                         {currentTrack.artist}
                     </p>
