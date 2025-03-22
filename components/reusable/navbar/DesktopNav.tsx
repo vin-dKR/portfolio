@@ -1,17 +1,24 @@
 import React from 'react';
-import { NAV_ITEMS } from '@/constant/NavItems';
+import { NAV_ITEMS, myColors } from '@/constant/NavItems';
+import NeonUnderline from '@/components/ui/NeonUnderline';
 
 export const DesktopNav = () => {
+
     return (
         <div className="hidden md:flex items-center space-x-8">
             {NAV_ITEMS.map(item => (
-                <a 
-                    key={item.name} 
-                    href={item.href} 
-                    className="text-gray-700 hover:text-stone-950 dark:text-gray-400 dark:hover:text-zinc-50 transition-colors"
+                <NeonUnderline 
+                    key={item.name}
+                    colors={myColors}
+                    width="100%"
                 >
-                    {item.name}
-                </a>
+                    <a 
+                        href={item.href} 
+                        className="text-gray-700 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"
+                    >
+                        {item.name}
+                    </a>
+                </NeonUnderline>
             ))}
         </div>
     );

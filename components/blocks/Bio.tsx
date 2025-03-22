@@ -1,9 +1,10 @@
 "use client"
 
 import React, {useState, useEffect} from "react";
-import { Terminal } from "lucide-react";
-import { motion } from "framer-motion";
-import { useTheme } from "next-themes";
+import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import { Separator } from "@radix-ui/react-separator";
+import { BlurFade } from "../magicui/blur-fade";
 
 const HomeBio = () => {
 
@@ -13,30 +14,83 @@ const HomeBio = () => {
         setMounted(true)
     }, [])
 
-    const { resolvedTheme } = useTheme()
 
     if (!mounted) return <div className="size-14" />
 
     return (
-        <div className="px-2 text-lg text-gray-700">
-            I’m a React.js & Next.js developer who loves turning ideas into interactive, user-friendly web experiences. My journey started with Clothing GO, a startup I co-founded to connect rural vendors to the digital world. While the venture didn’t take off, it fueled my passion for building scalable solutions that make a real impact.
-            <br/>
-            <br/>
-            Now, as an intern at HCL Tech, I specialize in React.js, Next.js, and TypeScript, crafting high-performance applications with clean, efficient code. Whether it's frontend magic, seamless user experiences, or backend optimization, I’m all about solving real-world problems through technology.
-            <br/>
-            <br/>
-            <div className="flex items-center space-x-4 relative">
-                <Terminal className={`w-4 h-4 ${resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
-                <motion.span 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.8 }}
-                    className={`text-sm ${resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
-                >
-                    Let’s build something amazing together! ✨
-                </motion.span>
-            </div>
-        </div>
+        <section className="mt-2 text-zinc-600 dark:text-zinc-400">
+            <BlurFade delay={0.25} inView >
+                <div className="space-y-5 text-left">
+                    <p>
+                        Hi, I thrive on building {' '}
+                        <span className="transform-gpu bg-gradient-to-r from-rose-400 via-fuchsia-500 to-indigo-500 bg-[length:0%_2px] bg-left-bottom bg-no-repeat transition-all duration-500 hover:bg-[length:100%_2px]">
+                            clean,
+                        </span>{' '}
+                        <span className="transform-gpu bg-gradient-to-r from-rose-400 via-fuchsia-500 to-indigo-500 bg-[length:0%_2px] bg-left-bottom bg-no-repeat transition-all duration-500 hover:bg-[length:100%_2px]">
+                            responsive
+                        </span>{' '} and {' '}
+                        <span className="transform-gpu bg-gradient-to-r from-rose-400 via-fuchsia-500 to-indigo-500 bg-[length:0%_2px] bg-left-bottom bg-no-repeat transition-all duration-500 hover:bg-[length:100%_2px]">
+                            engaging
+                        </span>{' '} web applications with modern tools like Next.js and React.
+                    </p>
+
+                    <p>
+                        I specialize in delivering seamless user experiences, with a focus on performance, scalability, and pixel-perfect design.
+                    </p>
+
+                    <p>
+                        Beyond coding, I enjoy building things—whether it’s scalable tech or brands. Previously, I helped lead the tech side of an apparel venture as a co-founder.
+                    </p>
+
+                    <p>
+                        I love tinkering with new technologies, optimizing code, and bringing creative ideas to life. You can check out some of my {' '}
+
+                        <Link href="https://www.vkr/project" target="_blank">
+                            <span className="underline decoration-wavy underline-offset-2">builds</span>
+                        </Link>{' '}
+
+                        here. Lately, I'm diving deeper into backend systems, DevOps, and Web-3.
+                    </p>
+
+                    <div className="flex">
+                        A glimpse of my
+                        <Link href={'/work'} className="group ml-1 flex">{' '}
+                            work & projects.
+                            <div className="relative size-5 -translate-x-px translate-y-[-2px] overflow-hidden">
+                                <ArrowUpRight className="size-4 transition-all duration-300 ease-in-out group-hover:-translate-y-full group-hover:translate-x-full" />
+                                <ArrowUpRight className="relative size-4 -translate-x-full transition-all duration-300 ease-in-out group-hover:-translate-y-full group-hover:translate-x-0" />
+                            </div>
+                        </Link>
+                    </div>
+
+                    <div className="flex w-full items-center justify-center">
+                        <Separator className="w-14 bg-[#888]/40 dark:bg-gray" />
+                    </div>
+
+                    <p>
+                        Catch me on Twitter at {' '}
+
+                        <Link
+                            target="_blank"
+                            href={'https://x.com/always_VinodKr'}
+                            className="underline decoration-wavy underline-offset-2"
+                        >
+                            x.com
+                        </Link>{' '}
+
+                        or feel free to connect via {' '}
+
+                        <Link
+                            target="_blank"
+                            href={'mailto:vinodkumarmurmu62@gmail.com'}
+                            className="underline decoration-wavy underline-offset-2"
+                        >
+                            email
+                        </Link>
+                    </p>
+                </div>
+            </BlurFade>
+        </section>
     )
 }
 

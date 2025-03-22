@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
+import { SparklesText } from "@/components/magicui/sparkles-text"
 
 const HomeHeader = () => {
 
@@ -64,7 +65,7 @@ const HomeHeader = () => {
                         className={`text-xl m-0 ${ resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'} flex items-center space-x-2`}
                         style={{marginTop: "0"}}
                     >
-                        <span>Full Stack Developer</span>
+                        <SparklesText className="text-xl font-light" text="Full Stack Dev" />
                         <ArrowRight className="w-4 h-4" />
                     </motion.h2>
                 </div>
