@@ -10,7 +10,7 @@ const SpotifyStats = () => {
     const { currentTrack, isLoading, error, refreshTrack } = useSpotify();
 
     return (
-        <BentoCard className="col-span-2 group/spotify h-full">
+        <BentoCard className="col-span-6 sm:col-span-2 group/spotify h-full">
             <div className="flex items-center space-x-2 mb-3">
                 <Music className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
                 <h3 className="text-sm font-medium bg-gradient-to-r from-green-400 to-green-600 bg-clip-text text-transparent">

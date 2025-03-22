@@ -21,7 +21,7 @@ const WakatimeStats = () => {
     }, [])
 
     return (
-        <BentoCard className="col-span-2 group/wakatime h-full">
+        <BentoCard className="col-span-4 sm:col-span-2 group/wakatime h-full">
             <div className="absolute -right-4 top-[30px] w-[40px] opacity-4 group-hover/wakatime:opacity-1 transition-opacity duration-500 dark:invert">
                 <Image
                     src='/images/wakatime-logo.png'

@@ -21,7 +21,7 @@ const ProjectsCard = () => {
 
     return (
         <>
-            <BentoCard className="col-span-4 row-span-1 group/projects h-full">
+            <BentoCard className="col-span-5 sm:col-span-4 row-span-1 group/projects h-full">
                 <div className="flex items-center space-x-2 mb-3">
                     <Code className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
                     <h3 className="text-sm font-medium bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">

@@ -25,7 +25,7 @@ const SocialLinksCard = () => {
     };
 
     return (
-        <BentoCard className="col-span-3 row-span-1 group/social h-full">
+        <BentoCard className="col-span-5 sm:col-span-3 row-span-1 group/social h-full">
             <div className="flex items-center space-x-2 mb-3">
                 <ExternalLink className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
                 <h3 className="text-sm font-medium bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">

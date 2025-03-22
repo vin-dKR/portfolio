@@ -31,9 +31,7 @@ declare global {
     }
 
     interface BentoGridProps {
-        currentTrack: SpotifyStatsProps['currentTrack'];
         techStacks: TechStackCardProps['techStacks'];
-        socialMedia: SocialMediaProps[];
     }
     interface BentoCardProps {
         children: React.ReactNode;

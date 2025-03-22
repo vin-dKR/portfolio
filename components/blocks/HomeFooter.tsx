@@ -13,7 +13,7 @@ const HomeFooter = () => {
     const year = String(new Date().getFullYear())
 
     return (
-        <div className="w-1/3 mb-[12px]">
+        <div className="w-[88%] sm:w-1/3 mb-[12px]">
             <Separator className="h-[0.5px] bg-emerald-900/60 w-full" />
             <div className="flex items-center py-3 text-sm font-semibold text-[#4B4B4B]">
                 <time className="hidden sm:inline" dateTime={String(year)}>

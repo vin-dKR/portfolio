@@ -7,7 +7,7 @@ import ProjectsCard from "../reusable/bento/ProjectsCard";
 import SpotifyStats from "../reusable/bento/SpotifyStats";
 import TechStackCard from "../reusable/bento/TechStack";
  
-const BentoGrid = ({ techStacks }: BentoGridProps) => {
+const BentoGrid = () => {
     return (
         <div className="w-full px-2">
             <motion.section
@@ -31,14 +31,15 @@ const BentoGrid = ({ techStacks }: BentoGridProps) => {
                         </h2>
                     </div>
 
-                    <div className="grid grid-cols-7 gap-4">
-                        <VisualCard />
-                        <TechStackCard techStacks={techStacks} />
+                    <div className="grid grid-cols-9 sm:grid-cols-7 gap-4">
+                        <VisualCard visibleOn="dektop" />
+                        <TechStackCard />
                         <GithubStats username="vin-dKR" />
                         <ProjectsCard />
                         <WakatimeStats />
                         <SocialLinksCard />
                         <SpotifyStats />
+                        <VisualCard visibleOn="mobile"/>
                     </div>
                 </div>
             </motion.section>
