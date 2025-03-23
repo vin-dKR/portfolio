@@ -33,17 +33,27 @@ const Navbar = () => {
 
     if (!mounted) return <div className='size-14' />;
 
+    const expandedHeight = isOpen ? (3 * 40 + 80) : (isScrolled ? 60 : 80);
+
     return (
-        <div className="fixed top-0 left-0 right-0 flex justify-center z-[101]">
+        <div className="fixed top-0 left-0 right-0 flex justify-center z-[99]">
             <motion.nav
-                style={{ width, height, scale }}
-                className={`transition-all duration-300 z-[100] ${
+                style={{
+                    width,
+                    height: expandedHeight,
+                    scale,
+                    transformOrigin: "top center"
+                }}
+                animate={{ 
+                  height: expandedHeight
+                }}
+                className={`transition-all duration-300 ${
                     isScrolled ? 'backdrop-blur-md bg-black/30' : 'backdrop-blur-sm bg-black/20'
-                } rounded-b-2xl w-1/3`}
+                } rounded-b-2xl w-1/3 flex flex-col overflow-hidden`}
             >
                 <motion.div 
                     style={{ opacity }}
-                    className="h-full flex items-center justify-between px-8"
+                    className="h-16 flex items-center justify-between px-8 z-[101]"
                 >
                     <Link href={"/"}>
                     <Image 
@@ -51,7 +61,7 @@ const Navbar = () => {
                         alt="logo image"
                         width={70}
                         height={40}
-                        className='z-[100]'
+                        className='z-[200]!'
                     />
                     </Link>
                     <DesktopNav />

@@ -2,21 +2,23 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { NAV_ITEMS } from '@/constant/NavItems';
-import { menuIconVariants, dropdownVariants, itemVariants } from '@/constant/AnimationData';
+import { menuIconVariants } from '@/constant/AnimationData';
 import { usePathname } from 'next/navigation';
+import NeonUnderline from '@/components/ui/NeonUnderline';
 
 const MobileDropdown = ({ isOpen, setIsOpen }: MobileDropdownProps) => {
     const path = usePathname()
+
     return (
         <div className="relative md:hidden mt-2">
             <motion.button 
-                className="z-[100] relative"
+                className="relative z-[100]"
                 onClick={() => setIsOpen(!isOpen)}
                 variants={menuIconVariants}
                 animate={isOpen ? "open" : "closed"}
             >
                 <motion.div
-                    className="relative z-[100]"
+                    className="relative"
                     animate={isOpen ? { rotate: 90 } : { rotate: 0 }}
                     transition={{ duration: 0.2 }}
                 >
@@ -24,16 +26,17 @@ const MobileDropdown = ({ isOpen, setIsOpen }: MobileDropdownProps) => {
                 </motion.div>
                 {isOpen && (
                     <motion.div
-                        className="absolute inset-0 bg-white/10 rounded-full"
+                        className="absolute inset-0 bg-black/10 dark:bg-white/10 rounded-full"
                         initial={{ scale: 0 }}
                         animate={{ scale: 2 }}
                         transition={{ duration: 0.4 }}
                     />
                 )}
             </motion.button>
+
             <AnimatePresence mode="wait">
                 {isOpen && (
-                    <div className="absolute top-[-24px] w-[399px] right-[-29px] z-[10]">
+                    <div className="fixed w-full top-16 right-0 z-50">
                         <motion.nav
                             initial={{
                                 y: '-100%',
@@ -50,12 +53,12 @@ const MobileDropdown = ({ isOpen, setIsOpen }: MobileDropdownProps) => {
                             }}
                             transition={{ duration: 0.4 }}
                             style={{ originY: 0 }}
-                            className="rounded-b-2xl py-5 shadow-md backdrop-blur-md dark:bg-black dark:shadow-purple-900/30 md:hidden"
-                        >
-                            <div className="top-12 mt-16 py-4 flex flex-col items-center space-x-100">
+                            className="w-full rounded-b-2xl md:hidden "
+                        >       
+                            <div className="flex flex-col items-center space-x-100">
                                 {NAV_ITEMS.map(({ name, href }, index) => (
                                     <motion.div
-                                        className='mb-2 text-lg'
+                                        className='mb-2 text-lg text-black dark:text-white'
                                         key={name + href}
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{
@@ -82,7 +85,9 @@ const MobileDropdown = ({ isOpen, setIsOpen }: MobileDropdownProps) => {
                                                 path === href ? 'opacity-100' : 'hover:opacity-100'
                                             }`}
                                         >
+                                            <NeonUnderline >
                                             {name}
+                                            </NeonUnderline>
                                         </Link>
                                     </motion.div>
                                 ))}
