@@ -85,8 +85,8 @@ const MobileDropdown = ({ isOpen, setIsOpen }: MobileDropdownProps) => {
                                                 path === href ? 'opacity-100' : 'hover:opacity-100'
                                             }`}
                                         >
-                                            <NeonUnderline >
-                                            {name}
+                                            <NeonUnderline width='100%' >
+                                                {name}
                                             </NeonUnderline>
                                         </Link>
                                     </motion.div>

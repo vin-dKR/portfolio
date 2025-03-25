@@ -123,4 +123,25 @@ declare global {
         refresh_token: string;
         scope: string;
     }
+
+
+    interface TimelineEntry {
+        title: string;
+        content: string;
+        date?: string;
+        image?: string;
+        summaryPoints?: string[];
+    }
+
+    interface TimelineProps {
+        data: TimelineEntry[];
+        styleClass?: string;
+        entriesGap?: string;
+        entryGap?: string;
+        titleGap?: string;
+        pathWidth?: string;
+        titleMaxWidth?: string;
+        pathColor?: string;
+        gradientColors?: [string, string];
+    }
 }
