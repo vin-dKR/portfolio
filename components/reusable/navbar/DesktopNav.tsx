@@ -1,6 +1,7 @@
 import React from 'react';
 import { NAV_ITEMS, myColors } from '@/constant/NavItems';
 import NeonUnderline from '@/components/ui/NeonUnderline';
+import Link from 'next/link';
 
 export const DesktopNav = () => {
 
@@ -12,12 +13,12 @@ export const DesktopNav = () => {
                     colors={myColors}
                     width="100%"
                 >
-                    <a 
+                    <Link 
                         href={item.href} 
                         className="text-gray-700 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"
                     >
                         {item.name}
-                    </a>
+                    </Link>
                 </NeonUnderline>
             ))}
         </div>

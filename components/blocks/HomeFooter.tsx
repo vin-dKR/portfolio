@@ -1,6 +1,7 @@
 import React from "react"
 import { Separator } from "@radix-ui/react-separator"
 import { Github } from "lucide-react"
+import { RandomEmoji } from "../ui/RandomEmoji"
 
 function getLatestCommit() {
     const sha = process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA
@@ -10,17 +11,13 @@ function getLatestCommit() {
 
 const HomeFooter = () => {
     const commit = getLatestCommit()
-    const year = String(new Date().getFullYear())
 
     return (
         <div className="w-[88%] sm:w-1/3 mb-[12px]">
             <Separator className="h-[0.5px] bg-emerald-900/60 w-full" />
-            <div className="flex items-center py-3 text-sm font-semibold text-[#4B4B4B]">
-                <time className="hidden sm:inline" dateTime={String(year)}>
-                    {year}{' '}
-                </time>{' '}
-
-                ©<p>Vinod KR</p>
+            <div className="flex items-center py-3 text-md text-[#4B4B4B]">
+                <span className="text-black/50 dark:text-white/30 italic">"Let's go to mars"</span>{"  "}
+                <RandomEmoji />
                 <a
                     className="link ml-auto inline-flex items-center gap-1.5"
                     href="https://github.com/vin-dKR/portfolio"
@@ -29,6 +26,7 @@ const HomeFooter = () => {
                 >
                     <Github className="size-5 dark:invert" />
                     <span>
+
                         <span className="bg-gradient-to-l from-gray-600 to-gray-300 bg-clip-text text-transparent">
                             vin-dKR
                         </span>

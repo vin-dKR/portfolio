@@ -55,7 +55,7 @@ const HomeBio = () => {
                     <div className="flex">
                         A glimpse of my
                         <Link href={'/work'} className="group ml-1 flex">{' '}
-                            work & projects.
+                            work & experiences.
                             <div className="relative size-5 -translate-x-px translate-y-[-2px] overflow-hidden">
                                 <ArrowUpRight className="size-4 transition-all duration-300 ease-in-out group-hover:-translate-y-full group-hover:translate-x-full" />
                                 <ArrowUpRight className="relative size-4 -translate-x-full transition-all duration-300 ease-in-out group-hover:-translate-y-full group-hover:translate-x-0" />

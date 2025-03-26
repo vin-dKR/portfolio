@@ -199,7 +199,7 @@ const Timeline: React.FC<TimelineProps> = ({
                             </div>
                             <div className={index % 2 !== 0 ? 'mr-12 text-right' : 'md:ml-12 text-left'}>
                                 <div
-                                    className="om-timeline-entry-title text-lg font-semibold"
+                                    className="om-timeline-entry-title text-lg text-black dark:text-white font-semibold"
                                     dangerouslySetInnerHTML={sanitizeHtml(item.title)}
                                 />
                                     {item.date && <div className="text-sm text-gray-500">{item.date}</div>}
@@ -214,11 +214,11 @@ const Timeline: React.FC<TimelineProps> = ({
                                 {item.image && (
                                     <img src={item.image} alt={item.title} className="w-[150px] md:w-[250px] max-w-xs mb-4 rounded-lg" />
                                 )}
-                                <div dangerouslySetInnerHTML={sanitizeHtml(item.content)} />
+                                <div className="text-black dark:text-white font-bold text-sm" dangerouslySetInnerHTML={sanitizeHtml(item.content)} />
                                 {item.summaryPoints && (
-                                    <ul className="list-disc ml-5 mt-2">
+                                    <ul className="list-disc mt-2">
                                         {item.summaryPoints.map((point, i) => (
-                                            <li key={i} className="text-sm md:text-md text-gray-700">{point}</li>
+                                            <li key={i} className="text-sm md:text-md text-gray-700 list-none">{point}</li>
                                         ))}
                                     </ul>
                                 )}
