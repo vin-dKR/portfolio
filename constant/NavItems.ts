@@ -1,7 +1,7 @@
 export const NAV_ITEMS = [
-    { name: 'About', href: '/about' },
+    { name: 'Projects', href: '/projects' },
     { name: 'Work', href: '/work' },
-    { name: 'Contact', href: '/contact' }
+    {name: 'Blog', href: '/posts'},
 ] as const;
 
 export const myColors = [

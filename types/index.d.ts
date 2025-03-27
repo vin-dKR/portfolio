@@ -1,3 +1,5 @@
+import { MDXRemoteSerializeResult } from 'next-mdx-remote'
+
 export {}
 
 declare global {
@@ -129,7 +131,7 @@ declare global {
         title: string;
         content: string;
         date?: string;
-        image?: string;
+        image?: ImageItem[];
         summaryPoints?: string[];
     }
 
@@ -143,5 +145,29 @@ declare global {
         titleMaxWidth?: string;
         pathColor?: string;
         gradientColors?: [string, string];
+    }
+
+    interface ImageItem {
+        id: number;
+        src: string;
+        alt: string;
+    }
+
+    interface CarouselProps {
+        images: ImageItem[];
+    }
+
+    interface BlogPostFrontmatter {
+        title: string
+        date: string
+        description: string
+        tags?: string[]
+        slug: string
+        readingTime?: number
+    }
+
+    interface BlogPost {
+        frontmatter: BlogPostFrontmatter
+        content: MDXRemoteSerializeResult
     }
 }

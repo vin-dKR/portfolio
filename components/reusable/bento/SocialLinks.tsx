@@ -10,15 +10,15 @@ const SocialLinksCard = () => {
     const getSocialIcon = (name: string) => {
         switch (name.toLowerCase()) {
             case 'github':
-                return <Image src="/images/github.svg" width={30} height={40} alt="github icon" className="dark:invert" />
+                return <Image src="/images/socials/github.svg" width={30} height={40} alt="github icon" className="dark:invert" />
             case 'twitter':
-                return <Image src="/images/xcom.svg" width={30} height={40} alt="x.com icon" />
+                return <Image src="/images/socials/xcom.svg" width={30} height={40} alt="x.com icon" />
             case 'linkedin':
-                return <Image src="/images/linkedin.svg" width={30} height={40} alt="linkedin icon" />
+                return <Image src="/images/socials/linkedin.svg" width={30} height={40} alt="linkedin icon" />
             case 'discord':
-                return <Image src="/images/discord.svg" width={30} height={40} alt="discord icon" />
+                return <Image src="/images/socials/discord.svg" width={30} height={40} alt="discord icon" />
             case 'youtube':
-                return <Image src="/images/youtube.svg" width={30} height={40} alt="youtube icon" />
+                return <Image src="/images/socials/youtube.svg" width={30} height={40} alt="youtube icon" />
             default:
                 return <ExternalLink className="w-5 h-5" />;
         }

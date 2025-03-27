@@ -5,24 +5,9 @@ import Timeline from "@/components/ui/Timeline"
 import Head from "next/head"
 import Link from "next/link"
 import React from "react"
+import {timelineData} from "@/constant/work"
 
 const Page = () => {
-    const timelineData: TimelineEntry[] = [
-  {
-    title: 'Clothing GO',
-    content: 'Co-Founder & CTO',
-    date: 'July 2022 - Dec 2023',
-    image: '/images/clothinggo.jpg',
-    summaryPoints: ['• Website Development & Management ', '• UI/UX Design', '• Business Strategy & Digital Presence'],
-  },
-  {
-    title: 'HCL Tech',
-    content: 'Intern',
-    image: '/images/hcltech.jpg',
-    date: 'Sep 2024 - Feb 2025',
-    summaryPoints: ['Financial Systems Support •', 'Incident Handling & Support •', 'System Monitoring & Maintenance •'],
-  },
-];
 
     return (
         <>

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import "./Timeline.css";
+import ImageCarousel from './ImageCarousel';
 
 const sanitizeHtml = (html: string) => {
     return { __html: html };
@@ -212,7 +213,7 @@ const Timeline: React.FC<TimelineProps> = ({
                                     index % 2 !== 0 ? "text-right flex flex-col items-end " : ""
                                                    )}>
                                 {item.image && (
-                                    <img src={item.image} alt={item.title} className="w-[150px] md:w-[250px] max-w-xs mb-4 rounded-lg" />
+                                    <ImageCarousel images={item.image} />
                                 )}
                                 <div className="text-black dark:text-white font-bold text-sm" dangerouslySetInnerHTML={sanitizeHtml(item.content)} />
                                 {item.summaryPoints && (

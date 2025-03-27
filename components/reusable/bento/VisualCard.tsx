@@ -19,7 +19,7 @@ const VisualCard = ({ visibleOn = "desktop" }) => {
                 className="absolute inset-0 size-full"
             >
                 <img
-                    src="/images/batman.webp"
+                    src="/images/batman-v.jpg"
                     alt="Visual element"
                     className="w-full h-full object-cover transition-all duration-700 group-hover/visual:scale-150"
                 />
