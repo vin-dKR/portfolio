@@ -170,4 +170,29 @@ declare global {
         frontmatter: BlogPostFrontmatter
         content: MDXRemoteSerializeResult
     }
+
+    // Type definitions for MDX component props
+    interface HeadingProps {
+        children: React.ReactNode
+        id?: string
+    }
+
+    interface LinkProps {
+        href: string
+        children: React.ReactNode
+        className?: string
+    }
+
+    interface ImageProps {
+        src: string
+        alt: string
+        width?: number
+        height?: number
+        className?: string
+    }
+
+    interface CodeProps {
+        children: React.ReactNode
+        className?: string
+    }
 }

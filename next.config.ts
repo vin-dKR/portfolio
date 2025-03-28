@@ -1,29 +1,22 @@
 import type { NextConfig } from "next";
+import createMDX from '@next/mdx'
 
+/** @type {import('next').NextConfig} */
 const nextConfig: NextConfig = {
     images: {
-        domains: ['i.scdn.co'], 
+        domains: ['i.scdn.co', 'miro.medium.com'], 
     },
-    experimental: {
-        mdxRs: true, // Use Rust-based MDX compiler
-    },
-    transpilePackages: ['next-mdx-remote'],
-    webpack: (config, options) => {
-        config.module.rules.push({
-            test: /\.mdx?$/,
-            use: [
-                options.defaultLoaders.babel,
-                {
-                    loader: '@mdx-js/loader',
-                    options: {
-                        providerImportSource: '@mdx-js/react'
-                    }
-                }
-            ]
-        })
-
-        return config
-    }
+  pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
+  experimental: {
+    mdxRs: true
+  }
 }
 
-export default nextConfig;
+const withMDX = createMDX({
+  options: {
+    remarkPlugins: [],
+    rehypePlugins: []
+  }
+})
+
+export default withMDX(nextConfig)

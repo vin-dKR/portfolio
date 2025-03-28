@@ -2,12 +2,8 @@
 
 import { MDXRemote } from 'next-mdx-remote'
 import { useMemo } from 'react'
+import { MDXComponents } from './MDXComponents'
 
-// Custom MDX components (client-side)
-const mdxComponents = {
-    h1: (props: any) => <h1 className="text-3xl font-bold mb-4" {...props} />,
-    p: (props: any) => <p className="mb-4" {...props} />
-}
 
 type BlogPostViewProps = {
     post: BlogPost
@@ -34,7 +30,7 @@ export default function BlogPostView({ post }: BlogPostViewProps) {
             <div className="prose max-w-none text-gray-900 dark:text-gray-300">
                 <MDXRemote 
                     {...memoizedContent} 
-                    components={mdxComponents} 
+                    components={MDXComponents} 
                 />
             </div>
         </article>
