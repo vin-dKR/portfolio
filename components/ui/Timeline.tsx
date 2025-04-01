@@ -34,7 +34,7 @@ const Timeline: React.FC<TimelineProps> = ({
         '--om-timeline-entry-gap': entryGap || '4rem',
         '--om-timeline-entry-title-gap': titleGap || '2rem',
         '--om-timeline-path-width': pathWidth || '2px',
-        '--om-timeline-entry-title-max-width': titleMaxWidth || '25rem',
+        '--om-timeline-entry-title-max-width': titleMaxWidth || '20rem',
         '--om-timeline-path-color': pathColor,
         '--om-timeline-gradient-start': gradientColors[0],
         '--om-timeline-gradient-end': gradientColors[1],
@@ -140,7 +140,8 @@ const Timeline: React.FC<TimelineProps> = ({
             const startX = i % 2 === 0 ? padding : wrapperRect.width - padding;
             const endX = i % 2 === 0 ? wrapperRect.width - padding : padding;
             const startY = entryRect.top - wrapperRect.top + 20;
-            const endY = entryRect.bottom - wrapperRect.top;
+            const endY = i % 2 === 0 ? 550 : 1600
+            // const endY = entryRect.bottom - wrapperRect.top;
 
             circlePositions.push({ x: startX, y: startY });
 
@@ -171,7 +172,7 @@ const Timeline: React.FC<TimelineProps> = ({
             className={twMerge('om-timeline w-full relative switch', styleClass)}
             style={customStyles}
         >
-            <div className="om-timeline-entries relative flex flex-col gap-[--om-timeline-entries-gap] py-40 max-w-full">
+            <div className="om-timeline-entries relative flex flex-col gap-[--om-timeline-entries-gap] max-w-full">
                 {data.map((item, index) => (
                     <div
                         key={index}
@@ -188,7 +189,7 @@ const Timeline: React.FC<TimelineProps> = ({
                         <div
                             className={twMerge(
                                 'om-timeline-entry-header sticky top-40 z-40 flex items-center gap-[--om-timeline-entry-title-gap] relative',
-                                index % 2 !== 0 ? 'flex-row-reverse' : 'flex-row mr-32 md:mr-0'
+                                index % 2 !== 0 ? 'flex-row-reverse' : 'flex-row mr-auto md:mr-0'
                             )}
                         >
                             <div
@@ -198,11 +199,12 @@ const Timeline: React.FC<TimelineProps> = ({
                                     }
                                 }}
                                 className="om-timeline-circle h-10 w-10 rounded-full bg-black flex items-center justify-center flex-shrink-0"
-                                style={{ position: 'sticky', top: '5rem', right: '60px' }} // Match header sticky
+                                style={{ position: 'sticky', top: '2rem', right: '60px' }} // Match header sticky
                             >
                                 <div className="om-timeline-inner-circle h-4 w-4 rounded-full bg-gray-800 border border-gray-600"></div>
                             </div>
-                            <div className={index % 2 !== 0 ? 'mr-12 text-right' : 'md:ml-12 text-left'}>
+
+                            <div className={index % 2 !== 0 ? 'mr-12 text-right' : 'ml-12 text-left'}>
                                 <div
                                     className="om-timeline-entry-title text-lg text-black dark:text-white font-semibold"
                                     dangerouslySetInnerHTML={sanitizeHtml(item.title)}
@@ -231,30 +233,30 @@ const Timeline: React.FC<TimelineProps> = ({
                     </div>
                 ))}
 
-                <div className="om-timeline-line-wrapper absolute top-0 w-full h-full pointer-events-none">
-                    <svg
-                        ref={timelineSvgRef}
-                        className="om-timeline-svg absolute"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <defs>
-                            <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" style={{ stopColor: 'transparent', stopOpacity: 1 }} />
-                                <stop offset="10%" style={{ stopColor: gradientColors[1], stopOpacity: 1 }} />
-                                <stop offset="90%" style={{ stopColor: gradientColors[0], stopOpacity: 1 }} />
-                                <stop offset="100%" style={{ stopColor: 'transparent', stopOpacity: 1 }} />
-                            </linearGradient>
-                            <linearGradient id="gradientBg" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" style={{ stopColor: 'transparent', stopOpacity: 1 }} />
-                                <stop offset="10%" style={{ stopColor: pathColor, stopOpacity: 1 }} />
-                                <stop offset="90%" style={{ stopColor: pathColor, stopOpacity: 1 }} />
-                                <stop offset="100%" style={{ stopColor: 'transparent', stopOpacity: 1 }} />
-                            </linearGradient>
-                        </defs>
-                        <path ref={timelinePathRef} className="om-timeline-path" />
-                        <path ref={timelineGradientPathRef} className="om-timeline-gradient-path" />
-                    </svg>
-                </div>
+            </div>
+            <div className="om-timeline-line-wrapper absolute top-0 w-full h-full pointer-events-none">
+                <svg
+                    ref={timelineSvgRef}
+                    className="om-timeline-svg absolute"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style={{ stopColor: 'transparent', stopOpacity: 1 }} />
+                            <stop offset="10%" style={{ stopColor: gradientColors[1], stopOpacity: 1 }} />
+                            <stop offset="90%" style={{ stopColor: gradientColors[0], stopOpacity: 1 }} />
+                            <stop offset="100%" style={{ stopColor: 'transparent', stopOpacity: 1 }} />
+                        </linearGradient>
+                        <linearGradient id="gradientBg" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style={{ stopColor: 'transparent', stopOpacity: 1 }} />
+                            <stop offset="10%" style={{ stopColor: pathColor, stopOpacity: 1 }} />
+                            <stop offset="90%" style={{ stopColor: pathColor, stopOpacity: 1 }} />
+                            <stop offset="100%" style={{ stopColor: 'transparent', stopOpacity: 1 }} />
+                        </linearGradient>
+                    </defs>
+                    <path ref={timelinePathRef} className="om-timeline-path" />
+                    <path ref={timelineGradientPathRef} className="om-timeline-gradient-path" />
+                </svg>
             </div>
         </div>
     )

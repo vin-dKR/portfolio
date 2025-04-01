@@ -34,16 +34,6 @@
     height: 40px; /* Match circle height */
 }
 
-.om-timeline-circle {
-    height: 40px;
-    width: 40px;
-    border-radius: 50%;
-    background-color: black;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
 
 .om-timeline-inner-circle {
     height: 16px;

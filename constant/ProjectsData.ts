@@ -2,13 +2,13 @@ export const projectsData: ProjectsData[] = [
     {
         name: "Hellium AI",
         desc: "marketing ai",
-        img: "/images/hellium.png",
+        img: "/images/projects/hellium.png",
         timeline: "Dec 24 - Jan 25",
         techStacks: ["next js", "shadcn", "typescript", "prisma", "clerk"],
         sourceCode: "https://github.com/vin-dKR/hellium",
         liveOn: "https://hellium.vercel.app/"
     },
-    { 
+    {
         name: "Plash",
         desc: "Clone of Splash",
         img: "/images/projects/plash.jpg",
@@ -17,7 +17,7 @@ export const projectsData: ProjectsData[] = [
         sourceCode: "https://github.com/vin-dKR/plash_backend",
         liveOn: "https://plash-vinodkr.vercel.app/",
     },
-    { 
+    {
         name: "Mediyum",
         desc: "Clone of Medium Blog",
         img: "/images/projects/mediyum.jpg",
@@ -26,7 +26,7 @@ export const projectsData: ProjectsData[] = [
         sourceCode: "https://github.com/vin-dKR/Blog",
         liveOn: "https://mediyum.vercel.app",
     },
-    { 
+    {
         name: "Boogle Docs",
         desc: "Clone of google docs",
         img: "/images/projects/boogle-docs.jpg",
@@ -35,12 +35,12 @@ export const projectsData: ProjectsData[] = [
         sourceCode: "https://github.com/vin-dKR/google-docs",
         liveOn: "https://google-docs-xi-eight.vercel.app",
     },
-    { 
+    {
         name: "Tesla Frontend",
         desc: "Tesla Cars Web design",
         img: "/images/projects/tesla.jpg",
         timeline: "Nov 22 - Dec 23",
-        techStacks: ["react", "material-ui", "styled-component" ],
+        techStacks: ["react", "material-ui", "styled-component"],
         sourceCode: "https://github.com/vin-dKR/tesla-frontend",
         liveOn: "https://tesla-frontend-omega.vercel.app/",
     },

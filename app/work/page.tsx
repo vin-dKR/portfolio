@@ -42,7 +42,7 @@ const Page = () => {
                     <Timeline
                         data={timelineData}
                         gradientColors={['#10b981', '#3b82f6']}
-                        styleClass="rounded-lg shadow-sm"
+                        styleClass="rounded-lg"
                     />
 
                     <div className="h-px w-full bg-black/70 dark:bg-white/20 my-10"></div>
