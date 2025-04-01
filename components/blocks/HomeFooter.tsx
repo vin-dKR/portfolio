@@ -16,7 +16,7 @@ const HomeFooter = () => {
         <div className="w-[88%] sm:w-1/3 mb-[12px]">
             <Separator className="h-[0.5px] bg-emerald-900/60 w-full" />
             <div className="flex items-center py-3 text-md text-[#4B4B4B]">
-                <span className="text-black/50 dark:text-white/30 italic">"Let's go to mars"</span>{"  "}
+                <span className="text-black/50 dark:text-white/30 italic">&quot;Let&apos;s go to mars&quot;</span>{"  "}
                 <RandomEmoji />
                 <a
                     className="link ml-auto inline-flex items-center gap-1.5"

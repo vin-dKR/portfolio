@@ -1,7 +1,7 @@
 'use client'
 
 import { getWakatimeStats } from "@/actions/wakatime"
-import React, { createContext, useContext, useState } from "react"
+import React, { createContext, useCallback, useContext, useState } from "react"
 
 
 const defaultWakatimeStats: WakatimeStatsType = {
@@ -13,17 +13,17 @@ const WakatimeContext = createContext<WakatimeContextType>({
     wakatimeStats: defaultWakatimeStats,
     isLoading: false,
     errors: null,
-    refreshStats: async() => {}
+    refreshStats: async () => { }
 })
 
 export const useWakatime = () => useContext(WakatimeContext)
 
-export const WakatimeProvider = ({children, initialState = defaultWakatimeStats}: WakatimeProviderProps) => {
+export const WakatimeProvider = ({ children, initialState = defaultWakatimeStats }: WakatimeProviderProps) => {
     const [wakatimeStats, setWakatimeStats] = useState<WakatimeStatsType>(initialState)
     const [isLoading, setIsLoading] = useState(false)
     const [errors, setError] = useState<string | null>(null)
 
-    const refreshStats = async () => {
+    const refreshStats = useCallback(async () => {
         try {
             setIsLoading(true)
             setError(null)
@@ -31,16 +31,16 @@ export const WakatimeProvider = ({children, initialState = defaultWakatimeStats}
             const stats = await getWakatimeStats()
 
             setWakatimeStats(stats)
-        } catch(error) {
+        } catch (error) {
             console.log(error)
             setError(`Error refreshing WakaTime stats: ${error}`)
         } finally {
             setIsLoading(false)
         }
-    }
+    }, [])
 
     return (
-        <WakatimeContext.Provider value={{wakatimeStats, isLoading, errors, refreshStats}}>
+        <WakatimeContext.Provider value={{ wakatimeStats, isLoading, errors, refreshStats }}>
             {children}
         </WakatimeContext.Provider>
     )

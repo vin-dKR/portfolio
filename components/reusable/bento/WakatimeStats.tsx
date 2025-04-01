@@ -7,26 +7,28 @@ import Image from "next/image";
 import Link from "next/link";
 
 const WakatimeStats = () => {
-    const {wakatimeStats, isLoading, errors, refreshStats} = useWakatime()
-    console.log(wakatimeStats)
+    const { wakatimeStats, isLoading, errors, refreshStats } = useWakatime()
+    // console.log(wakatimeStats)
 
     useEffect(() => {
-        refreshStats()
-
-        const intervalId = setInterval(() => {
+        const fetchData = () => {
             refreshStats()
-        }, 3600000)
+        }
+
+        fetchData()
+
+        const intervalId = setInterval(fetchData, 3600000)
 
         return () => clearInterval(intervalId);
-    }, [])
+    }, [refreshStats])
 
     return (
         <BentoCard className="col-span-4 sm:col-span-2 group/wakatime h-full">
             <div className="absolute -right-4 top-[30px] w-[40px] opacity-4 group-hover/wakatime:opacity-1 transition-opacity duration-500 dark:invert">
                 <Image
-                    src='/images/wakatime-logo.png'
-                    width={100}
-                    height={100}
+                    src='/images/socials/wakatime-logo.png'
+                    width={40}
+                    height={40}
                     alt="logo"
                 />
             </div>
@@ -36,8 +38,8 @@ const WakatimeStats = () => {
                 <h3 className="text-sm font-medium bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
                     Coding Time
                 </h3>
-                <button 
-                    onClick={() => refreshStats()} 
+                <button
+                    onClick={() => refreshStats()}
                     className="p-1 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
                     disabled={isLoading}
                     title="Refresh stats"
@@ -49,11 +51,11 @@ const WakatimeStats = () => {
 
             {errors ? (
                 <div className="flex justify-center items-center h-40 text-red-500 text-sm">
-                    <p>Couldn't load WakaTime data</p>
+                    <p>Couldn&apos;t load WakaTime data</p>
                 </div>
             ) : (
                 <>
-                    <Link 
+                    <Link
                         href="https://wakatime.com/@fb861e4c-0eee-42a3-8d54-a65ccab34573"
                         target="_blank"
                         rel="noopener noreferrer"
@@ -112,7 +114,7 @@ const WakatimeStats = () => {
             )}
 
             <div className="absolute bottom-2 right-2 opacity-50 group-hover/wakatime:opacity-100 transition-opacity duration-300">
-                <Link 
+                <Link
                     href="https://wakatime.com/@fb861e4c-0eee-42a3-8d54-a65ccab34573"
                     target="_blank"
                     rel="noopener noreferrer"

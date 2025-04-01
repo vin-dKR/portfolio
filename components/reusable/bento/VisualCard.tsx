@@ -2,13 +2,14 @@ import React from "react";
 import BentoCard from "./BentoCard";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
+import Image from "next/image";
 
 const VisualCard = ({ visibleOn = "desktop" }) => {
 
     const visibilityClass =
-    visibleOn === "mobile"
-      ? "block sm:hidden col-span-3" 
-      : "hidden sm:block"
+        visibleOn === "mobile"
+            ? "block sm:hidden col-span-3"
+            : "hidden sm:block"
 
     return (
         <BentoCard className={`${visibilityClass} sm:col-span-2 p-0 overflow-hidden group/visual`}>
@@ -18,9 +19,11 @@ const VisualCard = ({ visibleOn = "desktop" }) => {
                 transition={{ duration: 1.5 }}
                 className="absolute inset-0 size-full"
             >
-                <img
+                <Image
                     src="/images/batman-v.jpg"
                     alt="Visual element"
+                    width={400}
+                    height={400}
                     className="w-full h-full object-cover transition-all duration-700 group-hover/visual:scale-150"
                 />
             </motion.div>

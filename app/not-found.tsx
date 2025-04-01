@@ -1,6 +1,6 @@
 import React from "react"
 import Link from "next/link"
-import Navbar from "@/components/Navbar"
+import Navbar from "@/components/blocks/Navbar"
 import HomeFooter from "@/components/blocks/HomeFooter"
 
 export default function Page() {
@@ -23,7 +23,7 @@ export default function Page() {
                 </Link>
             </div>
 
-            <HomeFooter/> 
+            <HomeFooter />
         </div>
     )
 }

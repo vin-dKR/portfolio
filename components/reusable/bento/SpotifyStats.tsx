@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowUpRight, Music } from "lucide-react";
 import BentoCard from "./BentoCard";
 import { useSpotify } from "@/context/SpotifyContext";
+import Image from "next/image";
 
 const SpotifyStats = () => {
     const { currentTrack, isLoading, error, refreshTrack } = useSpotify();
@@ -34,9 +35,11 @@ const SpotifyStats = () => {
                         className="relative group"
                     >
                         <div className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-blue-500/20 rounded-lg blur group-hover:blur-xl transition-all duration-300" />
-                        <img
+                        <Image
                             src={currentTrack.albumArt}
                             alt={currentTrack.name}
+                            height={200}
+                            width={200}
                             className={`w-full h-32 object-cover rounded-lg mb-2 relative transition-all duration-300 ${!currentTrack.isPlaying ? "grayscale" : ""}`}
                         />
                     </motion.div>
@@ -62,13 +65,13 @@ const SpotifyStats = () => {
             ) : (
                 <div className="flex flex-col items-center justify-center h-40 space-y-3">
                     <motion.div
-                        animate={{ 
-                        scale: [1, 1.1, 1],
-                        opacity: [0.5, 1, 0.5] 
+                        animate={{
+                            scale: [1, 1.1, 1],
+                            opacity: [0.5, 1, 0.5]
                         }}
-                        transition={{ 
-                            repeat: Infinity, 
-                            duration: 4 
+                        transition={{
+                            repeat: Infinity,
+                            duration: 4
                         }}
                         className="relative w-16 h-16 rounded-full bg-gradient-to-r from-green-400 to-blue-500 opacity-20"
                     >
@@ -81,7 +84,7 @@ const SpotifyStats = () => {
                 </div>
             )}
 
-            <div 
+            <div
                 className="absolute bottom-2 right-2 opacity-50 group-hover/spotify:opacity-100 transition-opacity duration-300 cursor-pointer"
                 onClick={() => currentTrack?.spotifyUrl ? window.open(currentTrack.spotifyUrl, '_blank') : refreshTrack()}
             >

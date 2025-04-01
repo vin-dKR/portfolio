@@ -1,10 +1,11 @@
 "use client"
 
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { Separator } from "@radix-ui/react-separator";
-import { BlurFade } from "../magicui/blur-fade";
+import { BlurFade } from "../ui/blur-fade";
+import { RoughNotation } from "react-rough-notation";
 
 const HomeBio = () => {
 
@@ -23,15 +24,37 @@ const HomeBio = () => {
                 <div className="space-y-5 text-left">
                     <p>
                         Hi, I thrive on building {' '}
-                        <span className="transform-gpu bg-gradient-to-r from-rose-400 via-fuchsia-500 to-indigo-500 bg-[length:0%_2px] bg-left-bottom bg-no-repeat transition-all duration-500 hover:bg-[length:100%_2px]">
+                        <RoughNotation
+                            type="underline"
+                            show={true}
+                            color="red"
+                            strokeWidth={1}
+                            animationDuration={800}
+                            animationDelay={1500}
+                        >
                             clean,
-                        </span>{' '}
-                        <span className="transform-gpu bg-gradient-to-r from-rose-400 via-fuchsia-500 to-indigo-500 bg-[length:0%_2px] bg-left-bottom bg-no-repeat transition-all duration-500 hover:bg-[length:100%_2px]">
-                            responsive
-                        </span>{' '} and {' '}
-                        <span className="transform-gpu bg-gradient-to-r from-rose-400 via-fuchsia-500 to-indigo-500 bg-[length:0%_2px] bg-left-bottom bg-no-repeat transition-all duration-500 hover:bg-[length:100%_2px]">
-                            engaging
-                        </span>{' '} web applications with modern tools like Next.js and React.
+                        </RoughNotation>{' '}
+                        <RoughNotation
+                            type="underline"
+                            show={true}
+                            color="green"
+                            strokeWidth={1}
+                            animationDuration={800}
+                            animationDelay={1500}
+                        >
+                            responsive,
+                        </RoughNotation>{' '}
+                        <RoughNotation
+                            type="underline"
+                            show={true}
+                            color="purple"
+                            strokeWidth={1}
+                            animationDuration={800}
+                            animationDelay={1500}
+                        >
+                            engaging,
+                        </RoughNotation>{' '}
+                        {' '} web applications with modern tools like Next.js and React.
                     </p>
 
                     <p>
@@ -45,17 +68,28 @@ const HomeBio = () => {
                     <p>
                         I love tinkering with new technologies, optimizing code, and bringing creative ideas to life. You can check out some of my {' '}
 
-                        <Link href="https://www.vkr/project" target="_blank">
+                        <Link href="https://onlyfans-vinodkr.vercel.app/" target="_blank">
                             <span className="underline decoration-wavy underline-offset-2">builds</span>
                         </Link>{' '}
 
-                        here. Lately, I'm diving deeper into backend systems, DevOps, and Web-3.
+                        here. Lately, I&apos;m diving deeper into backend systems, DevOps, and Web-3.
                     </p>
 
                     <div className="flex">
-                        A glimpse of my
+                        A glimpse of my{' '}{' '}
                         <Link href={'/work'} className="group ml-1 flex">{' '}
-                            work & experiences.
+                            <RoughNotation
+                                type="circle"
+                                show={true}
+                                color="skyblue"
+                                strokeWidth={1}
+                                animationDuration={800}
+                                animationDelay={1500}
+                                padding={4}
+                            >
+                                work & experiences.
+                            </RoughNotation>{' '}
+
                             <div className="relative size-5 -translate-x-px translate-y-[-2px] overflow-hidden">
                                 <ArrowUpRight className="size-4 transition-all duration-300 ease-in-out group-hover:-translate-y-full group-hover:translate-x-full" />
                                 <ArrowUpRight className="relative size-4 -translate-x-full transition-all duration-300 ease-in-out group-hover:-translate-y-full group-hover:translate-x-0" />

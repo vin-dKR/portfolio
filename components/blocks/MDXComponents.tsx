@@ -51,11 +51,12 @@ export function MDXComponents(): MDXComponentsType {
         a: ({ href, children, className }: LinkProps) => (
             <Link 
                 href={href || '#'} 
+                target='_blank'
                 className={`
-                text-blue-600 dark:text-blue-400 
-                hover:underline 
-                transition-colors duration-200
-                ${className || ''}
+                    text-blue-600 dark:text-blue-400 
+                    hover:underline 
+                    transition-colors duration-200
+                    ${className || ''}
                 `}
             >
                 {children}

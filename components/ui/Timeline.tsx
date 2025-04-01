@@ -1,4 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+"use client"
+
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import "./Timeline.css";
 import ImageCarousel from './ImageCarousel';
@@ -38,6 +40,59 @@ const Timeline: React.FC<TimelineProps> = ({
         '--om-timeline-gradient-end': gradientColors[1],
     } as React.CSSProperties;
 
+    const updateSvgPathAndCircles = useCallback((wrapperRect: DOMRect) => {
+        if (!timelineSvgRef.current || !timelinePathRef.current || !timelineGradientPathRef.current) return;
+
+        const { path, circlePositions } = calculateSvgPathAndCircles(wrapperRect);
+        timelineSvgRef.current.setAttribute('width', `${wrapperRect.width}`);
+        timelineSvgRef.current.setAttribute('height', `${wrapperRect.height}`);
+        timelinePathRef.current.setAttribute('d', path);
+        timelineGradientPathRef.current.setAttribute('d', path);
+
+        circleRefs.current.forEach((circle, index) => {
+            if (circle && circlePositions[index]) {
+                const { x, y } = circlePositions[index];
+                circle.style.left = `${x - 20}px`;
+                circle.style.top = `${y - 20}px`;
+            }
+        });
+    }, [])
+
+    const updateTimelineLine = useCallback(() => {
+        if (!wrapperRef.current || !timelineGradientPathRef.current) return;
+
+        const rect = wrapperRef.current.getBoundingClientRect();
+        const scrollHeight =
+            scrollableParent === window
+                ? window.innerHeight
+                : (scrollableParent as HTMLElement).clientHeight;
+
+        const scrollTop =
+            scrollableParent === window
+                ? window.scrollY
+                : (scrollableParent as HTMLElement).scrollTop;
+
+        const topPosition = scrollTop - (rect.top + window.scrollY) + 160;
+        const totalHeight = rect.height + 320;
+
+        let progress = topPosition / (totalHeight - scrollHeight);
+        progress = Math.max(0, Math.min(1, progress));
+
+        const length = timelineGradientPathRef.current.getTotalLength();
+        timelineGradientPathRef.current.style.strokeDasharray = `${length}`;
+        timelineGradientPathRef.current.style.strokeDashoffset = `${length * (1 - progress)}`;
+    }, [scrollableParent]);
+
+
+    const setHeight = useCallback(() => {
+        if (!wrapperRef.current) return;
+
+        const rect = wrapperRef.current.getBoundingClientRect();
+        updateSvgPathAndCircles(rect);
+        updateTimelineLine();
+    }, [updateTimelineLine, updateSvgPathAndCircles]);
+
+
     useEffect(() => {
         const determineScrollContext = () => {
             let parent = wrapperRef.current?.parentElement;
@@ -65,61 +120,10 @@ const Timeline: React.FC<TimelineProps> = ({
             scrollableParent.removeEventListener('scroll', handleScroll);
             window.removeEventListener('resize', handleResize);
         };
-    }, [scrollableParent, data]);
+    }, [scrollableParent, data, setHeight, updateTimelineLine]);
 
-    const setHeight = () => {
-        if (!wrapperRef.current) return;
 
-        const rect = wrapperRef.current.getBoundingClientRect();
-        updateSvgPathAndCircles(rect);
-        updateTimelineLine();
-    };
 
-    const updateTimelineLine = () => {
-        if (!wrapperRef.current || !timelineGradientPathRef.current) return;
-
-        const rect = wrapperRef.current.getBoundingClientRect();
-        const scrollHeight =
-            scrollableParent === window
-                ? window.innerHeight
-                    : (scrollableParent as HTMLElement).clientHeight;
-
-        const scrollTop =
-            scrollableParent === window
-                ? window.scrollY
-                    : (scrollableParent as HTMLElement).scrollTop;
-
-        const topPosition = scrollTop - (rect.top + window.scrollY) + 160;
-        const totalHeight = rect.height + 320;
-
-        let progress = topPosition / (totalHeight - scrollHeight);
-        progress = Math.max(0, Math.min(1, progress));
-
-        const length = timelineGradientPathRef.current.getTotalLength();
-        timelineGradientPathRef.current.style.strokeDasharray = `${length}`;
-        timelineGradientPathRef.current.style.strokeDashoffset = `${length * (1 - progress)}`;
-    };
-
-    const updateSvgPathAndCircles = (wrapperRect: DOMRect) => {
-        if (!timelineSvgRef.current || !timelinePathRef.current || !timelineGradientPathRef.current) return;
-
-        const { path, circlePositions } = calculateSvgPathAndCircles(wrapperRect);
-        timelineSvgRef.current.setAttribute('width', `${wrapperRect.width}`);
-        timelineSvgRef.current.setAttribute('height', `${wrapperRect.height}`);
-        timelinePathRef.current.setAttribute('d', path);
-        timelineGradientPathRef.current.setAttribute('d', path);
-
-        console.log('Circle Positions:', circlePositions);
-        console.log('Circle Refs:', circleRefs.current);
-
-        circleRefs.current.forEach((circle, index) => {
-            if (circle && circlePositions[index]) {
-                const { x, y } = circlePositions[index];
-                circle.style.left = `${x - 20}px`; // Center circle
-                circle.style.top = `${y - 20}px`; // Center circle relative to entry
-            }
-        });
-    };
 
     const calculateSvgPathAndCircles = (wrapperRect: DOMRect): { path: string; circlePositions: { x: number; y: number }[] } => {
         const entries = entriesRefs.current.filter(Boolean) as HTMLDivElement[];
@@ -183,7 +187,7 @@ const Timeline: React.FC<TimelineProps> = ({
                     >
                         <div
                             className={twMerge(
-                            'om-timeline-entry-header sticky top-40 z-40 flex items-center gap-[--om-timeline-entry-title-gap] relative',
+                                'om-timeline-entry-header sticky top-40 z-40 flex items-center gap-[--om-timeline-entry-title-gap] relative',
                                 index % 2 !== 0 ? 'flex-row-reverse' : 'flex-row mr-32 md:mr-0'
                             )}
                         >
@@ -203,56 +207,56 @@ const Timeline: React.FC<TimelineProps> = ({
                                     className="om-timeline-entry-title text-lg text-black dark:text-white font-semibold"
                                     dangerouslySetInnerHTML={sanitizeHtml(item.title)}
                                 />
-                                    {item.date && <div className="text-sm text-gray-500">{item.date}</div>}
-                                </div>
-                            </div>
-
-                            <div 
-                                className={twMerge(
-                                    'om-timeline-entry-content flex-1 max-w-full',
-                                    index % 2 !== 0 ? "text-right flex flex-col items-end " : ""
-                                                   )}>
-                                {item.image && (
-                                    <ImageCarousel images={item.image} />
-                                )}
-                                <div className="text-black dark:text-white font-bold text-sm" dangerouslySetInnerHTML={sanitizeHtml(item.content)} />
-                                {item.summaryPoints && (
-                                    <ul className="list-disc mt-2">
-                                        {item.summaryPoints.map((point, i) => (
-                                            <li key={i} className="text-sm md:text-md text-gray-700 list-none">{point}</li>
-                                        ))}
-                                    </ul>
-                                )}
+                                {item.date && <div className="text-sm text-gray-500">{item.date}</div>}
                             </div>
                         </div>
-                    ))}
 
-                    <div className="om-timeline-line-wrapper absolute top-0 w-full h-full pointer-events-none">
-                        <svg
-                            ref={timelineSvgRef}
-                            className="om-timeline-svg absolute"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <defs>
-                                <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <div
+                            className={twMerge(
+                                'om-timeline-entry-content flex-1 max-w-full',
+                                index % 2 !== 0 ? "text-right flex flex-col items-end " : ""
+                            )}>
+                            {item.image && (
+                                <ImageCarousel images={item.image} />
+                            )}
+                            <div className="text-black dark:text-white font-bold text-sm" dangerouslySetInnerHTML={sanitizeHtml(item.content)} />
+                            {item.summaryPoints && (
+                                <ul className="list-disc mt-2">
+                                    {item.summaryPoints.map((point, i) => (
+                                        <li key={i} className="text-sm md:text-md text-gray-700 list-none">{point}</li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+                    </div>
+                ))}
+
+                <div className="om-timeline-line-wrapper absolute top-0 w-full h-full pointer-events-none">
+                    <svg
+                        ref={timelineSvgRef}
+                        className="om-timeline-svg absolute"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <defs>
+                            <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
                                 <stop offset="0%" style={{ stopColor: 'transparent', stopOpacity: 1 }} />
                                 <stop offset="10%" style={{ stopColor: gradientColors[1], stopOpacity: 1 }} />
                                 <stop offset="90%" style={{ stopColor: gradientColors[0], stopOpacity: 1 }} />
                                 <stop offset="100%" style={{ stopColor: 'transparent', stopOpacity: 1 }} />
-                                </linearGradient>
-                                <linearGradient id="gradientBg" x1="0%" y1="0%" x2="0%" y2="100%">
+                            </linearGradient>
+                            <linearGradient id="gradientBg" x1="0%" y1="0%" x2="0%" y2="100%">
                                 <stop offset="0%" style={{ stopColor: 'transparent', stopOpacity: 1 }} />
                                 <stop offset="10%" style={{ stopColor: pathColor, stopOpacity: 1 }} />
                                 <stop offset="90%" style={{ stopColor: pathColor, stopOpacity: 1 }} />
                                 <stop offset="100%" style={{ stopColor: 'transparent', stopOpacity: 1 }} />
-                                </linearGradient>
-                            </defs>
-                            <path ref={timelinePathRef} className="om-timeline-path" />
-                            <path ref={timelineGradientPathRef} className="om-timeline-gradient-path" />
-                        </svg>
-                    </div>
+                            </linearGradient>
+                        </defs>
+                        <path ref={timelinePathRef} className="om-timeline-path" />
+                        <path ref={timelineGradientPathRef} className="om-timeline-gradient-path" />
+                    </svg>
                 </div>
             </div>
+        </div>
     )
 }
 

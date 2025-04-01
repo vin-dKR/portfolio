@@ -1,7 +1,7 @@
 import { Dispatch } from "react";
 
-type GithubActionType = 
-    | { type: 'FETCH_GITHUB_START'}
+type GithubActionType =
+    | { type: 'FETCH_GITHUB_START' }
     | { type: 'FETCH_GITHUB_SUCCESS'; payload: Partial<GithubStatsProps> }
     | { type: 'FETCH_GITHUB_ERROR'; payload: string }
 
@@ -47,7 +47,7 @@ export const githubFetchUser = async (username: string, dispatch: Dispatch<Githu
                 const issuesData = await issuesRes.json()
                 issues = issuesData.total_count
             }
-        }catch (error) {
+        } catch (error) {
             console.log("Failed fetching issues!!")
         }
 

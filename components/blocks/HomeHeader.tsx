@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
-import { SparklesText } from "@/components/magicui/sparkles-text"
+import { SparklesText } from "@/components/ui/sparkles-text"
 
 const HomeHeader = () => {
 
@@ -16,7 +16,7 @@ const HomeHeader = () => {
         setMounted(true)
     }, [])
 
-    if (!mounted) return <div className="size-14"/>
+    if (!mounted) return <div className="size-14" />
 
     return (
         <motion.div
@@ -25,7 +25,7 @@ const HomeHeader = () => {
             className="w-full mx-auto pt-16 md:pt-20 pb-6"
         >
             <header className="relative">
-                <motion.div 
+                <motion.div
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.2 }}
@@ -33,8 +33,8 @@ const HomeHeader = () => {
                 />
                 <div className="relative space-y-4 ">
                     <div className="flex items-center  justify-between">
-                        <div> 
-                            <motion.h1 
+                        <div>
+                            <motion.h1
                                 initial={{ x: -20, opacity: 0 }}
                                 animate={{ x: 0, opacity: 1 }}
                                 className={`text-4xl font-sans font-bold ${resolvedTheme === 'dark' ? 'bg-gradient-to-r from-white to-gray-500' : 'bg-gradient-to-r from-black to-gray-700'} bg-clip-text text-transparent`}
@@ -49,7 +49,7 @@ const HomeHeader = () => {
                             className="relative group"
                         >
                             <div className="absolute inset-0 bg-gradient-to-r z-0 from-purple-500 to-blue-500 rounded-full blur group-hover:blur-xl transition-all duration-300" />
-                            <Image 
+                            <Image
                                 src="/images/dp.jpeg"
                                 alt="profile pic"
                                 width={400}
@@ -58,12 +58,12 @@ const HomeHeader = () => {
                             />
                         </motion.div>
                     </div>
-                    <motion.h2 
+                    <motion.h2
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.4 }}
-                        className={`text-xl m-0 ${ resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'} flex items-center space-x-2`}
-                        style={{marginTop: "0"}}
+                        className={`text-xl m-0 ${resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'} flex items-center space-x-2`}
+                        style={{ marginTop: "0" }}
                     >
                         <SparklesText className="text-xl font-light" text="Full Stack Dev" />
                         <ArrowRight className="w-4 h-4" />

@@ -1,4 +1,4 @@
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/blocks/Navbar";
 import React from "react";
 import { projectsData } from "@/constant/ProjectsData";
 import Project from "@/components/reusable/projects/Project";
@@ -16,10 +16,10 @@ const ProjectsPage = () => {
                     <p className="text-gray-600 dark:text-gray-300 mb-12 max-w-2xl">
                         Explore some of my recent work. Each project represents a unique challenge and opportunity to create something meaningful.
                     </p>
-                    
+
                     <div className="space-y-16">
                         {projectsData.map((project, index) => (
-                            <Project 
+                            <Project
                                 key={index}
                                 name={project.name}
                                 desc={project.desc}
@@ -31,7 +31,7 @@ const ProjectsPage = () => {
                             />
                         ))}
                     </div>
-                </div>        
+                </div>
             </div>
         </div>
     )

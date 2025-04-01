@@ -1,6 +1,6 @@
 import { MDXRemoteSerializeResult } from 'next-mdx-remote'
 
-export {}
+export { }
 
 declare global {
     interface GithubStatsProps {
@@ -103,12 +103,12 @@ declare global {
 
 
     interface CurrentTrackType {
-      name: string;
-      artist: string;
-      albumArt: string;
-      isPlaying: boolean;
-      spotifyUrl: string;
-      lastPlayed?: string
+        name: string;
+        artist: string;
+        albumArt: string;
+        isPlaying: boolean;
+        spotifyUrl: string;
+        lastPlayed?: string
     }
 
     interface SpotifyContextType {
@@ -171,6 +171,7 @@ declare global {
         content: MDXRemoteSerializeResult
     }
 
+
     // Type definitions for MDX component props
     interface HeadingProps {
         children: React.ReactNode
@@ -194,5 +195,24 @@ declare global {
     interface CodeProps {
         children: React.ReactNode
         className?: string
+    }
+
+    interface BlogPostPageProps {
+        params: { slug: string }
+    }
+
+    interface NeonColor {
+        middle: string;
+        side: string;
+    }
+
+    interface NeonUnderlineProps {
+        children: React.ReactNode;
+        colors?: NeonColor[];
+        width?: string | number;
+        className?: string;
+        style?: React.CSSProperties;
+        alwaysOn?: boolean;
+        cycleSpeed?: number;
     }
 }

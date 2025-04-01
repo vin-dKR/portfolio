@@ -1,7 +1,7 @@
 import React from "react";
 import BentoCard from "./BentoCard";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Github, ExternalLink, Youtube } from "lucide-react";
+import { ArrowUpRight, ExternalLink } from "lucide-react";
 import { socialMedia } from "@/constant/SocialMedia";
 import Image from "next/image";
 
@@ -41,8 +41,8 @@ const SocialLinksCard = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-800/50 hover:scale-95 transition-all duration-200 shadow-sm hover:shadow-md hover:border-zinc-300 dark:hover:border-zinc-700"
-                        whileHover={{ 
-                            rotate: [-5, 0, 5, 0], 
+                        whileHover={{
+                            rotate: [-5, 0, 5, 0],
                             transition: { duration: 0.5 },
                             boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
                         }}
