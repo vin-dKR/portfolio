@@ -5,6 +5,9 @@ import Link from "next/link"
 import React from "react"
 import { timelineData } from "@/constant/Work"
 
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
 const Page = () => {
     return (
         <>

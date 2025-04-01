@@ -13,8 +13,8 @@ export default async function BlogListPage() {
 
             <div className="grid gap-6">
                 {posts.map((post) => (
-                    <Link 
-                        key={post.frontmatter.slug} 
+                    <Link
+                        key={post.frontmatter.slug}
                         href={`/posts/${post.frontmatter.slug}`}
                         className="block"
                     >
