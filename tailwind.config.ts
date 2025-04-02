@@ -61,11 +61,22 @@ export default {
             animation: {
                 rainbow: "rainbow var(--speed, 2s) infinite linear",
                 "line-shadow": "line-shadow 15s linear infinite",
+                borderAnimation: "borderAnimation 2s linear infinite",
+                borderSpin: 'borderSpin 4s linear infinite',
             },
             keyframes: {
                 rainbow: {
                     "0%": { "background-position": "0%" },
                     "100%": { "background-position": "200%" },
+                },
+                borderAnimation: {
+                    "0%": { "background-position": "0% 50%" },
+                    "50%": { "background-position": "100% 50%" },
+                    "100%": { "background-position": "0% 50%" },
+                },
+                borderSpin: {
+                    '0%': { transform: 'rotate(0deg)' },
+                    '100%': { transform: 'rotate(360deg)' },
                 },
             }
         }
