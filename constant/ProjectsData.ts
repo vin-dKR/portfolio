@@ -52,7 +52,7 @@ export const getTechColor = (tech: string) => {
     const seed = tech.charCodeAt(0) + tech.length;
     const randomSeed = Math.sin(seed) * 10000;
     const hue = Math.floor((randomSeed - Math.floor(randomSeed)) * 360);
-    return `hsl(${hue}, 40%, 75%)`;
+    return `hsl(${hue}, 60%, 45%)`;
 };
 
 export const getTextColor = (backgroundColor: string) => {

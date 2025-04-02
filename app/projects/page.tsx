@@ -11,7 +11,7 @@ const ProjectsPage = () => {
 
                 <div className="container mx-auto px-4 py-16">
                     <h1 className="text-4xl font-bold mb-8 text-gray-800 dark:text-gray-100">
-                        My Projects
+                        projects
                     </h1>
                     <p className="text-gray-600 dark:text-gray-300 mb-12 max-w-2xl">
                         Explore some of my recent work. Each project represents a unique challenge and opportunity to create something meaningful.

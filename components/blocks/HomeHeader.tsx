@@ -31,8 +31,8 @@ const HomeHeader = () => {
                     transition={{ delay: 0.2 }}
                     className="absolute -right-4 w-32 h-32 bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-full blur-2xl"
                 />
-                <div className="relative space-y-4 ">
-                    <div className="flex items-center  justify-between">
+                <div className="relative space-y-2 ">
+                    <div className="flex items-center justify-between">
                         <div>
                             <motion.h1
                                 initial={{ x: -20, opacity: 0 }}

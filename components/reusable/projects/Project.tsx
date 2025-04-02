@@ -19,9 +19,9 @@ const Project = (props: ProjectsData) => {
 
     return (
         <>
-            <div className={`flex flex-col lg:flex-row gap-0 items-center dark:bg-gray-950 bg-white rounded-lg shadow-md hover:shadow-lg`}>
+            <div className={`flex flex-col lg:flex-row gap-0 items-center dark:bg-gray-950 bg-white rounded-xl shadow-lg hover:shadow-xl`}>
                 {/* Project Image with Mac-style frame */}
-                <div className="w-full lg:w-4/5 m-4 relative">
+                <div className="w-[90%] lg:w-4/5 m-4 relative">
                     <div
                         className="relative overflow-hidden border rounded-lg shadow-xl transition-all duration-300 hover:shadow-2xl group cursor-pointer transform hover:-translate-y-1"
                         onClick={handleCardClick}
@@ -36,8 +36,7 @@ const Project = (props: ProjectsData) => {
                         </div>
 
                         {/* Image */}
-                        <div className="relative pt-8"> {/* Added pt-8 to account for the Mac header */}
-
+                        <div className="relative pt-8">
                             <Image
                                 src={img}
                                 alt={name}
@@ -78,8 +77,13 @@ const Project = (props: ProjectsData) => {
                                 return (
                                     <span
                                         key={index}
-                                        className={`px-3 py-1 text-xs rounded-full font-medium ${textColor} cursor-default transition-all hover:shadow-md`}
-                                        style={{ backgroundColor }}
+                                        className={`px-3 py-1 text-xs rounded-full font-medium ${textColor} cursor-default transition-all hover:shadow-md relative`}
+                                        style={{
+                                            backgroundColor,
+                                            backdropFilter: 'blur(10px)',
+                                            WebkitBackdropFilter: 'blur(10px)',
+                                            boxShadow: `0 0 5px 2px ${backgroundColor}, 0 0 21px 5px ${backgroundColor}`, // Neon light shadow
+                                        }}
                                     >
                                         {tech}
                                     </span>
@@ -87,7 +91,6 @@ const Project = (props: ProjectsData) => {
                             })}
                         </div>
                     </div>
-
                     <div className="pt-2 text-right">
                         <span className="text-sm text-blue-600 dark:text-blue-400">
                             View Details →
