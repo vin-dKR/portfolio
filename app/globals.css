@@ -1,6 +1,41 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --animate-rainbow: rainbow 2s linear infinite;
+  @keyframes rainbow {
+    from {
+      background-position: -100%;
+    }
+    to {
+      background-position: 100%;
+    }
+  }
+
+
+  --animate-spin-star: spin-star 2s linear infinite;
+  @keyframes spin-star {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+
+
+  --font-lenia: "Lenia", "sans-serif";
+  --font-ltserif: "LTSerif", "sans-serif";
+  --font-instrui: "InstruItalic", "sans-serif";
+
+  --color-color-1: 0 100% 63%;
+  --color-color-2: 270 100% 63%;
+  --color-color-3: 210 100% 63%;
+  --color-color-4: 195 100% 63%;
+  --color-color-5: 90 100% 63%;
+}
 
 @layer base {
     :root {
@@ -64,14 +99,38 @@
     }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+@font-face {
+  font-family: Inter; 
+  font-style: normal;
+  font-weight: 200 700;
+  font-display: swap;
+  src: url("/fonts/Inter.ttf");
 }
+
+@font-face {
+  font-family: Lenia;
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/Lenia.ttf");
+}
+
+@font-face {
+  font-family: LTSerif;
+  font-style: normal;
+  font-weight: 200 700;
+  font-display: swap;
+  src: url("/fonts/LTSerif.otf");
+}
+
+@font-face {
+  font-family: InstruItalic;
+  font-style: normal;
+  font-weight: 200 700;
+  font-display: swap;
+  src: url("/fonts/InstruItalic.ttf");
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -87,7 +146,7 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Inter;
 }
 
 ::view-transition-new(root) {
