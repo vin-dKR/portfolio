@@ -215,4 +215,18 @@ declare global {
         alwaysOn?: boolean;
         cycleSpeed?: number;
     }
+
+
+    interface Service {
+        id: number;
+        title: string;
+        serviceName: string;
+        description: string;
+        deliveryTime: string;
+        urgentDelivery: string;
+        price: number | string | null;
+        requirements: string[];
+        deliverables: string[];
+        includes?: string[];
+    }
 }

@@ -9,7 +9,7 @@ interface ButtonProps {
 }
 
 const Button: React.FC<ButtonProps> = ({
-    maxWidth = '300px',
+    maxWidth = '70px',
     label,
     disabled = false,
     onClick,
