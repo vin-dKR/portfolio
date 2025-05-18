@@ -2,7 +2,7 @@ import PricingCard from "./PricingCard"
 
 const Pricing = () => {
     return (
-        <div className="text-black dark:text-white rounded rounded-lg">
+        <div className="text-black dark:text-white rounded rounded-lg mt-40">
             <div>
                 <div className="text-center">
                     <div className="text-3xl sm:text-4xl font-lenia">

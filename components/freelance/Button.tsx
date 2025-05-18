@@ -16,13 +16,13 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
     return (
         <div
-            className={`relative group self-end w-full lg:w-80 p-[1px] rounded-lg mx-10 lg:mx-0 ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg'
+            className={`relative group self-end w-full p-[1px] rounded-2xl mx-10 lg:mx-0 ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg'
                 }`}
             style={{ maxWidth, height: '48px' }}
         >
             <div className='absolute top-[10px] -left-1 bg-gradient-to-br from-white to-purple-500 filter blur-lg w-[90%] h-[100%] dark:h-[60%] z-0' />
             {/* Background layer */}
-            <div className="absolute inset-[1px] bg-gradient-to-br from-white to-purple-950 rounded-[7px] overflow-hidden z-0">
+            <div className="absolute inset-[1px] bg-gradient-to-br from-white to-purple-950 rounded-[20px] overflow-hidden z-0">
                 <div className="absolute inset-[2px] bg-gradient-to-tr from-white to-purple-500 filter blur-xs rounded-[7px] z-0" />
             </div>
 

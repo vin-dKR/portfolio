@@ -28,43 +28,43 @@ export const designServices: DesignServices = {
             {
                 id: 1,
                 title: "Hero Section",
-                serviceName: "Hero Section Revamp",
-                description: "Redesigning your hero section to be more conversion-friendly, visually engaging, and impactful.",
+                serviceName: "Hero Section Design/Develop",
+                description: "Creating your hero section to be more conversion-friendly, visually engaging, and impactful.",
                 deliveryTime: "15 Days Delivery",
                 urgentDelivery: "Urgent delivery (3 days)",
-                price: 229,
+                price: 99,
                 requirements: [
                     "Screenshots or Link of the Website Hero",
                     "A little brief of what you are expecting"
                 ],
                 deliverables: [
-                    "Figma file of Revamped Hero Section",
+                    "Figma file of Hero Section or",
                     "Figma to Code conversion (HTML/CSS/JS)"
                 ]
             },
             {
                 id: 2,
                 title: "Landing Page",
-                serviceName: "Landing Page Revamp",
-                description: "A complete redesign to enhance user experience, boost conversions, and align with your brand goals.",
+                serviceName: "Landing Page Design / Develop",
+                description: "A full-service design or development solution to create a powerful user experience, drive conversions, and bring your brand vision to life.",
                 deliveryTime: "15 Days Delivery",
                 urgentDelivery: "Urgent delivery (5 days)",
-                price: 689,
+                price: 149,
                 requirements: [
                     "Website Link",
                     "A little brief of what you are expecting"
                 ],
                 deliverables: [
-                    "Figma file of Revamped Landing Page",
+                    "Figma file of Revamped Landing Page or",
                     "Figma to Code conversion (HTML/CSS/JS)"
                 ]
             },
             {
                 id: 3,
                 title: "App/Dashboard Screens",
-                serviceName: "App/Dashboard Screens Revamp",
-                description: "Redesigning your app or website screens for a seamless, modern, and user-friendly experience.",
-                deliveryTime: "15 Days Delivery",
+                serviceName: "App/Dashboard Screens Design/Develop",
+                description: "Creating your app or website screens for a seamless, modern, and user-friendly experience.",
+                deliveryTime: "30 Days Delivery",
                 urgentDelivery: "Urgent delivery (5 days)",
                 price: null, // Contact for pricing
                 requirements: [
@@ -72,29 +72,11 @@ export const designServices: DesignServices = {
                     "A little brief of what you are expecting"
                 ],
                 deliverables: [
-                    "Figma file of Revamped screens",
+                    "Figma file of design screens",
                     "Figma to Code conversion (React/JS components)",
                     "Cohesive Design System"
                 ]
             },
-            {
-                id: 4,
-                title: "Pitch Deck",
-                serviceName: "Pitch Deck Design",
-                description: "Creating an impactful pitch deck that effectively communicates your business value proposition.",
-                deliveryTime: "15 Days Delivery",
-                urgentDelivery: "Urgent delivery (5 days)",
-                price: null, // Contact for pricing
-                requirements: [
-                    "Content for the pitch deck",
-                    "Brand guidelines (if available)"
-                ],
-                deliverables: [
-                    "Editable presentation file (PPT/Keynote/Figma)",
-                    "PDF version",
-                    "Figma source files"
-                ]
-            }
         ]
     },
     additionalServices: {
