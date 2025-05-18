@@ -19,7 +19,7 @@ const HomeBio = () => {
     if (!mounted) return <div className="size-14" />
 
     return (
-        <section className="mt-2 text-zinc-600 dark:text-zinc-400">
+        <section className="mt-2 text-zinc-600 dark:text-zinc-400 font-lenia">
             <BlurFade delay={0.25} inView >
                 <div className="space-y-5 text-left">
                     <p>
@@ -62,7 +62,7 @@ const HomeBio = () => {
                     </p>
 
                     <p>
-                        Beyond coding, I enjoy building things—whether it’s scalable tech or brands. Previously, I helped lead the tech side of an apparel venture as a co-founder.
+                        Beyond coding, I enjoy building things - whether it&apos;s scalable tech or brands. Previously, I helped lead the tech side of an apparel venture as a co-founder.
                     </p>
 
                     <p>

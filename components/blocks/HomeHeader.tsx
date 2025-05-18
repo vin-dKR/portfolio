@@ -33,14 +33,24 @@ const HomeHeader = () => {
                 />
                 <div className="relative space-y-2 ">
                     <div className="flex items-center justify-between">
-                        <div>
+                        <div className="font-lenia">
                             <motion.h1
                                 initial={{ x: -20, opacity: 0 }}
                                 animate={{ x: 0, opacity: 1 }}
-                                className={`text-4xl font-sans font-bold ${resolvedTheme === 'dark' ? 'bg-gradient-to-r from-white to-gray-500' : 'bg-gradient-to-r from-black to-gray-700'} bg-clip-text text-transparent`}
+                                className={`text-5xl font-bold ${resolvedTheme === 'dark' ? 'bg-gradient-to-r from-white to-gray-500' : 'bg-gradient-to-r from-black to-gray-700'} bg-clip-text text-transparent`}
                             >
                                 Vinod KR
                             </motion.h1>
+                            <motion.h2
+                                initial={{ y: 20, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                transition={{ delay: 0.4 }}
+                                className={`text-xl m-0 ${resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'} flex items-center space-x-2`}
+                                style={{ marginTop: "0" }}
+                            >
+                                <SparklesText className="text-xl font-light font-lenia ml-2" text="Full Stack Dev" />
+                                <ArrowRight className="w-4 h-4" />
+                            </motion.h2>
                         </div>
                         <motion.div
                             initial={{ scale: 0 }}
@@ -58,16 +68,6 @@ const HomeHeader = () => {
                             />
                         </motion.div>
                     </div>
-                    <motion.h2
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.4 }}
-                        className={`text-xl m-0 ${resolvedTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'} flex items-center space-x-2`}
-                        style={{ marginTop: "0" }}
-                    >
-                        <SparklesText className="text-xl font-light" text="Full Stack Dev" />
-                        <ArrowRight className="w-4 h-4" />
-                    </motion.h2>
                 </div>
             </header>
         </motion.div>
