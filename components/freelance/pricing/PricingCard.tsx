@@ -64,11 +64,13 @@ const PricingCard = () => {
                         </span>
                     </div>
 
-                    <Button
-                        maxWidth="100%"
-                        label="Get The Service"
-                        onClick={() => { }}
-                    />
+                    <div className="flex w-full">
+                        <Button
+                            maxWidth="100%"
+                            label="Get The Service"
+                            onClick={() => { }}
+                        />
+                    </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-4 mx-auto mt-4">
                         <div>

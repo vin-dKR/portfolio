@@ -229,4 +229,23 @@ declare global {
         deliverables: string[];
         includes?: string[];
     }
+
+    interface Testimonial {
+        id: number;
+        text: string;
+    }
+
+    interface Testimonials {
+        title: string;
+        items: Testimonial[];
+    }
+    interface HowWeRollStep {
+        id: number;
+        text: string;
+    }
+
+    interface HowWeRoll {
+        title: string;
+        steps: HowWeRollStep[];
+    }
 }

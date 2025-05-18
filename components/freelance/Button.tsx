@@ -9,14 +9,14 @@ interface ButtonProps {
 }
 
 const Button: React.FC<ButtonProps> = ({
-    maxWidth = '70px',
+    maxWidth = '220px',
     label,
     disabled = false,
     onClick,
 }) => {
     return (
         <div
-            className={`relative group self-end w-full p-[1px] rounded-2xl mx-10 lg:mx-0 ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg'
+            className={`relative group self-end w-full p-[1px] rounded-2xl mx-10 lg:mx-0 text-xl font-lenia ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg'
                 }`}
             style={{ maxWidth, height: '48px' }}
         >

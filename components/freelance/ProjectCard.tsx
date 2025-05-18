@@ -63,7 +63,7 @@ const ProjectCard = React.forwardRef<HTMLDivElement, ProjectCardProps>(
                 className="
                     relative rounded-xl overflow-hidden
                     backdrop-blur-sm bg-black/10 dark:bg-white/5 border border-black/20 dark:border-white/20
-                    p-4 w-[400px] md:w-[500px] flex-shrink-0
+                    p-4 w-[400px] md:w-[500px] h-full flex-shrink-0
                     transition-opacity duration-300
                     select-none z-0
                 "
