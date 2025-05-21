@@ -1,4 +1,5 @@
 import { MDXRemoteSerializeResult } from 'next-mdx-remote'
+import { ReactNode, CSSProperties } from 'react';
 
 export { }
 
@@ -36,7 +37,7 @@ declare global {
         techStacks: TechStackCardProps['techStacks'];
     }
     interface BentoCardProps {
-        children: React.ReactNode;
+        children: ReactNode;
         className?: string;
         hoverable?: boolean;
     }
@@ -58,7 +59,7 @@ declare global {
     interface SocialMediaProps {
         name: string,
         url: string,
-        icon?: React.ReactNode
+        icon?: ReactNode
     }
 
     interface ProjectsData {
@@ -97,7 +98,7 @@ declare global {
     }
 
     interface WakatimeProviderProps {
-        children: React.ReactNode,
+        children: ReactNode,
         initialState?: WakatimeStatsType
     }
 
@@ -174,13 +175,13 @@ declare global {
 
     // Type definitions for MDX component props
     interface HeadingProps {
-        children: React.ReactNode
+        children: ReactNode
         id?: string
     }
 
     interface LinkProps {
         href: string
-        children: React.ReactNode
+        children: ReactNode
         className?: string
     }
 
@@ -193,7 +194,7 @@ declare global {
     }
 
     interface CodeProps {
-        children: React.ReactNode
+        children: ReactNode
         className?: string
     }
 
@@ -207,11 +208,11 @@ declare global {
     }
 
     interface NeonUnderlineProps {
-        children: React.ReactNode;
+        children: ReactNode;
         colors?: NeonColor[];
         width?: string | number;
         className?: string;
-        style?: React.CSSProperties;
+        style?: CSSProperties;
         alwaysOn?: boolean;
         cycleSpeed?: number;
     }
@@ -248,4 +249,18 @@ declare global {
         title: string;
         steps: HowWeRollStep[];
     }
+    interface ProjectData {
+        name: string;
+        desc: string;
+        img: string;
+        timeline: string;
+        techStacks: string[];
+        sourceCode: string;
+        liveOn: string;
+    }
+
+    interface ProjectCardProps extends ProjectData {
+        isActive: boolean;
+    }
+
 }

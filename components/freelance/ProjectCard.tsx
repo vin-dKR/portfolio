@@ -3,20 +3,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 
-interface ProjectData {
-    name: string;
-    desc: string;
-    img: string;
-    timeline: string;
-    techStacks: string[];
-    sourceCode: string;
-    liveOn: string;
-}
-
-interface ProjectCardProps extends ProjectData {
-    isActive: boolean;
-}
-
 const ProjectCard = React.forwardRef<HTMLDivElement, ProjectCardProps>(
     ({ name, desc, img, techStacks, sourceCode, liveOn, isActive }, ref) => {
         const cardInnerRef = useRef<HTMLDivElement>(null);
@@ -25,11 +11,6 @@ const ProjectCard = React.forwardRef<HTMLDivElement, ProjectCardProps>(
 
         const rotateX = useTransform(y, [-0.5, 0.5], [10, -10]);
         const rotateY = useTransform(x, [-0.5, 0.5], [-10, 10]);
-
-        const imageX = useTransform(x, [-0.5, 0.5], [5, -5]);
-        const imageY = useTransform(y, [-0.5, 0.5], [5, -5]);
-        const imageScale = useTransform(x, [-0.5, 0.5], [1.02, 0.98]);
-
 
         const contentX = useTransform(x, [-0.5, 0.5], [-3, 3]);
         const contentY = useTransform(y, [-0.5, 0.5], [-3, 3]);
@@ -81,7 +62,9 @@ const ProjectCard = React.forwardRef<HTMLDivElement, ProjectCardProps>(
                 onMouseLeave={handleMouseLeave}
             >
                 {/* Project Image */}
-                <div className="relative w-full rounded-lg overflow-hidden">
+                <motion.div
+                    className="relative w-full rounded-lg overflow-hidden"
+                >
                     <Image
                         src={img}
                         alt={name}
@@ -89,7 +72,7 @@ const ProjectCard = React.forwardRef<HTMLDivElement, ProjectCardProps>(
                         height={500}
                         width={500}
                     />
-                </div>
+                </motion.div>
 
                 {/* Content */}
                 <motion.div

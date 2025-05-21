@@ -33,11 +33,13 @@ const WakatimeStats = () => {
                 />
             </div>
 
-            <div className="flex items-center space-x-2 mb-3">
-                <Clock className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
-                <h3 className="text-sm font-medium bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                    Coding Time
-                </h3>
+            <div className="flex items-center justify-between mb-3">
+                <div className="flex gap-2 items-center">
+                    <Clock className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
+                    <h3 className="text-sm font-medium bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                        Coding Time
+                    </h3>
+                </div>
                 <button
                     onClick={() => refreshStats()}
                     className="p-1 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"

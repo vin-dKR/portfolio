@@ -74,7 +74,7 @@ const PricingCard = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-4 mx-auto mt-4">
                         <div>
-                            <h4 className="font-semibold text-gray-800 text-lg dark:text-gray-200 mb-2">What we'll need:</h4>
+                            <h4 className="font-semibold text-gray-800 text-lg dark:text-gray-200 mb-2">What we&apos;ll need:</h4>
                             <ul className="list-disc pl-5 text-sm text-gray-600 dark:text-gray-300">
                                 {selectedService.requirements.map((req, i) => (
                                     <li key={i}>{req}</li>
