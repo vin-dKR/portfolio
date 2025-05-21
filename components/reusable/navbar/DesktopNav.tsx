@@ -15,7 +15,7 @@ export const DesktopNav = () => {
                 >
                     <Link
                         href={item.href}
-                        className="text-gray-700 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors justify-self-center"
+                        className="text-gray-100 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors justify-self-center"
                     >
                         {item.name}
                     </Link>

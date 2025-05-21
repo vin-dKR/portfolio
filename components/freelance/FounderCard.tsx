@@ -33,23 +33,23 @@ const FounderCard = () => {
                                 </div>
                             </div>
 
-                            <div className="ml-6 gap-[-2px] text-left">
+                            <div className="ml-6 gap-[-2px] text-left dark:text-white/70 text-black">
                                 <div className="text-3xl md:text-6xl font-bold text-shadow-sm">
                                     Vinod KR
                                 </div>
 
-                                <div className="ml-1 md:ml-4 text-white/70 text-sm md:text-lg text-shadow-sm">
+                                <div className="ml-1 md:ml-4  text-sm md:text-lg text-shadow-sm">
                                     Web Developer | Designer
                                 </div>
 
-                                <span className="relative ml-1 md:ml-4 p-1 bg-linear-to-br from-blue-400 from-[40%] to-white/90 rounded-sm px-2 py-[1px] text-xs text-black z-0">
+                                <span className="relative ml-1 md:ml-4 p-1 bg-linear-to-br from-blue-400 from-[40%] to-white/90 rounded-sm px-2 py-[1px] text-xs z-0">
                                     <div className="absolute left-[1.3px] top-[1px] bg-blue-500 rounded-sm w-[98%] h-[88%] z-0" />
                                     <span className="relative z-[1]">
                                         founder - Vinnetic Media
                                     </span>
                                 </span>
 
-                                <div className="ml-1 md:ml-4 text-white/70 text-sm text-shadow-sm">
+                                <div className="ml-1 md:ml-4 text-sm text-shadow-sm">
                                     <a href="mailto:example@example.com" className="hover:underline">
                                         vinneticmedia@gmail.com
                                     </a>

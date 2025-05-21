@@ -12,7 +12,7 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
             onClick={onClose}
         >
             <div
-                className="relative bg-white dark:bg-slate-950 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] border-4 border-black/20 dark:border-white/30"
+                className="relative bg-white dark:bg-slate-950 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] border border-white/5 dark:border-white/30"
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="absolute inset-0 opacity-80 dark:opacity-30 pointer-events-none">
@@ -49,7 +49,7 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
                 <div className="p-6">
                     <div className="pointer-events-none fixed bottom-0 right-0 h-[150px] w-[300px] opacity-50 mix-blend-screen [background:radial-gradient(ellipse_at_bottom_right,_rgba(255,0,0,0.4),_rgba(255,154,0,0.4),_rgba(208,222,33,0.4),_rgba(79,220,74,0.4),_rgba(63,218,216,0.4),_rgba(47,201,226,0.4),_rgba(28,127,238,0.4),_rgba(95,21,242,0.4),_rgba(186,12,248,0.4),_rgba(251,7,217,0.4),_transparent_80%)] [filter:blur(30px)] z-0" />
                     {/* Image */}
-                    <div className="mb-6 rounded-lg overflow-hidden shadow-lg">
+                    <div className="mb-6 rounded-lg overflow-hidden shadow-lg border border-black/20 dark:border-white/5">
                         <Image
                             src={project.img}
                             alt={project.name}

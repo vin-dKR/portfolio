@@ -11,7 +11,7 @@ const MobileDropdown = ({ isOpen, setIsOpen }: MobileDropdownProps) => {
 
     return (
         <div className="relative md:hidden mt-2">
-            <motion.button 
+            <motion.button
                 className="relative z-[100]"
                 onClick={() => setIsOpen(!isOpen)}
                 variants={menuIconVariants}
@@ -54,11 +54,11 @@ const MobileDropdown = ({ isOpen, setIsOpen }: MobileDropdownProps) => {
                             transition={{ duration: 0.4 }}
                             style={{ originY: 0 }}
                             className="w-full rounded-b-2xl md:hidden "
-                        >       
-                            <div className="flex flex-col items-center space-x-100">
+                        >
+                            <div className="flex flex-col items-center text-left ">
                                 {NAV_ITEMS.map(({ name, href }, index) => (
                                     <motion.div
-                                        className='mb-2 text-lg text-black dark:text-white'
+                                        className='mb-2 text-lg text-black dark:text-white text-left'
                                         key={name + href}
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{
@@ -81,11 +81,10 @@ const MobileDropdown = ({ isOpen, setIsOpen }: MobileDropdownProps) => {
                                         <Link
                                             href={href}
                                             onClick={() => setIsOpen(false)}
-                                            className={`opacity-100 transition-all ${
-                                                path === href ? 'opacity-100' : 'hover:opacity-100'
-                                            }`}
+                                            className={`opacity-100 transition-all text-left ${path === href ? 'opacity-100' : 'hover:opacity-100'
+                                                }`}
                                         >
-                                            <NeonUnderline width='100%' >
+                                            <NeonUnderline width='100%'>
                                                 {name}
                                             </NeonUnderline>
                                         </Link>

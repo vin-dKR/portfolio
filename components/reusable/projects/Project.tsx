@@ -19,19 +19,19 @@ const Project = (props: ProjectsData) => {
 
     return (
         <>
-            <div className={`flex flex-col lg:flex-row gap-0 items-center dark:bg-gray-950 bg-white rounded-xl shadow-lg hover:shadow-xl`}>
+            <div className={`flex flex-col lg:flex-row gap-0 font-lenia items-center dark:bg-white/2 bg-black/10 border border-black/4 dark:border-white/4 rounded-xl shadow-lg hover:shadow-xl`}>
                 {/* Project Image with Mac-style frame */}
-                <div className="w-[90%] lg:w-4/5 m-4 relative">
+                <div className="w-[90%] lg:w-4/5 m-8 lg:m-4 relative">
                     <div
-                        className="relative overflow-hidden border rounded-lg shadow-xl transition-all duration-300 hover:shadow-2xl group cursor-pointer transform hover:-translate-y-1"
+                        className="relative overflow-hidden border border-white/5 rounded-lg shadow-xl transition-all duration-300 hover:shadow-2xl group cursor-pointer transform hover:-translate-y-1"
                         onClick={handleCardClick}
                     >
                         {/* Mac-style header */}
-                        <div className="absolute top-0 left-0 right-0 h-8 bg-gray-100 dark:bg-slate-950 flex items-center px-3 z-10">
+                        <div className="absolute top-0 left-0 right-0 h-6 bg-white/50 dark:bg-white/10 flex items-center px-3 z-10">
                             <div className="flex space-x-2">
-                                <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                                <div className="w-3 h-3 rounded-full bg-red-500" />
+                                <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                                <div className="w-3 h-3 rounded-full bg-green-500" />
                             </div>
                         </div>
 
@@ -45,7 +45,7 @@ const Project = (props: ProjectsData) => {
                                 className="w-full object-cover"
                             />
                         </div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-60 pt-8"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-20 dark:opacity-60 pt-8"></div>
                     </div>
                 </div>
 
@@ -93,7 +93,8 @@ const Project = (props: ProjectsData) => {
                     </div>
                     <div className="pt-2 text-right">
                         <span className="text-sm text-blue-600 dark:text-blue-400">
-                            View Details →
+                            View Details
+                            <span className="font-ltserif">→</span>
                         </span>
                     </div>
                 </div>

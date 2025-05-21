@@ -146,7 +146,7 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Inter;
+  font-family: Lenia;
 }
 
 ::view-transition-new(root) {

@@ -32,7 +32,7 @@ const Navbar = () => {
 
     if (!mounted) return <div className='size-14' />;
 
-    const expandedHeight = isOpen ? (3 * 40 + 80) : (isScrolled ? 60 : 80);
+    const expandedHeight = isOpen ? (4 * 40 + 80) : (isScrolled ? 60 : 80);
 
     return (
         <div className="fixed top-0 left-0 right-0 flex justify-center z-[99]">
