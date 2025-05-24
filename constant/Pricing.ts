@@ -8,7 +8,8 @@ interface Service {
     price: number | string | null;
     requirements: string[];
     deliverables: string[];
-    includes?: string[]; // Optional for packages
+    includes?: string[];
+    href?: string
 }
 
 interface ServiceCategory {
@@ -40,7 +41,8 @@ export const designServices: DesignServices = {
                 deliverables: [
                     "Figma file of Hero Section or",
                     "Figma to Code conversion (HTML/CSS/JS)"
-                ]
+                ],
+                href: "https://cal.com/vinod-kr/15min"
             },
             {
                 id: 2,

@@ -4,7 +4,7 @@ import Button from "./Button";
 const WhatIDo = () => {
 
     const handleSubmit = () => {
-        console.log("hii mf");
+        window.location.href = "mailto:vinodkumarmurmu62@gmail.com";
     };
 
     return (

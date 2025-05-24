@@ -3,6 +3,7 @@ import { designServices } from "@/constant/Pricing";
 import { useState } from "react";
 import ServiceButton from "./Button";
 import Button from "../Button";
+import CalPopup from "./CalEmbded";
 
 
 const PricingCard = () => {
@@ -65,11 +66,13 @@ const PricingCard = () => {
                     </div>
 
                     <div className="flex w-full">
-                        <Button
-                            maxWidth="100%"
-                            label="Get The Service"
-                            onClick={() => { }}
-                        />
+                        <CalPopup>
+                            <Button
+                                maxWidth="100%"
+                                label="Get The Service"
+                                onClick={() => { }}
+                            />
+                        </CalPopup>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-4 mx-auto mt-4">

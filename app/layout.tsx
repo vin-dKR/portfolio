@@ -19,7 +19,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" suppressHydrationWarning>
-            <body className="antialiased font-lenia">
+            <body className="antialiased font-lenia w-full">
                 <ThemeProvider
                     attribute="class"
                     enableSystem
