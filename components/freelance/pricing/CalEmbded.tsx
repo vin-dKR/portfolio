@@ -1,6 +1,6 @@
 "use client"
 import { getCalApi } from "@calcom/embed-react";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect } from "react";
 
 export default function CalPopup({ children }: { children: ReactNode }) {
 
