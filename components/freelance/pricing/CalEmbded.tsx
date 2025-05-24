@@ -17,7 +17,7 @@ export default function CalPopup({ children }: { children: ReactNode }) {
                 data-cal-link="vinod-kr/30min"
 
                 data-cal-config='{"layout":"month_view"}'
-            >{children}</div>;
+            >{children}</div>
         </>
     )
 };
