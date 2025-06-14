@@ -55,9 +55,9 @@ const WhatIDo = () => {
                     </div>
 
                     {/* Button */}
-                    <div className="flex w-full items-center justify-center gap-4 mt-4 sm:mt-6 px-4 sm:px-6 md:px-10">
+                    <div className="px-4 md:px-20 lg:px-30">
                         <Button
-                            maxWidth="60%"
+                            maxWidth="100%"
                             label="Hire Me"
                             onClick={handleSubmit}
                         />

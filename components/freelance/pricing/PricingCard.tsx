@@ -65,7 +65,7 @@ const PricingCard = () => {
                         </span>
                     </div>
 
-                    <div className="flex w-full">
+                    <div className="mx-auto">
                         <CalPopup>
                             <Button
                                 maxWidth="100%"

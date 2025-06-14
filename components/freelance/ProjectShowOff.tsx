@@ -67,9 +67,9 @@ const ProjectShowOff = () => {
                     {/* Swipeable Projects */}
                     <div className="relative pt-16 w-full overflow-hidden">
                         {/* Focus Overlay */}
-                        <div className="absolute top-10 bg-gradient-to-r from-white dark:from-[#120D16] from-10% lg:from-40% to-transparent w-[50%] h-[400px] md:h-[500px] pointer-events-none z-50" />
+                        <div className="absolute top-10 bg-gradient-to-r from-white dark:from-[#120D16]/60 lg:dark:from-[#120D16] from-1% lg:from-40% to-transparent w-[50%] h-[400px] md:h-[500px] pointer-events-none z-50" />
 
-                        <div className="absolute top-10 right-0 bg-gradient-to-r from-transparent to-90% lg:to-60% to-white dark:to-[#120D16] w-[50%] h-[4100px] md:h-[500px] pointer-events-none z-50" />
+                        <div className="absolute top-10 right-0 bg-gradient-to-r from-transparent to-90% lg:to-60% to-white dark:to-[#120D16]/60 lg:dark:to-[#120D16] w-[50%] h-[4100px] md:h-[500px] pointer-events-none z-50" />
 
                         {/* Swipeable Container */}
                         <motion.div
