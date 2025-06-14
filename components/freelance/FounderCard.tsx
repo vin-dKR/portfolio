@@ -20,9 +20,9 @@ const FounderCard = () => {
                         />
 
                         <div className="flex items-center w-full font-lenia px-6">
-                            <div className="relative flex h-[100px] w-[100px] bg-black p-[1px] rounded-full">
+                            <div className="relative flex h-[80px] md:h-[99px] w-[80px] md:w-[99px] bg-black p-[1px] rounded-full">
                                 <div className="absolute bg-white/40 rounded-full h-full w-full blur-md z-0" />
-                                <div className="relative rounded-full h-full w-full overflow-hidden border">
+                                <div className="relative h-[80px] md:h-[99px] w-[80px] md:w-[99px] rounded-full overflow-hidden border">
                                     <Image
                                         src="/images/dp.jpeg"
                                         alt="sdf"
