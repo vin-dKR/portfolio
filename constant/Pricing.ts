@@ -39,7 +39,7 @@ export const designServices: DesignServices = {
                     "A little brief of what you are expecting"
                 ],
                 deliverables: [
-                    "Figma file of Hero Section or",
+                    "Figma File of Hero Section or",
                     "Figma to Code conversion (HTML/CSS/JS)"
                 ],
                 href: "https://cal.com/vinod-kr/15min"
@@ -57,7 +57,7 @@ export const designServices: DesignServices = {
                     "A little brief of what you are expecting"
                 ],
                 deliverables: [
-                    "Figma file of Revamped Landing Page or",
+                    "Figma File of Revamped Landing Page or",
                     "Figma to Code conversion (HTML/CSS/JS)"
                 ]
             },
@@ -70,11 +70,11 @@ export const designServices: DesignServices = {
                 urgentDelivery: "Urgent delivery (5 days)",
                 price: null, // Contact for pricing
                 requirements: [
-                    "Screenshots or Figma file containing screens",
+                    "Screenshots or Figma File containing screens",
                     "A little brief of what you are expecting"
                 ],
                 deliverables: [
-                    "Figma file of design screens",
+                    "Figma File of design screens",
                     "Figma to Code conversion (React/JS components)",
                     "Cohesive Design System"
                 ]
