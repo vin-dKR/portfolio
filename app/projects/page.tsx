@@ -21,13 +21,7 @@ const ProjectsPage = () => {
                         {projectsData.map((project, index) => (
                             <Project
                                 key={index}
-                                name={project.name}
-                                desc={project.desc}
-                                img={project.img}
-                                timeline={project.timeline}
-                                techStacks={project.techStacks}
-                                sourceCode={project.sourceCode}
-                                liveOn={project.liveOn}
+                                {...project}
                             />
                         ))}
                     </div>

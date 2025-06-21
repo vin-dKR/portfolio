@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { getTextColor, getTechColor } from "@/constant/ProjectsData";
 import { GithubIcon, Globe } from "lucide-react";
 import SpotlightButton from "@/components/ui/SpotLightBtn";
@@ -15,10 +14,6 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
                 className="relative bg-white dark:bg-slate-950 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] border border-white/5 dark:border-white/30"
                 onClick={(e) => e.stopPropagation()}
             >
-                <div className="absolute inset-0 opacity-80 dark:opacity-30 pointer-events-none">
-                    <div className="absolute inset-0 bg-[url('/noise.svg')] bg-[length:200px] mix-blend-overlay" />
-                </div>
-
                 <div className="pointer-events-none absolute -bottom-10 -right-10 h-[200px] w-[400px] opacity-50 dark:opacity-70 mix-blend-screen 
                     [background:radial-gradient(ellipse_at_bottom_right,_rgba(255,0,0,0.4),_rgba(255,154,0,0.4),_rgba(208,222,33,0.4),_rgba(79,220,74,0.4),_rgba(63,218,216,0.4),_rgba(47,201,226,0.4),_rgba(28,127,238,0.4),_rgba(95,21,242,0.4),_rgba(186,12,248,0.4),_rgba(251,7,217,0.4),_transparent_80%)] 
                     [filter:blur(40px)] z-0" />
@@ -49,13 +44,14 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
                 <div className="p-6">
                     <div className="pointer-events-none fixed bottom-0 right-0 h-[150px] w-[300px] opacity-50 mix-blend-screen [background:radial-gradient(ellipse_at_bottom_right,_rgba(255,0,0,0.4),_rgba(255,154,0,0.4),_rgba(208,222,33,0.4),_rgba(79,220,74,0.4),_rgba(63,218,216,0.4),_rgba(47,201,226,0.4),_rgba(28,127,238,0.4),_rgba(95,21,242,0.4),_rgba(186,12,248,0.4),_rgba(251,7,217,0.4),_transparent_80%)] [filter:blur(30px)] z-0" />
                     {/* Image */}
-                    <div className="mb-6 rounded-lg overflow-hidden shadow-lg border border-black/20 dark:border-white/5">
-                        <Image
-                            src={project.img}
-                            alt={project.name}
-                            width={800}
-                            height={450}
-                            className="w-full object-cover"
+                    <div className="relative mb-6 rounded-lg overflow-hidden shadow-lg border border-black/20 dark:border-white/5">
+                        <video
+                            src={project.video}
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                            className="relative w-full object-cover rounded-lg"
                         />
                     </div>
 

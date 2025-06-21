@@ -1,12 +1,11 @@
 "use client"
 
 import React, { useState } from "react";
-import Image from "next/image";
 import ProjectModal from "./ProjectModal";
 import { getTechColor, getTextColor } from "@/constant/ProjectsData";
 
 const Project = (props: ProjectsData) => {
-    const { name, desc, img, timeline, techStacks } = props;
+    const { name, desc, timeline, techStacks, video } = props;
     const [showModal, setShowModal] = useState(false);
 
     const handleCardClick = () => {
@@ -23,28 +22,32 @@ const Project = (props: ProjectsData) => {
                 {/* Project Image with Mac-style frame */}
                 <div className="w-[90%] lg:w-4/5 m-8 lg:m-4 relative">
                     <div
-                        className="relative overflow-hidden border border-white/5 rounded-lg shadow-xl transition-all duration-300 hover:shadow-2xl group cursor-pointer transform hover:-translate-y-1"
+                        className="relative p-1 overflow-hidden border border-white/5 rounded-lg bg-white/10 shadow-xl transition-all duration-300 hover:shadow-2xl group cursor-pointer transform hover:-translate-y-1"
                         onClick={handleCardClick}
                     >
-                        {/* Mac-style header */}
-                        <div className="absolute top-0 left-0 right-0 h-6 bg-white/50 dark:bg-white/10 flex items-center px-3 z-10">
-                            <div className="flex space-x-2">
-                                <div className="w-3 h-3 rounded-full bg-red-500" />
-                                <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                                <div className="w-3 h-3 rounded-full bg-green-500" />
+                        <div className="flex flex-row w-full justify-between items-center ">
+                            {/* Mac-style header */}
+
+                            <div className="absolute flex space-x-2">
+                                <div className="w-2 h-2 rounded-full bg-red-500" />
+                                <div className="w-2 h-2 rounded-full bg-yellow-500" />
+                                <div className="w-2 h-2 rounded-full bg-green-500" />
                             </div>
+
+                            <div className="mx-auto bg-black/30 w-1/3 text-center text-[10px] px-4 rounded-sm mb-1">{name}</div>
+                        </div>
+                        <div className="relative rounded-lg ">
+                            <video
+                                src={video}
+                                autoPlay
+                                muted
+                                loop
+                                playsInline
+                                className="w-full object-cover rounded-lg"
+                            />
                         </div>
 
                         {/* Image */}
-                        <div className="relative pt-8">
-                            <Image
-                                src={img}
-                                alt={name}
-                                width={700}
-                                height={450}
-                                className="w-full object-cover"
-                            />
-                        </div>
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-20 dark:opacity-60 pt-8"></div>
                     </div>
                 </div>

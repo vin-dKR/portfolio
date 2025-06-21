@@ -29,7 +29,7 @@ export const designServices: DesignServices = {
             {
                 id: 1,
                 title: "Hero Section",
-                serviceName: "Hero Section Design/Develop",
+                serviceName: "Hero Section Design / Develop",
                 description: "Creating your hero section to be more conversion-friendly, visually engaging, and impactful.",
                 deliveryTime: "15 Days Delivery",
                 urgentDelivery: "Urgent delivery (3 days)",
@@ -63,8 +63,8 @@ export const designServices: DesignServices = {
             },
             {
                 id: 3,
-                title: "App/Dashboard Screens",
-                serviceName: "App/Dashboard Screens Design/Develop",
+                title: "Custom Apps",
+                serviceName: "Custom Apps Design/Develop",
                 description: "Creating your app or website screens for a seamless, modern, and user-friendly experience.",
                 deliveryTime: "30 Days Delivery",
                 urgentDelivery: "Urgent delivery (5 days)",

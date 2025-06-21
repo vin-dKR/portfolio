@@ -65,11 +65,11 @@ declare global {
     interface ProjectsData {
         name: string
         desc: string
-        img: string
         timeline: string
         techStacks: string[]
         sourceCode: string
         liveOn: string
+        video: string
         features?: string[]
         challenges?: string
 
@@ -252,7 +252,7 @@ declare global {
     interface ProjectData {
         name: string;
         desc: string;
-        img: string;
+        video: string;
         timeline: string;
         techStacks: string[];
         sourceCode: string;

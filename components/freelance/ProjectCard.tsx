@@ -1,10 +1,9 @@
 import React, { useRef } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 
 const ProjectCard = React.forwardRef<HTMLDivElement, ProjectCardProps>(
-    ({ name, desc, img, techStacks, sourceCode, liveOn, isActive }, ref) => {
+    ({ name, desc, video, techStacks, sourceCode, liveOn, isActive }, ref) => {
         const cardInnerRef = useRef<HTMLDivElement>(null);
         const x = useMotionValue(0);
         const y = useMotionValue(0);
@@ -65,13 +64,15 @@ const ProjectCard = React.forwardRef<HTMLDivElement, ProjectCardProps>(
                 <motion.div
                     className="relative w-full rounded-lg overflow-hidden"
                 >
-                    <Image
-                        src={img}
-                        alt={name}
-                        className="object-cover"
-                        height={500}
-                        width={500}
+                    <video
+                        src={video}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        className="w-full object-cover rounded-lg"
                     />
+
                 </motion.div>
 
                 {/* Content */}

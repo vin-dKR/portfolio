@@ -2,7 +2,7 @@ export const projectsData: ProjectsData[] = [
     {
         name: "Hellium AI",
         desc: "marketing ai",
-        img: "/images/projects/hellium.png",
+        video: "https://amh7dc2otlwrtz2o.public.blob.vercel-storage.com/hellium-ai-1750488385543-3kFV380zdSxEOXoHp6VD18HOxa047k.mp4",
         timeline: "Dec 24 - Jan 25",
         techStacks: ["next js", "shadcn", "typescript", "prisma", "clerk"],
         sourceCode: "https://github.com/vin-dKR/hellium",
@@ -11,7 +11,7 @@ export const projectsData: ProjectsData[] = [
     {
         name: "Vin UI",
         desc: "NextJS UI library",
-        img: "/images/projects/plash.jpg",
+        video: "https://amh7dc2otlwrtz2o.public.blob.vercel-storage.com/cursorful-video-1750489106351-MEr4MeWGkLrk4UCOUd5HgZgxuqLZVJ.mp4",
         timeline: "Mar 25 - Apr 25",
         techStacks: ["next js", "rust", "tailwind css", "framer", "mdx"],
         sourceCode: "https://github.com/vin-dKR/vin-ui",
@@ -20,7 +20,7 @@ export const projectsData: ProjectsData[] = [
     {
         name: "theorangeleaf",
         desc: "a restaurant app",
-        img: "/images/projects/mediyum.jpg",
+        video: "https://amh7dc2otlwrtz2o.public.blob.vercel-storage.com/the-orange-leaf-1750495984840-AT8SAWU0cakcJNYB5iwd6saxEvY31O.mp4",
         timeline: "Apr 25 - Apr 25",
         techStacks: ["next js", "tailwind", "framer"],
         sourceCode: "https://github.com/vin-dKR/hack-restaurant",
@@ -29,7 +29,7 @@ export const projectsData: ProjectsData[] = [
     {
         name: "Boogle Docs",
         desc: "Clone of google docs",
-        img: "/images/projects/boogle-docs.jpg",
+        video: "https://amh7dc2otlwrtz2o.public.blob.vercel-storage.com/hellium-ai-1750488385543-3kFV380zdSxEOXoHp6VD18HOxa047k.mp4",
         timeline: "Aug 24 - Aug 24",
         techStacks: ["nextjs", "clerk", "live-blocks", "tailwindcss"],
         sourceCode: "https://github.com/vin-dKR/google-docs",
@@ -38,7 +38,7 @@ export const projectsData: ProjectsData[] = [
     {
         name: "Tesla Frontend",
         desc: "Tesla Cars Web design",
-        img: "/images/projects/tesla.jpg",
+        video: "https://amh7dc2otlwrtz2o.public.blob.vercel-storage.com/hellium-ai-1750488385543-3kFV380zdSxEOXoHp6VD18HOxa047k.mp4",
         timeline: "Nov 22 - Dec 22",
         techStacks: ["react", "material-ui", "styled-component"],
         sourceCode: "https://github.com/vin-dKR/tesla-frontend",
