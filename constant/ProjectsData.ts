@@ -25,7 +25,8 @@ export const projectsData: ProjectsData[] = [
         techStacks: ["next js", "tailwind", "framer"],
         sourceCode: "https://github.com/vin-dKR/hack-restaurant",
         liveOn: "https://theorangeleaf.vercel.app/",
-    },
+    }
+    /*
     {
         name: "Boogle Docs",
         desc: "Clone of google docs",
@@ -44,6 +45,7 @@ export const projectsData: ProjectsData[] = [
         sourceCode: "https://github.com/vin-dKR/tesla-frontend",
         liveOn: "https://tesla-frontend-omega.vercel.app/",
     },
+    */
 
 ]
 
