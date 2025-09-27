@@ -263,4 +263,12 @@ declare global {
         isActive: boolean;
     }
 
+    interface GithubContributionTypes {
+        repo: string
+        title: string
+        prNumber: string
+        state: string
+        date: string
+        url: string
+    }
 }

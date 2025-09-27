@@ -11,7 +11,7 @@ import GitHubContribution from "@/components/reusable/projects/GithubContributio
 
 const ProjectsPage = () => {
     const [activeTab, setActiveTab] = useState("projects");
-    const githubContributions = [
+    const githubContributions: GithubContributionTypes[] = [
         {
             repo: "polarsource/polar",
             title: "Fix for issue #6864: hide navigation on Customer Portal sign-in page",

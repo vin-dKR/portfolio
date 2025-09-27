@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { GitMergeIcon, GitPullRequest, GitPullRequestClosed } from "lucide-react";
 
-const GitHubContribution = ({ repo, title, prNumber, state, date, url }: any) => {
+const GitHubContribution = ({ repo, title, prNumber, state, date, url }: GithubContributionTypes) => {
     const getStateBadge = (state: string) => {
         switch (state) {
             case "merged":
