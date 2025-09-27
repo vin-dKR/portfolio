@@ -1,5 +1,14 @@
 export const projectsData: ProjectsData[] = [
     {
+        name: "Eduents",
+        desc: "Seamless Exam Creator & Student Analytics",
+        video: "https://amh7dc2otlwrtz2o.public.blob.vercel-storage.com/hellium-ai-1750488385543-3kFV380zdSxEOXoHp6VD18HOxa047k.mp4",
+        timeline: "May 25 - Present",
+        techStacks: ["next js", "shadcn", "typescript", "prisma", "clerk", "puppeteer", "zustand", "mongodb",],
+        sourceCode: "https://github.com/vin-dKR/question-bank",
+        liveOn: "https://eduents.com"
+    },
+    {
         name: "Hellium AI",
         desc: "marketing ai",
         video: "https://amh7dc2otlwrtz2o.public.blob.vercel-storage.com/hellium-ai-1750488385543-3kFV380zdSxEOXoHp6VD18HOxa047k.mp4",

@@ -10,7 +10,7 @@ interface GithubStatsProps {
 }
 
 const GithubStats = ({ username }: GithubStatsProps) => {
-    
+
     const githubStats = useGithubData(username)
     // console.log(githubStats)
 
@@ -37,24 +37,23 @@ const GithubStats = ({ username }: GithubStatsProps) => {
                 </div>
             ) : githubStats.error ? (
                 <div className="text-sm text-red-500 mt-4">
-                    Error: { githubStats.error }
+                    Error: {githubStats.error}
                 </div>
             ) : (
                 <div className="mt-4 space-y-1">
                     {statsItems.map((item, index) => (
                         <motion.div
                             key={item.key}
-                            className={`flex ${index % 2 === 0 ? 'justify-start' : 'justify-end'}`}
+                            className={`flex ${index === 4 ? '' : 'border-b border-white/30'} ${index % 2 === 0 ? 'justify-start' : 'justify-end'}`}
                             initial={{ x: index % 2 === 0 ? -20 : 20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ delay: index * 0.1 }}
                         >
-                            <div 
-                                className={`githubStats py-2 px-6 ${
-                                    index % 2 === 0 
+                            <div
+                                className={`githubStats py-2 px-6 ${index % 2 === 0
                                     ? 'rounded-r-full -translate-x-6 transition-all duration-300 ease-in group-hover/github:translate-x-0'
                                     : 'rounded-l-full translate-x-6 transition-all duration-300 ease-in group-hover/github:translate-x-0'
-                                } bg-gradient-to-r from-zinc-50 to-green-800 dark:from-green-800 dark:to-zinc-250`}
+                                    } `}
                             >
                                 <span className="pr-2 text-zinc-700 dark:text-zinc-400 text-xs">
                                     {item.label}:
@@ -70,7 +69,7 @@ const GithubStats = ({ username }: GithubStatsProps) => {
             )}
 
             <div className="absolute bottom-2 right-2 opacity-50 group-hover/github:opacity-100 transition-opacity duration-300">
-                <Link 
+                <Link
                     href="https://github.com/vin-dKR"
                     target="_blank"
                     rel="noopener noreferrer"

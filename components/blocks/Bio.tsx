@@ -72,7 +72,7 @@ const HomeBio = () => {
                             <span className="underline decoration-wavy underline-offset-2">builds</span>
                         </Link>{' '}
 
-                        here. Lately, I&apos;m diving deeper into backend systems, DevOps, and Web-3.
+                        here. Lately, I&apos;m diving deeper into Opensource, backend systems, DevOps, and Web-3.
                     </p>
 
                     <div className="flex">
