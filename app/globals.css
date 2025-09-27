@@ -112,7 +112,7 @@
   font-style: normal;
   font-weight: 400 700;
   font-display: swap;
-  src: url("/fonts/Lenia.ttf");
+  src: url("/fonts/Lenia.otf");
 }
 
 @font-face {
@@ -146,7 +146,7 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Lenia;
+  font-family: "Lenia", Arial, sans-serif;
 }
 
 ::view-transition-new(root) {
