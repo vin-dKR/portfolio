@@ -2,7 +2,7 @@ export const projectsData: ProjectsData[] = [
     {
         name: "Eduents",
         desc: "Seamless Exam Creator & Student Analytics",
-        video: "https://amh7dc2otlwrtz2o.public.blob.vercel-storage.com/hellium-ai-1750488385543-3kFV380zdSxEOXoHp6VD18HOxa047k.mp4",
+        video: "https://amh7dc2otlwrtz2o.public.blob.vercel-storage.com/eduents",
         timeline: "May 25 - Present",
         techStacks: ["next js", "shadcn", "typescript", "prisma", "clerk", "puppeteer", "zustand", "mongodb",],
         sourceCode: "https://github.com/vin-dKR/question-bank",
@@ -63,7 +63,7 @@ export const getTechColor = (tech: string) => {
     const seed = tech.charCodeAt(0) + tech.length;
     const randomSeed = Math.sin(seed) * 10000;
     const hue = Math.floor((randomSeed - Math.floor(randomSeed)) * 360);
-    return `hsl(${hue}, 60%, 45%)`;
+    return `hsl(${hue}, 60%, 45%, 0.2)`;
 };
 
 export const getTextColor = (backgroundColor: string) => {

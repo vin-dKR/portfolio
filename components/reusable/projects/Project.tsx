@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import ProjectModal from "./ProjectModal";
-import { getTechColor, getTextColor } from "@/constant/ProjectsData";
+import { getTechColor } from "@/constant/ProjectsData";
 
 const Project = (props: ProjectsData) => {
     const { name, desc, timeline, techStacks, video } = props;
@@ -54,7 +54,7 @@ const Project = (props: ProjectsData) => {
 
                 {/* Project Details */}
                 <div
-                    className="w-full lg:w-3/5 space-y-4 p-6  transition-all cursor-pointer"
+                    className="w-full lg:w-3/5 space-y-2 p-6  transition-all cursor-pointer"
                     onClick={handleCardClick}
                 >
                     <h2 className="text-2xl font-bold text-gray-800 dark:text-white">{name}</h2>
@@ -75,17 +75,13 @@ const Project = (props: ProjectsData) => {
                         <div className="flex flex-wrap gap-2">
                             {techStacks.map((tech, index) => {
                                 const backgroundColor = getTechColor(tech);
-                                const textColor = getTextColor(backgroundColor);
 
                                 return (
                                     <span
                                         key={index}
-                                        className={`px-3 py-1 text-xs rounded-full font-medium ${textColor} cursor-default transition-all hover:shadow-md relative`}
+                                        className={`px-3 py-1 text-xs rounded-full font-medium text-white cursor-default transition-all hover:shadow-md relative`}
                                         style={{
                                             backgroundColor,
-                                            backdropFilter: 'blur(10px)',
-                                            WebkitBackdropFilter: 'blur(10px)',
-                                            boxShadow: `0 0 5px 2px ${backgroundColor}, 0 0 21px 5px ${backgroundColor}`, // Neon light shadow
                                         }}
                                     >
                                         {tech}

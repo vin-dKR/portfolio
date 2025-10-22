@@ -8,7 +8,10 @@ export default function Home() {
             <div className="flex items-center md:px-0 pt-16 pb-12 w-full xs:w-11/12 sm:w-5/6 md:w-3/4 lg:w-2/3 xl:w-1/2 2xl:w-1/3 p-4 md:p-8 lg:p-0 mx-auto my-4">
                 <HomePage />
             </div>
-            <HomeFooter />
+
+            <div className="flex items-center md:px-0 pt-16 pb-12 w-full xs:w-11/12 sm:w-5/6 md:w-3/4 lg:w-2/3 xl:w-1/2 2xl:w-1/3 p-4 md:p-8 lg:p-0 mx-auto my-4">
+                <HomeFooter />
+            </div>
         </div>
     )
 }

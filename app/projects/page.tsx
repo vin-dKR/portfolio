@@ -31,61 +31,80 @@ const ProjectsPage = () => {
     ];
 
     return (
-        <div className="flex flex-col items-center dark:bg-purple-500/5 bg-white min-h-screen font-lenia">
-            <div className="flex items-center w-full px-4 md:px-0 md:w-1/2 pt-16 pb-12">
-                <Navbar />
+        <div className="flex min-h-screen flex-col items-center dark:bg-purple-500/5 bg-white font-lenia">
+            {/* Main container with responsive padding */}
+            <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+                {/* Navbar */}
+                <div className="w-full mb-8 sm:mb-12">
+                    <Navbar />
+                </div>
 
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="relative mt-10 w-full">
-                    <TabsList className="flex w-fit rounded-lg align-left items-center mb-8 p-1 gap-6 text-2xl">
-                        <TabsTrigger
-                            value="projects"
-                            className="text-gray-400 dark:text-gray-200/70 data-[state=active]:text-black dark:data-[state=active]:text-white rounded-lg px-2 md:px-3 py-4 text-xs md:text-2xl font-medium transition-all cursor-pointer"
-                        >Projects</TabsTrigger>
-                        <span className="text-black dark:text-white"> | </span>
-                        <TabsTrigger
-                            value="contributions"
-                            className="text-gray-400 dark:text-gray-200/70 data-[state=active]:text-black dark:data-[state=active]:text-white rounded-lg px-2 md:px-3 py-4 text-xs md:text-2xl font-medium transition-all cursor-pointer"
-                        >Contributions</TabsTrigger>
-                    </TabsList>
+                {/* Tabs Section */}
+                <div className="w-full">
+                    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                        {/* Responsive Tabs List */}
+                        <TabsList className="flex w-full max-w-md rounded-lg mb-6 sm:mb-8 p-1 gap-4 sm:gap-6">
+                            <TabsTrigger
+                                value="projects"
+                                className="flex-1 sm:flex-none text-gray-400 dark:text-gray-200/70 data-[state=active]:text-black dark:data-[state=active]:text-white rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base md:text-lg lg:text-xl font-medium transition-all cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800/50"
+                            >
+                                Projects
+                            </TabsTrigger>
+                            <div className="hidden sm:flex items-center">
+                                <span className="text-black dark:text-white">|</span>
+                            </div>
+                            <TabsTrigger
+                                value="contributions"
+                                className="flex-1 sm:flex-none text-gray-400 dark:text-gray-200/70 data-[state=active]:text-black dark:data-[state=active]:text-white rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base md:text-lg lg:text-xl font-medium transition-all cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800/50"
+                            >
+                                Contributions
+                            </TabsTrigger>
+                        </TabsList>
 
-                    <TabsContent value="projects" className="space-y-8">
-                        {projectsData.map((project, index) => (
-                            <Project
-                                key={index}
-                                {...project}
-                            />
-                        ))}
-                    </TabsContent>
-
-                    <TabsContent value="contributions">
-                        <div className="mb-6">
-                            <h2 className="text-2xl font-semibold mb-2 text-gray-800 dark:text-gray-100">
-                                GitHub Contributions
-                            </h2>
-                            <p className="text-gray-600 dark:text-gray-300">
-                                A list of my pull requests to open-source projects.
-                            </p>
-                        </div>
-
-                        {githubContributions.length > 0 ? (
-                            githubContributions.map((contribution, index) => (
-                                <GitHubContribution
+                        {/* Tabs Content */}
+                        <TabsContent value="projects" className="space-y-6 sm:space-y-8">
+                            {projectsData.map((project, index) => (
+                                <Project
                                     key={index}
-                                    {...contribution}
+                                    {...project}
                                 />
-                            ))
-                        ) : (
-                            <Card>
-                                <CardContent className="p-6 text-center">
-                                    <GitPullRequest className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-                                    <p className="text-gray-600 dark:text-gray-300">
-                                        No contributions to display yet.
-                                    </p>
-                                </CardContent>
-                            </Card>
-                        )}
-                    </TabsContent>
-                </Tabs>
+                            ))}
+                        </TabsContent>
+
+                        <TabsContent value="contributions">
+                            {/* Contributions Header */}
+                            <div className="mb-6 sm:mb-8">
+                                <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold mb-2 sm:mb-3 text-gray-800 dark:text-gray-100">
+                                    GitHub Contributions
+                                </h2>
+                                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
+                                    A list of my pull requests to open-source projects.
+                                </p>
+                            </div>
+
+                            {/* Contributions List */}
+                            {githubContributions.length > 0 ? (
+                                <div className="space-y-4 sm:space-y-6">
+                                    {githubContributions.map((contribution, index) => (
+                                        <GitHubContribution
+                                            key={index}
+                                            {...contribution}
+                                        />
+                                    ))}
+                                </div>
+                            ) : (
+                                <Card className="w-full">
+                                    <CardContent className="p-4 sm:p-6 text-center">
+                                        <GitPullRequest className="w-8 h-8 sm:w-12 sm:h-12 mx-auto text-gray-400 mb-3 sm:mb-4" />
+                                        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
+                                            No contributions to display yet.
+                                        </p>
+                                    </CardContent>
+                                </Card>
+                            )}
+                        </TabsContent>
+                    </Tabs>
+                </div>
             </div>
         </div>
     )

@@ -18,8 +18,8 @@ const HomeFooter = ({ borderColor, className }: HomeFooterProps) => {
     const commit = getLatestCommit()
 
     return (
-        <div className="w-[88%] sm:w-1/3 mb-[12px]">
-            <Separator className={`h-[0.5px] bg-emerald-900/60 w-full ${borderColor} ${className}`} />
+        <div className={`w-full mb-[12px] ${className}`} >
+            <Separator className={`h-[0.5px] bg-emerald-900/60 ${borderColor} ${className}`} />
             <div className="flex items-center py-3 text-md text-[#4B4B4B]">
                 <span className="text-black/50 dark:text-white/30 italic">&quot;Let&apos;s go to mars&quot;</span>{"  "}
                 <RandomEmoji />
@@ -41,7 +41,7 @@ const HomeFooter = ({ borderColor, className }: HomeFooterProps) => {
                     </span>
                 </a>
             </div>
-        </div>
+        </div >
     )
 }
 

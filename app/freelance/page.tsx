@@ -18,7 +18,7 @@ const Freelance = () => {
             <WhyVinneticMedia />
             <HowWeRoll />
             <FounderCard />
-            <HomeFooter borderColor="bg-purple-500/20" />
+            <HomeFooter borderColor="bg-purple-500/20" className="w-full max-w-[90vw] sm:max-w-[600px] mx-auto" />
         </div>
     );
 };
