@@ -68,7 +68,7 @@ const HomeBio = () => {
                     <p>
                         I love tinkering with new technologies, optimizing code, and bringing creative ideas to life. You can check out some of my {' '}
 
-                        <Link href="https://onlyfans-vinodkr.vercel.app/" target="_blank">
+                        <Link href="https://onlyfans.vinodkr.in" target="_blank">
                             <span className="underline decoration-wavy underline-offset-2">builds</span>
                         </Link>{' '}
 
