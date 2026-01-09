@@ -14,6 +14,14 @@ const ProjectsPage = () => {
     const githubContributions: GithubContributionTypes[] = [
         {
             repo: "polarsource/polar",
+            title: "Fix #8735: Make button text visible on main project page",
+            prNumber: "f5f1f59",
+            state: "merged",
+            date: "2026-01-09",
+            url: "https://github.com/polarsource/polar/pull/8739"
+        },
+        {
+            repo: "polarsource/polar",
             title: "Fix for issue #6864: hide navigation on Customer Portal sign-in page",
             prNumber: "9732dfb",
             state: "merged",

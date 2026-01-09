@@ -70,6 +70,7 @@ const ProjectCard = React.forwardRef<HTMLDivElement, ProjectCardProps>(
                         muted
                         loop
                         playsInline
+                        preload="metadata"
                         className="w-full object-cover rounded-lg"
                     />
 

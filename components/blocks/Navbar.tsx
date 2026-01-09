@@ -59,6 +59,7 @@ const Navbar = () => {
                             width={70}
                             height={40}
                             className='z-[200]!'
+                            style={{ width: "auto", height: "auto" }}
                         />
                     </Link>
                     <DesktopNav />

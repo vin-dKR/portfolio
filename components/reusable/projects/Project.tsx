@@ -8,6 +8,7 @@ import { GithubIcon, Globe } from "lucide-react";
 const Project = (props: ProjectsData) => {
     const { name, desc, timeline, techStacks, video, sourceCode, liveOn } = props;
     const [showModal, setShowModal] = useState(false);
+    const [videoError, setVideoError] = useState(false);
 
     const handleCardClick = () => {
         setShowModal(true);
@@ -37,15 +38,30 @@ const Project = (props: ProjectsData) => {
 
                             <div className="mx-auto bg-black/70 dark:bg-black/30 text-white dark:text-gray-200 w-1/3 text-center text-[10px] px-4 rounded-sm mb-1 z-10 relative">{name}</div>
                         </div>
-                        <div className="relative rounded-lg">
-                            <video
-                                src={video}
-                                autoPlay
-                                muted
-                                loop
-                                playsInline
-                                className="w-full object-cover rounded-lg"
-                            />
+                        <div className="relative rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 min-h-[200px] flex items-center justify-center">
+                            {!videoError ? (
+                                <video
+                                    src={video}
+                                    autoPlay
+                                    muted
+                                    loop
+                                    playsInline
+                                    preload="metadata"
+                                    className="w-full object-cover rounded-lg"
+                                    onError={() => setVideoError(true)}
+                                    onLoadStart={() => setVideoError(false)}
+                                />
+                            ) : (
+                                <div className="flex flex-col items-center justify-center p-8 text-center">
+                                    <div className="w-16 h-16 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center mb-4">
+                                        <svg className="w-8 h-8 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">{name}</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">Video unavailable</p>
+                                </div>
+                            )}
                         </div>
 
                         {/* Image */}
