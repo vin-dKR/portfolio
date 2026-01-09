@@ -133,7 +133,7 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
                                     href={project.sourceCode}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center justify-center gap-2 px-4 py-2 bg-black/40 dark:bg-black/10 rounded-lg border border-gray-700/50 dark:border-gray-600/30 text-gray-200 dark:text-gray-300 hover:bg-gray-700/50 dark:hover:bg-gray-600/40 transition-colors text-sm font-medium"
+                                    className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-gray-800 to-gray-900 dark:from-gray-700 dark:to-gray-800 rounded-lg border border-gray-600/50 dark:border-gray-500/30 hover:from-gray-700 hover:to-gray-800 dark:hover:from-gray-600 dark:hover:to-gray-700 transition-all text-sm font-semibold text-white shadow-md hover:shadow-lg"
                                 >
                                     <GithubIcon className="w-4 h-4" />
                                     Source Code
@@ -145,7 +145,7 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
                                     href={project.liveOn}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center justify-center gap-2 px-4 py-2 bg-black/40 dark:bg-black/10 rounded-lg border border-gray-700/50 dark:border-gray-600/30 text-gray-200 dark:text-gray-300 hover:bg-gray-700/50 dark:hover:bg-gray-600/40 transition-colors text-sm font-medium"
+                                    className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-500 dark:to-blue-600 rounded-lg border border-blue-500/30 dark:border-blue-400/30 hover:from-blue-500 hover:to-blue-600 dark:hover:from-blue-400 dark:hover:to-blue-500 transition-all text-sm font-semibold text-white shadow-md hover:shadow-lg"
                                 >
                                     <Globe className="w-4 h-4" />
                                     Live Demo

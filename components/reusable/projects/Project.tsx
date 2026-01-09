@@ -108,9 +108,9 @@ const Project = (props: ProjectsData) => {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     onClick={(e) => e.stopPropagation()}
-                                    className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-black/40 dark:bg-black/10 rounded-lg border border-gray-700/50 dark:border-gray-600/30 hover:bg-black/50 dark:hover:bg-black/20 transition-colors text-xs sm:text-sm font-medium text-gray-200 dark:text-gray-300"
+                                    className="flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-gray-800 to-gray-900 dark:from-gray-700 dark:to-gray-800 rounded-lg border border-gray-600/50 dark:border-gray-500/30 hover:from-gray-700 hover:to-gray-800 dark:hover:from-gray-600 dark:hover:to-gray-700 transition-all text-xs sm:text-sm font-semibold text-white shadow-md hover:shadow-lg"
                                 >
-                                    <GithubIcon className="w-3 h-3 sm:w-4 sm:h-4 fill-white dark:fill-white" />
+                                    <GithubIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                     <span>Source Code</span>
                                 </a>
                             )}
@@ -121,9 +121,9 @@ const Project = (props: ProjectsData) => {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     onClick={(e) => e.stopPropagation()}
-                                    className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-black/40 dark:bg-black/10 rounded-lg border border-gray-700/50 dark:border-gray-600/30 hover:bg-black/50 dark:hover:bg-black/20 transition-colors text-xs sm:text-sm font-medium text-gray-200 dark:text-gray-300"
+                                    className="flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-500 dark:to-blue-600 rounded-lg border border-blue-500/30 dark:border-blue-400/30 hover:from-blue-500 hover:to-blue-600 dark:hover:from-blue-400 dark:hover:to-blue-500 transition-all text-xs sm:text-sm font-semibold text-white shadow-md hover:shadow-lg"
                                 >
-                                    <Globe className="w-3 h-3 sm:w-4 sm:h-4 fill-white dark:fill-white" />
+                                    <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                     <span>Live Demo</span>
                                 </a>
                             )}
