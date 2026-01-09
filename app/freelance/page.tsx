@@ -11,14 +11,14 @@ import WhyVinneticMedia from "@/components/freelance/whyUs/WhyVinneticMedia";
 const Freelance = () => {
 
     return (
-        <div className="relative w-full flex flex-col gap-6 items-center dark:bg-purple-500/5 bg-white min-h-screen">
+        <div className="relative w-full flex flex-col gap-6 items-center dark:bg-purple-500/5 bg-white min-h-screen pb-24 md:pb-0">
             <WhatIDo />
             <ProjectShowOff />
             <Pricing />
             <WhyVinneticMedia />
             <HowWeRoll />
             <FounderCard />
-            <HomeFooter borderColor="bg-purple-500/20" className="w-full max-w-[90vw] sm:max-w-[600px] mx-auto" />
+            <HomeFooter borderColor="bg-purple-500/20" className="w-full max-w-[90vw] sm:max-w-[600px]" />
         </div>
     );
 };

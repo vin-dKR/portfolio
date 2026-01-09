@@ -33,7 +33,7 @@ const ProjectsPage = () => {
     return (
         <div className="flex min-h-screen flex-col items-center dark:bg-purple-500/5 bg-white font-lenia">
             {/* Main container with responsive padding */}
-            <div className="w-full xs:w-11/12 sm:w-5/6 md:w-3/4 lg:w-2/3 xl:w-1/2 2xl:w-1/3 px-3 sm:px-4 md:px-0 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-8 sm:pb-12 lg:pb-16 mx-auto">
+            <div className="w-full xs:w-11/12 sm:w-5/6 md:w-3/4 lg:w-2/3 xl:w-1/2 2xl:w-1/3 px-3 sm:px-4 md:px-0 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-24 md:pb-8 sm:pb-12 lg:pb-16 mx-auto">
                 {/* Navbar */}
                 <div className="w-full mb-8 sm:mb-12">
                     <Navbar />

@@ -13,7 +13,7 @@ const Page = () => {
         <>
             <Navbar />
 
-            <div className="w-full xs:w-11/12 sm:w-5/6 md:w-3/4 lg:w-2/3 xl:w-1/2 2xl:w-1/3 px-3 sm:px-4 md:px-0 mt-16 sm:mt-20 md:mt-24 pt-8 sm:pt-12 pb-12 sm:pb-16 md:pb-24 mx-auto">
+            <div className="w-full xs:w-11/12 sm:w-5/6 md:w-3/4 lg:w-2/3 xl:w-1/2 2xl:w-1/3 px-3 sm:px-4 md:px-0 mt-16 sm:mt-20 md:mt-24 pt-8 sm:pt-12 pb-24 md:pb-12 sm:pb-16 mx-auto">
                 <Head>
                     <title>My Work | Portfolio</title>
                     <meta name="description" content="Portfolio of my development work and projects" />
@@ -22,7 +22,7 @@ const Page = () => {
                 <main>
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
                         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold dark:text-white text-black">experiences</h1>
-                        <Link target="_blank" href="https://www.canva.com/design/DAFjdV8aOwE/UOJYSzPOslikrzUs7Gd6WQ/view?utm_content=DAFjdV8aOwE&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h74344188b3" className="text-sm sm:text-base text-black inline-block rounded rounded-lg border border-dashed border-black dark:border-white px-3 sm:px-4 py-2 dark:text-white hover:bg-black/10 dark:hover:bg-white/10 transition w-fit">
+                        <Link target="_blank" href="https://www.canva.com/design/DAFjdV8aOwE/UOJYSzPOslikrzUs7Gd6WQ/view?utm_content=DAFjdV8aOwE&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h74344188b3" className="text-sm sm:text-base text-black inline-block rounded-lg border border-dashed border-black dark:border-white px-3 sm:px-4 py-2 dark:text-white hover:bg-black/10 dark:hover:bg-white/10 transition w-fit">
                             View Resume <span className="ml-1">→</span>
                         </Link>
                     </div>

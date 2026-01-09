@@ -14,7 +14,7 @@ export default function BlogPostView({ post }: BlogPostViewProps) {
     const memoizedContent = useMemo(() => post.content, [post.content])
 
     return (
-        <article className="w-full xs:w-11/12 sm:w-5/6 md:w-3/4 lg:w-2/3 xl:w-1/2 2xl:w-1/3 px-3 sm:px-4 md:px-0 py-6 sm:py-8 pt-20 sm:pt-24 md:pt-28 lg:pt-32 mx-auto font-lenia">
+        <article className="w-full xs:w-11/12 sm:w-5/6 md:w-3/4 lg:w-2/3 xl:w-1/2 2xl:w-1/3 px-3 sm:px-4 md:px-0 py-6 sm:py-8 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-24 md:pb-8 mx-auto font-lenia">
             <header className="mb-4 sm:mb-6 md:mb-8">
                 <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3 md:mb-4 text-gray-800 dark:text-white break-words">
                     {post.frontmatter.title}
