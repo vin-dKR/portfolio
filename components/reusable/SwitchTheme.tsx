@@ -15,7 +15,15 @@ const SwitchTheme = () => {
     if (!mounted) return <div className="size-14"></div>
 
     const switchTheme = () => {
-        setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
+        const newTheme = resolvedTheme === 'dark' ? 'light' : 'dark'
+        const html = document.documentElement
+        // Set background immediately to prevent flash
+        if (newTheme === 'dark') {
+            html.style.backgroundColor = '#0a0a0a'
+        } else {
+            html.style.backgroundColor = '#ffffff'
+        }
+        setTheme(newTheme)
         console.log(resolvedTheme)
     }
 

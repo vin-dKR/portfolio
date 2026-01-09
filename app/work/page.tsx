@@ -13,30 +13,30 @@ const Page = () => {
         <>
             <Navbar />
 
-            <div className="max-w-2xl mt-20 px-4 pt-12 pb-24">
+            <div className="w-full xs:w-11/12 sm:w-5/6 md:w-3/4 lg:w-2/3 xl:w-1/2 2xl:w-1/3 px-3 sm:px-4 md:px-0 mt-16 sm:mt-20 md:mt-24 pt-8 sm:pt-12 pb-12 sm:pb-16 md:pb-24 mx-auto">
                 <Head>
                     <title>My Work | Portfolio</title>
                     <meta name="description" content="Portfolio of my development work and projects" />
                 </Head>
 
                 <main>
-                    <div className="flex justify-between items-center mb-8">
-                        <h1 className="text-4xl font-bold dark:text-white text-black">experiences</h1>
-                        <Link target="_blank" href="https://www.canva.com/design/DAFjdV8aOwE/UOJYSzPOslikrzUs7Gd6WQ/view?utm_content=DAFjdV8aOwE&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h74344188b3" className="text-black inline-block rounded rounded-lg border border-dashed border-black dark:border-white px-4 py-2 dark:text-white hover:bg-black/10 dark:hover:bg-white/10 transition">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
+                        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold dark:text-white text-black">experiences</h1>
+                        <Link target="_blank" href="https://www.canva.com/design/DAFjdV8aOwE/UOJYSzPOslikrzUs7Gd6WQ/view?utm_content=DAFjdV8aOwE&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h74344188b3" className="text-sm sm:text-base text-black inline-block rounded rounded-lg border border-dashed border-black dark:border-white px-3 sm:px-4 py-2 dark:text-white hover:bg-black/10 dark:hover:bg-white/10 transition w-fit">
                             View Resume <span className="ml-1">→</span>
                         </Link>
                     </div>
 
-                    <p className="text-lg text-black/60 dark:text-white/90 mb-6">
+                    <p className="text-sm sm:text-base md:text-lg text-black/60 dark:text-white/90 mb-4 sm:mb-6">
                         Exploring new technologies and creating engaging web experiences, while
                         continuously learning and growing as a developer.
                     </p>
 
-                    <p className="text-base text-black/50 dark:text-white/80 mb-8">
+                    <p className="text-xs sm:text-sm md:text-base text-black/50 dark:text-white/80 mb-6 sm:mb-8">
                         Here&apos;s a snapshot of my journey so far.
                     </p>
 
-                    <div className="h-px w-full bg-black/70 dark:bg-white/20 my-10"></div>
+                    <div className="h-px w-full bg-black/70 dark:bg-white/20 my-6 sm:my-8 md:my-10"></div>
 
                     {/* Previous Work Experience */}
                     <Timeline
@@ -45,13 +45,13 @@ const Page = () => {
                         styleClass="rounded-lg"
                     />
 
-                    <div className="h-px w-full bg-black/70 dark:bg-white/20 my-10"></div>
+                    <div className="h-px w-full bg-black/70 dark:bg-white/20 my-6 sm:my-8 md:my-10"></div>
 
-                    <p className="text-black/60 dark:text-white/90 mb-8">
+                    <p className="text-sm sm:text-base text-black/60 dark:text-white/90 mb-6 sm:mb-8">
                         I&apos;m always exploring new technologies and pushing boundaries to create innovative solutions. Exciting projects and experiences are on the way—stay tuned! 🚀
                     </p>
 
-                    <div className="font-mono bold text-black dark:text-white mt-8">
+                    <div className="font-mono text-sm sm:text-base font-bold text-black dark:text-white mt-6 sm:mt-8">
                         <Link href="/" >
                             → cd ..
                         </Link>

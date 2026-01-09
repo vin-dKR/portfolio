@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Separator } from "@radix-ui/react-separator";
 import { BlurFade } from "../ui/blur-fade";
 import { RoughNotation } from "react-rough-notation";
@@ -10,11 +11,43 @@ import { RoughNotation } from "react-rough-notation";
 const HomeBio = () => {
 
     const [mounted, setMounted] = useState(false)
+    const [isHoveringBuilds, setIsHoveringBuilds] = useState(false)
+    const [isHoveringTwitter, setIsHoveringTwitter] = useState(false)
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
 
     useEffect(() => {
         setMounted(true)
     }, [])
 
+    const handleBuildsMouseEnter = () => {
+        setIsHoveringBuilds(true)
+    }
+
+    const handleBuildsMouseLeave = () => {
+        setIsHoveringBuilds(false)
+    }
+
+    const handleBuildsMouseMove = (e: React.MouseEvent<HTMLSpanElement>) => {
+        setMousePosition({
+            x: e.clientX,
+            y: e.clientY
+        })
+    }
+
+    const handleTwitterMouseEnter = () => {
+        setIsHoveringTwitter(true)
+    }
+
+    const handleTwitterMouseLeave = () => {
+        setIsHoveringTwitter(false)
+    }
+
+    const handleTwitterMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        setMousePosition({
+            x: e.clientX,
+            y: e.clientY
+        })
+    }
 
     if (!mounted) return <div className="size-14" />
 
@@ -27,7 +60,7 @@ const HomeBio = () => {
                         <RoughNotation
                             type="underline"
                             show={true}
-                            color="red"
+                            color="#06b6d4"
                             strokeWidth={1}
                             animationDuration={800}
                             animationDelay={1500}
@@ -37,7 +70,7 @@ const HomeBio = () => {
                         <RoughNotation
                             type="underline"
                             show={true}
-                            color="green"
+                            color="#3b82f6"
                             strokeWidth={1}
                             animationDuration={800}
                             animationDelay={1500}
@@ -47,7 +80,7 @@ const HomeBio = () => {
                         <RoughNotation
                             type="underline"
                             show={true}
-                            color="purple"
+                            color="#f59e0b"
                             strokeWidth={1}
                             animationDuration={800}
                             animationDelay={1500}
@@ -68,8 +101,15 @@ const HomeBio = () => {
                     <p>
                         I love tinkering with new technologies, optimizing code, and bringing creative ideas to life. You can check out some of my {' '}
 
-                        <Link href="https://onlyfans.vinodkr.in" target="_blank">
-                            <span className="underline decoration-wavy underline-offset-2">builds</span>
+                        <Link href="https://onlyfans.vinodkr.in" target="_blank" className="relative inline-block">
+                            <span 
+                                className="underline decoration-wavy underline-offset-2 cursor-pointer"
+                                onMouseEnter={handleBuildsMouseEnter}
+                                onMouseLeave={handleBuildsMouseLeave}
+                                onMouseMove={handleBuildsMouseMove}
+                            >
+                                builds
+                            </span>
                         </Link>{' '}
 
                         here. Lately, I&apos;m diving deeper into Opensource, backend systems, DevOps, and Web-3.
@@ -107,7 +147,10 @@ const HomeBio = () => {
                         <Link
                             target="_blank"
                             href={'https://x.com/always_VinodKr'}
-                            className="underline decoration-wavy underline-offset-2"
+                            className="underline decoration-wavy underline-offset-2 cursor-pointer"
+                            onMouseEnter={handleTwitterMouseEnter}
+                            onMouseLeave={handleTwitterMouseLeave}
+                            onMouseMove={handleTwitterMouseMove}
                         >
                             x.com
                         </Link>{' '}
@@ -124,6 +167,54 @@ const HomeBio = () => {
                     </p>
                 </div>
             </BlurFade>
+            {isHoveringBuilds && (
+                <div 
+                    className="fixed pointer-events-none z-50 transition-opacity duration-200"
+                    style={{
+                        left: `${mousePosition.x}px`,
+                        top: `${mousePosition.y - 50}px`,
+                        transform: 'translate(-50%, 0)'
+                    }}
+                >
+                    <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-lg px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 whitespace-nowrap relative">
+                        <div className="flex items-center gap-2">
+                            <Image 
+                                src="/onlyfans.ico" 
+                                alt="OnlyFans icon" 
+                                width={16}
+                                height={16}
+                                className="w-4 h-4 object-contain"
+                            />
+                            <span className="text-xs font-medium">my projects</span>
+                        </div>
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white dark:bg-zinc-800 border-r border-b border-zinc-200 dark:border-zinc-700 rotate-45"></div>
+                    </div>
+                </div>
+            )}
+            {isHoveringTwitter && (
+                <div 
+                    className="fixed pointer-events-none z-50 transition-opacity duration-200"
+                    style={{
+                        left: `${mousePosition.x}px`,
+                        top: `${mousePosition.y - 50}px`,
+                        transform: 'translate(-50%, 0)'
+                    }}
+                >
+                    <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-lg px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 whitespace-nowrap relative">
+                        <div className="flex items-center gap-2">
+                            <Image 
+                                src="/images/socials/xcom.svg" 
+                                alt="X/Twitter icon" 
+                                width={16}
+                                height={16}
+                                className="w-4 h-4 object-contain dark:invert"
+                            />
+                            <span className="text-xs font-medium">Let&apos;s chat!</span>
+                        </div>
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white dark:bg-zinc-800 border-r border-b border-zinc-200 dark:border-zinc-700 rotate-45"></div>
+                    </div>
+                </div>
+            )}
         </section>
     )
 }

@@ -33,7 +33,7 @@ const ProjectsPage = () => {
     return (
         <div className="flex min-h-screen flex-col items-center dark:bg-purple-500/5 bg-white font-lenia">
             {/* Main container with responsive padding */}
-            <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+            <div className="w-full xs:w-11/12 sm:w-5/6 md:w-3/4 lg:w-2/3 xl:w-1/2 2xl:w-1/3 px-3 sm:px-4 md:px-0 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-8 sm:pb-12 lg:pb-16 mx-auto">
                 {/* Navbar */}
                 <div className="w-full mb-8 sm:mb-12">
                     <Navbar />
@@ -41,23 +41,20 @@ const ProjectsPage = () => {
 
                 {/* Tabs Section */}
                 <div className="w-full">
-                    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                    <Tabs value={activeTab} onValueChange={setActiveTab} className="">
                         {/* Responsive Tabs List */}
-                        <TabsList className="flex w-full max-w-md rounded-lg mb-6 sm:mb-8 p-1 gap-4 sm:gap-6">
+                        <TabsList className="flex w-full md:w-fit rounded-lg mb-6 sm:mb-8 p-1 gap-2 dark:bg-white/2 bg-black/10 border border-black/4 dark:border-white/4">
                             <TabsTrigger
                                 value="projects"
-                                className="flex-1 sm:flex-none text-gray-400 dark:text-gray-200/70 data-[state=active]:text-black dark:data-[state=active]:text-white rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base md:text-lg lg:text-xl font-medium transition-all cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800/50"
+                                className="flex-1 sm:flex-none text-gray-500 dark:text-gray-400 data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700/50 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base md:text-lg lg:text-xl font-medium transition-all cursor-pointer hover:bg-gray-200/50 dark:hover:bg-gray-700/30"
                             >
                                 Projects
                             </TabsTrigger>
-                            <div className="hidden sm:flex items-center">
-                                <span className="text-black dark:text-white">|</span>
-                            </div>
                             <TabsTrigger
                                 value="contributions"
-                                className="flex-1 sm:flex-none text-gray-400 dark:text-gray-200/70 data-[state=active]:text-black dark:data-[state=active]:text-white rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base md:text-lg lg:text-xl font-medium transition-all cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800/50"
+                                className="flex-1 sm:flex-none text-gray-500 dark:text-gray-400 data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700/50 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base md:text-lg lg:text-xl font-medium transition-all cursor-pointer hover:bg-gray-200/50 dark:hover:bg-gray-700/30"
                             >
-                                Contributions
+                                Contributions 
                             </TabsTrigger>
                         </TabsList>
 

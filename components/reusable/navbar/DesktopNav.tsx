@@ -6,7 +6,7 @@ import Link from 'next/link';
 export const DesktopNav = () => {
 
     return (
-        <div className="hidden md:flex items-center justify-center space-x-12">
+        <div className="hidden md:flex items-center justify-center space-x-12 mt-4">
             {NAV_ITEMS.map(item => (
                 <NeonUnderline
                     key={item.name}

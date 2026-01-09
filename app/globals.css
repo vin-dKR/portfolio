@@ -143,29 +143,57 @@
   }
 }
 
+html {
+  background-color: var(--background);
+}
+
+html:not(.dark) {
+  background-color: #ffffff;
+}
+
+html.dark {
+  background-color: #0a0a0a;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: "Lenia", Arial, sans-serif;
+  transition: background-color 0s;
 }
 
 ::view-transition-new(root) {
   mask: url('/images/batman.svg') center / 0 no-repeat;
-  animation: scale 2s;
-}
-
-::view-transition-old(root),
-.dark::view-transition-old(root) {
-  animation: none;
-  z-index: -1;
+  animation: scale 1s forwards;
+  background-color: #ffffff;
 }
 
 .dark::view-transition-new(root) {
-  animation: scale 2s;
+  background-color: #0a0a0a;
+}
+
+::view-transition-old(root) {
+  animation: none;
+  z-index: -1;
+  background-color: #ffffff;
+}
+
+.dark::view-transition-old(root) {
+  animation: none;
+  z-index: -1;
+  background-color: #0a0a0a;
+}
+
+::view-transition-group(root) {
+  background-color: #ffffff;
+}
+
+.dark::view-transition-group(root) {
+  background-color: #0a0a0a;
 }
 
 @keyframes scale {
   to {
-    mask-size: 1000vmax;
+    mask-size: 350vmax;
   }
 }

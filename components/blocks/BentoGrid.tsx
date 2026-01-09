@@ -6,6 +6,7 @@ import SocialLinksCard from "../reusable/bento/SocialLinks";
 import ProjectsCard from "../reusable/bento/ProjectsCard";
 import SpotifyStats from "../reusable/bento/SpotifyStats";
 import TechStackCard from "../reusable/bento/TechStack";
+import Planet3D from "../reusable/bento/Planet3D";
  
 const BentoGrid = () => {
     return (
@@ -23,8 +24,7 @@ const BentoGrid = () => {
                             transition={{ type: "spring", stiffness: 300, delay: 0.2 }}
                             className="relative"
                         >
-                            <div className="w-6 h-6 rounded-md bg-gradient-to-br from-purple-400 to-blue-500"></div>
-                            <div className="absolute -right-1 -top-1 w-3 h-3 rounded-full bg-gradient-to-br from-amber-400 to-pink-500"></div>
+                            <Planet3D />
                         </motion.div>
                         <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-blue-500">
                             Bento
