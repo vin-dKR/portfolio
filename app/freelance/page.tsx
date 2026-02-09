@@ -1,4 +1,28 @@
-"use client";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Freelance | Vinod KR",
+    description: "Freelance services by Vinod KR",
+    openGraph: {
+        title: "Freelance | Vinod KR",
+        description: "Freelance services by Vinod KR",
+        images: [
+            {
+                url: "/images/freelance.png",
+                width: 1200,
+                height: 630,
+                alt: "Freelance Services",
+            },
+        ],
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Freelance | Vinod KR",
+        description: "Freelance services by Vinod KR",
+        images: ["/images/freelance.png"],
+    },
+};
+
 
 import HomeFooter from "@/components/blocks/HomeFooter";
 import FounderCard from "@/components/freelance/FounderCard";
