@@ -1,5 +1,23 @@
 export const projectsData: ProjectsData[] = [
     {
+        name: "Atari",
+        desc: "Revamp of ICAR-ATARI's agricultural management portal with a new backend architecture for extension education tracking.",
+        video: "",
+        timeline: "Present",
+        techStacks: ["next js", "typescript", "node js", "postgresql", "tanstack", "zod", "tailwind css"],
+        sourceCode: "",
+        liveOn: "https://atari-client.vercel.app/"
+    },
+    {
+        name: "Pagz",
+        desc: "Online custom printing platform with ordering, tracking, and delivery for businesses.",
+        video: "",
+        timeline: "Present",
+        techStacks: ["next js", "typescript", "node js", "postgresql", "tanstack", "zod", "tailwind css"],
+        sourceCode: "",
+        liveOn: "https://pagz.in"
+    },
+    {
         name: "Libly Space",
         desc: "Manage Your Library Effortlessly.",
         video: "https://amh7dc2otlwrtz2o.public.blob.vercel-storage.com/libly-space-1767913058341.mp4",
@@ -79,7 +97,7 @@ export const getTechIconSvg = (tech: string): string | null => {
     try {
         const simpleIcons = require('simple-icons');
         const techLower = tech.toLowerCase().replace(/\s+/g, '');
-        
+
         const techMap: { [key: string]: string } = {
             'nextjs': 'nextdotjs',
             'next.js': 'nextdotjs',
@@ -105,21 +123,21 @@ export const getTechIconSvg = (tech: string): string | null => {
             'tanstack': 'tanstackquery',
             'zod': 'zod',
         };
-        
+
         const iconSlug = techMap[techLower];
         if (!iconSlug) return null;
-        
+
         // Convert slug to PascalCase for simple-icons key (e.g., 'nextdotjs' -> 'siNextdotjs')
         const iconKey = 'si' + iconSlug.charAt(0).toUpperCase() + iconSlug.slice(1);
         const icon = (simpleIcons as any)[iconKey];
-        
+
         if (!icon || !icon.svg) return null;
-        
+
         // Return SVG with proper sizing, theme-aware colors, and remove title
         let svg = icon.svg
             .replace('<svg', '<svg width="16" height="16"')
             .replace(/<title>.*?<\/title>/gi, '');
-        
+
         // Replace all fill colors with currentColor for theme support
         svg = svg.replace(/fill="[^"]*"/g, (match: string) => {
             // Only replace if it's a hex color, not currentColor or none
@@ -128,7 +146,7 @@ export const getTechIconSvg = (tech: string): string | null => {
             }
             return 'fill="currentColor"';
         });
-        
+
         // Also handle single quotes
         svg = svg.replace(/fill='[^']*'/g, (match: string) => {
             if (match.includes('currentColor') || match.includes('none')) {
@@ -136,7 +154,7 @@ export const getTechIconSvg = (tech: string): string | null => {
             }
             return "fill='currentColor'";
         });
-        
+
         return svg;
     } catch (error) {
         console.error('Error loading icon:', error);
