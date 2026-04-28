@@ -148,16 +148,18 @@ const HomeBio = () => {
                             5+ freelance projects
                         </span>{' '}
                         in the last{' '}
-                        <RoughNotation
-                            type="underline"
-                            show={true}
-                            color="#ec4899"
-                            strokeWidth={1}
-                            animationDuration={800}
-                            animationDelay={1500}
-                        >
-                            3 months
-                        </RoughNotation>.
+                        <span className="whitespace-nowrap">
+                            <RoughNotation
+                                type="underline"
+                                show={true}
+                                color="#ec4899"
+                                strokeWidth={1}
+                                animationDuration={800}
+                                animationDelay={1500}
+                            >
+                                3&nbsp;months
+                            </RoughNotation>.
+                        </span>
                     </p>
 
                     <p>
