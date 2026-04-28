@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -13,7 +13,11 @@ const HomeBio = () => {
     const [mounted, setMounted] = useState(false)
     const [isHoveringBuilds, setIsHoveringBuilds] = useState(false)
     const [isHoveringTwitter, setIsHoveringTwitter] = useState(false)
+    const [isHoveringFreelance, setIsHoveringFreelance] = useState(false)
+    const [isHoveringPolar, setIsHoveringPolar] = useState(false)
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+    const freelanceHideTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const polarHideTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
     useEffect(() => {
         setMounted(true)
@@ -48,6 +52,41 @@ const HomeBio = () => {
             y: e.clientY
         })
     }
+
+    const showFreelance = () => {
+        if (freelanceHideTimer.current) clearTimeout(freelanceHideTimer.current)
+        setIsHoveringFreelance(true)
+    }
+    const hideFreelance = () => {
+        freelanceHideTimer.current = setTimeout(() => setIsHoveringFreelance(false), 150)
+    }
+    const handleFreelanceMouseMove = (e: React.MouseEvent) => {
+        setMousePosition({ x: e.clientX, y: e.clientY })
+    }
+
+    const showPolar = () => {
+        if (polarHideTimer.current) clearTimeout(polarHideTimer.current)
+        setIsHoveringPolar(true)
+    }
+    const hidePolar = () => {
+        polarHideTimer.current = setTimeout(() => setIsHoveringPolar(false), 150)
+    }
+    const handlePolarMouseMove = (e: React.MouseEvent) => {
+        setMousePosition({ x: e.clientX, y: e.clientY })
+    }
+
+    const freelanceProjects = [
+        { name: "Atari", href: "https://onlyfans.vinodkr.in/atari", comingSoon: false },
+        { name: "Pagz", href: "https://onlyfans.vinodkr.in/pagz", comingSoon: false },
+        { name: "Libly Space", href: "https://onlyfans.vinodkr.in/libly-space", comingSoon: false },
+        { name: "Eduents", href: "https://onlyfans.vinodkr.in/eduents", comingSoon: false },
+        { name: "Trio EV", href: "#", comingSoon: true },
+    ]
+
+    const polarPRs = [
+        { title: "#7005", href: "https://github.com/polarsource/polar/pull/7005" },
+        { title: "#8739", href: "https://github.com/polarsource/polar/pull/8739" },
+    ]
 
     if (!mounted) return <div className="size-14" />
 
@@ -96,6 +135,43 @@ const HomeBio = () => {
 
                     <p>
                         Beyond coding, I enjoy building things - whether it&apos;s scalable tech or brands. Previously, I helped lead the tech side of an apparel venture as a co-founder.
+                    </p>
+
+                    <p>
+                        Since January 2026, I&apos;ve shipped{' '}
+                        <span
+                            className="underline decoration-wavy underline-offset-2 cursor-pointer"
+                            onMouseEnter={showFreelance}
+                            onMouseLeave={hideFreelance}
+                            onMouseMove={handleFreelanceMouseMove}
+                        >
+                            5+ freelance projects
+                        </span>{' '}
+                        in the last{' '}
+                        <RoughNotation
+                            type="underline"
+                            show={true}
+                            color="#ec4899"
+                            strokeWidth={1}
+                            animationDuration={800}
+                            animationDelay={1500}
+                        >
+                            3 months
+                        </RoughNotation>.
+                    </p>
+
+                    <p>
+                        I also contribute to open-source — including{' '}
+                        <Link
+                            href="https://github.com/polarsource/polar/pulls?q=is%3Apr+author%3Avin-dKR"
+                            target="_blank"
+                            className="underline decoration-wavy underline-offset-2 cursor-pointer"
+                            onMouseEnter={showPolar}
+                            onMouseLeave={hidePolar}
+                            onMouseMove={handlePolarMouseMove}
+                        >
+                            2 PRs in polar.sh
+                        </Link>.
                     </p>
 
                     <p>
@@ -192,7 +268,7 @@ const HomeBio = () => {
                 </div>
             )}
             {isHoveringTwitter && (
-                <div 
+                <div
                     className="fixed pointer-events-none z-50 transition-opacity duration-200"
                     style={{
                         left: `${mousePosition.x}px`,
@@ -202,14 +278,81 @@ const HomeBio = () => {
                 >
                     <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-lg px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 whitespace-nowrap relative">
                         <div className="flex items-center gap-2">
-                            <Image 
-                                src="/images/socials/xcom.svg" 
-                                alt="X/Twitter icon" 
+                            <Image
+                                src="/images/socials/xcom.svg"
+                                alt="X/Twitter icon"
                                 width={16}
                                 height={16}
                                 className="w-4 h-4 object-contain dark:invert"
                             />
                             <span className="text-xs font-medium">Let&apos;s chat!</span>
+                        </div>
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white dark:bg-zinc-800 border-r border-b border-zinc-200 dark:border-zinc-700 rotate-45"></div>
+                    </div>
+                </div>
+            )}
+            {isHoveringFreelance && (
+                <div
+                    className="fixed z-50 transition-opacity duration-200"
+                    style={{
+                        left: `${mousePosition.x}px`,
+                        top: `${mousePosition.y - 12}px`,
+                        transform: 'translate(-50%, -100%)'
+                    }}
+                    onMouseEnter={showFreelance}
+                    onMouseLeave={hideFreelance}
+                >
+                    <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-lg px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 whitespace-nowrap relative">
+                        <div className="flex flex-col gap-1.5">
+                            {freelanceProjects.map((p) => (
+                                p.comingSoon ? (
+                                    <span
+                                        key={p.name}
+                                        className="text-xs font-medium flex items-center gap-1 text-zinc-500 dark:text-zinc-500 cursor-not-allowed"
+                                    >
+                                        {p.name} <span className="text-[10px] italic">(coming soon)</span>
+                                    </span>
+                                ) : (
+                                    <Link
+                                        key={p.name}
+                                        href={p.href}
+                                        target="_blank"
+                                        className="text-xs font-medium hover:underline decoration-wavy underline-offset-2 flex items-center gap-1"
+                                    >
+                                        {p.name}
+                                        <ArrowUpRight className="size-3" />
+                                    </Link>
+                                )
+                            ))}
+                        </div>
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white dark:bg-zinc-800 border-r border-b border-zinc-200 dark:border-zinc-700 rotate-45"></div>
+                    </div>
+                </div>
+            )}
+            {isHoveringPolar && (
+                <div
+                    className="fixed z-50 transition-opacity duration-200"
+                    style={{
+                        left: `${mousePosition.x}px`,
+                        top: `${mousePosition.y - 12}px`,
+                        transform: 'translate(-50%, -100%)'
+                    }}
+                    onMouseEnter={showPolar}
+                    onMouseLeave={hidePolar}
+                >
+                    <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-lg px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 whitespace-nowrap relative">
+                        <div className="flex flex-col gap-1.5">
+                            {polarPRs.map((p) => (
+                                <Link
+                                    key={p.title}
+                                    href={p.href}
+                                    target="_blank"
+                                    className="text-xs font-medium hover:underline decoration-wavy underline-offset-2 flex items-center gap-1"
+                                >
+                                    {p.title}
+                                    <ArrowUpRight className="size-3" />
+                                </Link>
+                            ))}
                         </div>
                         <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white dark:bg-zinc-800 border-r border-b border-zinc-200 dark:border-zinc-700 rotate-45"></div>
                     </div>
