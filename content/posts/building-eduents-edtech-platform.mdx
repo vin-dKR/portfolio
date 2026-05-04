@@ -1,0 +1,241 @@
+---
+title: Shipping Eduents - How I Built the Next.js Core of a Five-Repo EdTech Platform
+date: 2026-05-04
+description: A simple walkthrough of the Eduents platform I built - the Next.js core I own, the real-time service I built, and how it talks to the Python tools my teammate built.
+tags:
+  - nextjs
+  - prisma
+  - mongodb
+  - puppeteer
+  - websocket
+  - typescript
+  - vision-llm
+  - clerk
+---
+
+## What Eduents is
+
+Eduents helps teachers do four things:
+
+1. Upload question PDFs and turn them into a searchable question bank.
+2. Build question papers and exams from that bank.
+3. Run those exams online, or grade paper OMR sheets.
+4. See how the students did.
+
+I built the main app and the live-collaboration server. My teammate built the Python tools that read PDFs and detect images. We meet at a small set of API rules.
+
+![Eduents dashboard - folders on the left, question list on the right](/images/blogs/building-eduents-edtech-platform/eduents-blog-1.png)
+
+*The question bank holds questions pulled from textbooks and content books. From there, the teacher picks the ones they want, drops them into "Create Test", and downloads the paper as a PDF - questions on one file, answers on another (when answers are available).*
+
+## What I own vs what my teammate built
+
+Here is who built what. Honest split.
+
+| # | Project | Stack | Owner |
+|---|---|---|---|
+| 1 | **eduents** (main app) | Next.js 15, React 19, Prisma, MongoDB, Clerk, Puppeteer, OpenAI SDK | **Me** |
+| 2 | **ws-questions-b** (live collab server) | Node.js, `ws` library | **Me** |
+| 3 | **image-auto-cropper** (Konva canvas tool) | Next.js 16 + Konva | **Me** (frontend) / teammate (Python backend) |
+| 4 | **question-extractor-tool** (PDF -> JSON tool) | Vite + React 19 | **Me** (frontend) / teammate (Flask backend) |
+| 5 | **question-image-verifier** (image checker tool) | Vite + React 19 | **Me** (frontend) / teammate (FastAPI backend) |
+
+This post is about the parts I built. I will mention the Python side only where my code talks to it.
+
+## Why five small repos, not one big one
+
+The simple answer: each app has a different runtime, a different deploy target, and a different lifetime. Trying to put them in one repo would slow everyone down. Keeping them separate means:
+
+- I can ship the Next.js app to Vercel.
+- The Python tools live on Railway, where slow cold starts do not matter.
+- My teammate can change his backend without breaking my frontend, as long as the JSON shape stays the same.
+
+The "contract" between the apps is just two things: a list of allowed origins (so the browser can call across domains) and an agreed JSON shape for each endpoint.
+
+![Architecture diagram - five apps and how data flows between them](/images/blogs/building-eduents-edtech-platform/eduent-blog-2.png)
+
+## The database design
+
+Eduents has two main areas of data, sharing one database.
+
+**Area 1 - the question bank and folders.** Users own folders. Folders hold questions. Other users can be invited to a folder as owner, editor, or viewer.
+
+**Area 2 - the exams.** A test holds questions, students take it, and we save each answer.
+
+One choice was a bit unusual - a `Student` is **not** a `User`. A student who only takes one OMR exam should not have to sign up. So the exam side has its own `Student` model with no login link. Cleaner, fewer accounts to manage.
+
+The `Question` model is shared by four other tables. Prisma asks for unique relation names when this happens, which looks ugly once and then works forever:
+
+```prisma
+model Question {
+  id              String                @id @default(auto()) @map("_id") @db.ObjectId
+  folderQuestions FolderQuestion[]      @relation("QuestionToFolderQuestion")
+  testQuestions   TestQuestion[]        @relation("QuestionToTestQuestion")
+  testAnswers     TestAnswer[]          @relation("QuestionToTestAnswer")
+  paperHistory    PaperHistoryQuestion[] @relation("QuestionToPaperHistoryQuestion")
+}
+```
+
+![ER diagram - the two database areas, with Question in the middle](/images/blogs/building-eduents-edtech-platform/eduents-blog-3.png)
+
+## Reordering questions without breaking everything
+
+When a teacher drags question 5 between question 2 and question 3, two things can go wrong:
+
+1. The app could update every row's number below the move. Slow.
+2. Two users dragging at the same time could fight.
+
+I used a trick called "fractional positions". Instead of integer positions (1, 2, 3...), I use floats (1.0, 2.0, 3.0...). To put a question between 2.0 and 3.0, I just save 2.5. No other rows change. To put one between 2.0 and 2.5, save 2.25. And so on.
+
+When two users drag at the same time and pick the same number, I break the tie using the question ID. Boring rule, never fails.
+
+## The PDF maker
+
+The most-loved feature is "click a button, get a clean question paper PDF". Doing this on a server is hard because the browser engine (Chromium) is huge.
+
+Two problems and how I fixed them:
+
+**Problem 1 - cold start is slow.** The first PDF after a long pause takes about 4 seconds because Chromium has to start. After that, it's about 600 ms.
+
+Fix - keep one Chromium running and reuse it. Code:
+
+```ts
+let browserPromise: Promise<Browser> | null = null
+
+export async function getBrowser() {
+  if (!browserPromise) {
+    browserPromise = puppeteer.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+    })
+    const browser = await browserPromise
+    browser.on('disconnected', () => { browserPromise = null })
+  }
+  return browserPromise
+}
+```
+
+If Chromium dies, the listener clears the saved one so the next call starts a fresh one.
+
+**Problem 2 - "query engine not found" on Vercel.** Prisma needs a small binary file to talk to the database. With my custom Prisma setup, that file did not get copied to the deploy bundle. The deploy died.
+
+Fix - I added a build step that copies the file into the bundle. Plus a CI check that fails the build if the file is missing. So this bug cannot come back quietly.
+
+<video src="https://ik.imagekit.io/vinodkr/eduents-blog-4.webm/ik-video.mp4?tr=orig" />
+
+## Math on screen vs math in the PDF
+
+Math is everywhere in EdTech. I used two tools because no single one does both jobs well:
+
+- **PDF side** - MathJax. Slow but pixel-perfect.
+- **Screen side** - KaTeX. Fast and good enough for editing.
+
+The same formula does not look identical in both. So I wrote a small helper called `jaxUtils.ts` that fixes a few known differences (font alignment, a white-on-white bug) right before the PDF screenshot. The result is "very close, not identical, looks fine to a human".
+
+![Math formula - on-screen (KaTeX) vs PDF (MathJax), side by side](/images/blogs/building-eduents-edtech-platform/eduents-blog-5.png)
+
+## Live collaboration without scary bugs
+
+When two teachers edit the same folder, their changes should show up live. I built a small WebSocket server that does this.
+
+The server is dumb on purpose. It just passes messages around. It does **not** save anything to the database. All saving is done by normal server actions in the main Next.js app.
+
+Why split it this way?
+
+- A WebSocket can disconnect mid-message. A server action either fully saves or fails clean.
+- Only one place writes to the database. No two-writers fighting.
+
+The cost is one extra HTTP request per change. Worth it for the safety.
+
+The connect rule is strict - if the client does not send `folderId`, `userId`, and `userName`, the server slams the door:
+
+```js
+const folderId = url.searchParams.get('folderId')
+const userId = url.searchParams.get('userId')
+const userName = url.searchParams.get('userName')
+if (!folderId || !userId || !userName) {
+  ws.close(1008, 'Missing required parameters')
+  return
+}
+```
+
+## One middleware, three jobs
+
+One file, `eduents/middleware.ts`, runs on every request and does three things in one pass:
+
+1. **CORS** - check the request comes from an allowed origin.
+2. **Login check** - if the user is not logged in, send them to the sign-in page.
+3. **Onboarding check** - if the user has not finished sign-up, send them to the onboarding form.
+
+Putting the onboarding step here (and not inside the page layout) avoids a bug where Clerk and my code redirect each other in a loop. I learned that one the hard way.
+
+## Reading questions from PDFs
+
+In `eduents/lib/school-test/`, my TypeScript code does these steps for each page of a PDF:
+
+1. Turn the PDF page into a PNG image.
+2. Fix the image rotation. (Phone cameras save photos with a hidden "this side up" tag. Some tools read the tag, others ignore it. If they disagree, the image is sideways.)
+3. Send the image to a vision model. Get back a list of where the question images are.
+4. Send the image again with a different prompt. Get back the question text and options as JSON.
+5. Crop out each question image using the boxes from step 3.
+6. Send progress updates to the browser as each page finishes, so the user does not stare at a blank spinner.
+
+Step 2 was the bug that ate the most time. Vision models silently rotated the image. My cropping code did not. So the boxes pointed to the wrong place. Fixing it once, in one place, fixed the bug for the whole pipeline.
+
+The Python side (the bigger extractor with six different prompts, the OpenCV auto-crop, the FastAPI image cropper) is my teammate's work. My code calls his code over HTTP and gets back JSON.
+
+> 🎥 VIDEO: 15-second clip - upload a PDF, see "page 1 detecting...", "page 1 cropped", etc, then the final list of questions and images. Real working pipeline.
+
+> 📸 IMAGE: Three side-by-side panels - "raw PDF page" -> "image with green boxes drawn around diagrams" -> "cropped image alone". Shows the pipeline visually.
+
+## OMR grading
+
+`/api/omr/checker` is one server action that does the whole grading job in one go:
+
+- Takes the scanned and parsed sheet.
+- Creates a `Student` record (no login needed).
+- Saves the student's answers.
+- Counts the score and percentage.
+- Returns the result.
+
+One block of code, one place to look if a number is wrong. No queue or background job - the load is small enough that this is fine for now.
+
+## Cross-app calls
+
+The four side apps call the main app from a different domain. The browser blocks this by default. To allow it, the main app keeps a list of allowed origins in its middleware.
+
+There is no fancy service registry. The list is hand-edited. That sounds primitive but is actually safer - adding a new origin needs a code review.
+
+## Bugs that ate days
+
+Real bugs, real fixes:
+
+- **"Query engine not found" on every Vercel deploy.** A Prisma file did not get bundled. Fix - a build step that copies it, plus a CI check that fails if it is missing.
+- **Phone-camera scans cropped the wrong region.** Image rotation tag was being read by the vision model but ignored by my cropper. Fix - bake the rotation into the pixels before any other step.
+- **Vision model JSON broke `JSON.parse`.** LaTeX backslashes inside the text broke parsing. Fix - a small repair function plus three retries.
+- **Onboarding redirect loops.** A silent error in my onboarding code left users bouncing forever. Fix - try/catch with logs and a clear error screen.
+- **Math PDF looked different from math on screen.** Two different math engines render differently. Fix - a small patch step before each PDF screenshot.
+- **Two users picking the same drag position.** Fix - tie-break by question ID, plus a unique index on (folder, position).
+
+## Things I want to fix next
+
+- Move all secret keys off the frontend. The image checker still reads a service-role key in the browser. Security debt.
+- Decommission the second Supabase project. We migrated, never finished cleanup.
+- Add fuzzy matching for section names in the extractor.
+- Put OMR grading behind a queue once we get to a point where 100s of students grade at once.
+
+## Why I wrote this
+
+I built Eduents because a teacher I know was spending six hours a week building question papers in Word and grading OMR sheets by hand. Multiply that by ten teachers, then by ten institutes - real time, real money.
+
+If you are hiring, what I want you to take from this:
+
+- I can own a full Next.js + Prisma + MongoDB system - schema, middleware, server actions, PDF pipeline, live collab.
+- I work cleanly with code I do not own - my teammate's Python services and mine meet at simple JSON, no shared state.
+- I make trade-offs out loud - keep one browser warm, dumb-relay WebSocket, fractional positions, two math engines. Each one has a stated cost.
+- I close bugs at the root, not at the symptom. Each bug above ended with either a fix or a CI check so it cannot come back quietly.
+
+If that fits what you need, I would love to talk.
+
+> 📸 IMAGE: A clean photo of you (headshot or working at a laptop) at the very bottom, plus a short call-to-action - email and GitHub link. Closes the post on a personal note.

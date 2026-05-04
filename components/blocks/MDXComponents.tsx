@@ -7,6 +7,71 @@ import Image from 'next/image'
 import { MDXComponents as MDXComponentsType } from 'mdx/types'
 import { cn } from '@/lib/utils'
 
+// Video component with lightbox + play-once
+const VideoWithLightbox = ({ src, className, ...rest }: React.VideoHTMLAttributes<HTMLVideoElement>) => {
+    const [isOpen, setIsOpen] = useState(false)
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => { setMounted(true) }, [])
+
+    useEffect(() => {
+        if (isOpen) document.body.style.overflow = 'hidden'
+        else document.body.style.overflow = 'unset'
+        return () => { document.body.style.overflow = 'unset' }
+    }, [isOpen])
+
+    if (!src) return null
+
+    const modalContent = isOpen && mounted ? createPortal(
+        <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 backdrop-blur-sm bg-black/80"
+            onClick={() => setIsOpen(false)}
+        >
+            <div className="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center">
+                <button
+                    onClick={() => setIsOpen(false)}
+                    className="absolute top-2 right-2 sm:top-4 sm:right-4 text-white hover:text-gray-300 transition-colors z-10 bg-black/50 rounded-full p-1.5 sm:p-2"
+                    aria-label="Close video"
+                >
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <video
+                    src={src}
+                    controls
+                    autoPlay
+                    playsInline
+                    className="max-w-full max-h-full object-contain rounded-lg px-2"
+                    onClick={(e) => e.stopPropagation()}
+                />
+            </div>
+        </div>,
+        document.body
+    ) : null
+
+    return (
+        <>
+            <span className="block my-3 sm:my-4 rounded-lg overflow-hidden shadow-md bg-gray-100 dark:bg-white/5">
+                <video
+                    src={src}
+                    autoPlay
+                    muted
+                    playsInline
+                    preload="metadata"
+                    className={cn(
+                        "rounded-lg cursor-pointer hover:opacity-90 transition-opacity w-full h-auto block",
+                        className
+                    )}
+                    onClick={() => setIsOpen(true)}
+                    {...rest}
+                />
+            </span>
+            {modalContent}
+        </>
+    )
+}
+
 // Image component with lightbox
 const ImageWithLightbox = ({ src, alt, width, height, className }: ImageProps) => {
     const [isOpen, setIsOpen] = useState(false)
@@ -59,18 +124,16 @@ const ImageWithLightbox = ({ src, alt, width, height, className }: ImageProps) =
     
     return (
         <>
-            <span className="block my-3 sm:my-4">
+            <span className="block my-3 sm:my-4 rounded-lg overflow-hidden shadow-md bg-gray-100 dark:bg-white/5">
                 <Image
                     src={src}
                     alt={alt || ''}
                     width={width || 800}
                     height={height || 600}
                     className={cn(
-                        "rounded-lg shadow-md object-cover cursor-pointer hover:opacity-90 transition-opacity w-full h-auto",
+                        "rounded-lg object-cover cursor-pointer hover:opacity-90 transition-opacity w-full h-auto block",
                         className
                     )}
-                    placeholder="blur"
-                    blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
                     onClick={() => setIsOpen(true)}
                 />
             </span>
@@ -140,6 +203,9 @@ export function MDXComponents(): MDXComponentsType {
 
         // Image with Next.js Image component and lightbox
         img: ImageWithLightbox,
+
+        // Video with lightbox - autoplay muted once, click to enlarge
+        video: VideoWithLightbox,
 
         pre: ({ className, ...props }: React.HTMLAttributes<HTMLPreElement>) => {
             return (
@@ -235,6 +301,40 @@ export function MDXComponents(): MDXComponentsType {
                     dark:border-gray-700
                 "
             />
+        ),
+
+        // GFM tables
+        table: ({ children }: { children: React.ReactNode }) => (
+            <div className="my-4 sm:my-6 overflow-x-auto rounded-lg border border-gray-400 dark:border-gray-600">
+                <table className="w-full text-sm sm:text-base border-collapse table-auto">
+                    {children}
+                </table>
+            </div>
+        ),
+        thead: ({ children }: { children: React.ReactNode }) => (
+            <thead className="bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-gray-100">
+                {children}
+            </thead>
+        ),
+        tbody: ({ children }: { children: React.ReactNode }) => (
+            <tbody>
+                {children}
+            </tbody>
+        ),
+        tr: ({ children }: { children: React.ReactNode }) => (
+            <tr className="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                {children}
+            </tr>
+        ),
+        th: ({ children }: { children: React.ReactNode }) => (
+            <th className="px-3 sm:px-4 py-2 sm:py-3 text-left font-semibold border border-gray-400 dark:border-gray-600 align-top break-words whitespace-normal">
+                {children}
+            </th>
+        ),
+        td: ({ children }: { children: React.ReactNode }) => (
+            <td className="px-3 sm:px-4 py-2 sm:py-3 text-gray-700 dark:text-gray-300 border border-gray-400 dark:border-gray-600 align-top break-words whitespace-normal">
+                {children}
+            </td>
         ),
 
         // Strong and emphasis
