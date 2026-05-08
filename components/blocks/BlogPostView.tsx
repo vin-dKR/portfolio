@@ -1,18 +1,13 @@
-'use client'
-
-import { MDXRemote } from 'next-mdx-remote'
-import { useMemo } from 'react'
+import { MDXRemote } from 'next-mdx-remote/rsc'
+import remarkGfm from 'remark-gfm'
+import rehypeSlug from 'rehype-slug'
 import { MDXComponents } from './MDXComponents'
-
 
 type BlogPostViewProps = {
     post: BlogPost
 }
 
 export default function BlogPostView({ post }: BlogPostViewProps) {
-    // Memoize the content to prevent unnecessary re-renders
-    const memoizedContent = useMemo(() => post.content, [post.content])
-
     return (
         <article className="w-full max-w-2xl px-4 sm:px-6 py-6 sm:py-8 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-24 md:pb-8 mx-auto font-lenia">
             <header className="mb-4 sm:mb-6 md:mb-8">
@@ -27,10 +22,16 @@ export default function BlogPostView({ post }: BlogPostViewProps) {
                 </div>
             </header>
 
-            <div className="prose prose-sm sm:prose-base lg:prose-lg xl:prose-xl max-w-none text-gray-800 dark:text-gray-300 prose-headings:text-gray-800 dark:prose-headings:text-white prose-p:text-gray-600 dark:prose-p:text-gray-300 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-strong:text-gray-900 dark:prose-strong:text-gray-100 prose-code:text-gray-800 dark:prose-code:text-gray-200 prose-pre:bg-gray-900 dark:prose-pre:bg-gray-800 prose-img:mx-auto">
+            <div className="prose prose-sm sm:prose-base lg:prose-lg xl:prose-xl max-w-none text-gray-800 dark:text-gray-300 prose-headings:text-gray-800 dark:prose-headings:text-white prose-p:text-gray-600 dark:prose-p:text-gray-300 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-strong:text-gray-900 dark:prose-strong:text-gray-100 prose-code:text-gray-800 dark:prose-code:text-gray-200 prose-pre:bg-transparent prose-pre:rounded-2xl prose-img:rounded-2xl prose-img:mx-auto">
                 <MDXRemote
-                    {...memoizedContent}
+                    source={post.content}
                     components={MDXComponents}
+                    options={{
+                        mdxOptions: {
+                            remarkPlugins: [remarkGfm],
+                            rehypePlugins: [rehypeSlug],
+                        },
+                    }}
                 />
             </div>
         </article>

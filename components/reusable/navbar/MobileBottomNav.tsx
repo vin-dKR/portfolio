@@ -56,12 +56,12 @@ const MobileBottomNav = () => {
 
     return (
         <nav className="fixed bottom-0 left-0 right-0 z-[99] md:hidden flex items-end justify-center pb-4 px-4 pointer-events-none">
-            <div 
-                className="flex items-center justify-around backdrop-blur-xl bg-white/80 dark:bg-black/40 rounded-3xl shadow-2xl border border-gray-200/50 dark:border-white/5 px-2 py-2 min-h-[64px] max-w-[90%] pointer-events-auto safe-area-inset-bottom"
+            <div
+                className="flex items-center justify-around backdrop-blur-xl bg-white/70 dark:bg-white/[0.04] rounded-3xl shadow-2xl border border-black/8 dark:border-white/8 px-2 py-2 min-h-[64px] max-w-[90%] pointer-events-auto safe-area-inset-bottom"
                 style={{
-                    boxShadow: isDark 
-                        ? '0 8px 32px 0 rgba(0, 0, 0, 0.3), 0 0 0 0.5px rgba(255, 255, 255, 0.05) inset'
-                        : '0 8px 32px 0 rgba(0, 0, 0, 0.1), 0 0 0 0.5px rgba(0, 0, 0, 0.05) inset'
+                    boxShadow: isDark
+                        ? '0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 0 0 0.5px rgba(255, 255, 255, 0.06) inset'
+                        : '0 8px 32px 0 rgba(0, 0, 0, 0.08), 0 0 0 0.5px rgba(0, 0, 0, 0.04) inset'
                 }}
             >
                 {NAV_ITEMS.map(({ name, href }) => {
@@ -77,7 +77,7 @@ const MobileBottomNav = () => {
                             {isActive && (
                                 <motion.div
                                     layoutId="activeTab"
-                                    className="absolute inset-0 bg-gray-200/60 dark:bg-white/10 rounded-2xl"
+                                    className="absolute inset-0 bg-black/10 dark:bg-white/10 rounded-2xl"
                                     transition={{ type: "tween", duration: 0.2, ease: "easeOut" }}
                                 />
                             )}

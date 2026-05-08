@@ -2,8 +2,7 @@ import { notFound } from 'next/navigation'
 import { getBlogPostBySlug, getBlogPosts } from '@/lib/blogs'
 import BlogPostView from '@/components/blocks/BlogPostView'
 
-export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
+export const dynamic = "force-static"
 
 export default async function BlogPostPage({
     params,

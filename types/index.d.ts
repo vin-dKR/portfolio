@@ -1,4 +1,3 @@
-import { MDXRemoteSerializeResult } from 'next-mdx-remote'
 import { ReactNode, CSSProperties } from 'react';
 
 export { }
@@ -169,7 +168,7 @@ declare global {
 
     interface BlogPost {
         frontmatter: BlogPostFrontmatter
-        content: MDXRemoteSerializeResult
+        content: string
     }
 
 

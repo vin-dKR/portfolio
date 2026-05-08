@@ -18,7 +18,7 @@ export default async function BlogListPage() {
                         href={`/posts/${post.frontmatter.slug}`}
                         className="block"
                     >
-                        <div className="dark:bg-white/2 bg-black/10 border border-black/4 dark:border-white/4 rounded-xl p-4 sm:p-6 hover:shadow-xl transition-all cursor-pointer">
+                        <div className="dark:bg-white/2 bg-black/10 border border-black/4 dark:border-white/4 rounded-2xl p-4 sm:p-6 hover:shadow-xl transition-all cursor-pointer">
                             <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 text-gray-800 dark:text-white">
                                 {post.frontmatter.title}
                             </h2>
