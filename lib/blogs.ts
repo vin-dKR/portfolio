@@ -4,6 +4,7 @@ import matter from 'gray-matter'
 import { serialize } from 'next-mdx-remote/serialize'
 import readingTime from 'reading-time'
 import remarkGfm from 'remark-gfm'
+import rehypeSlug from 'rehype-slug'
 
 const BLOG_POSTS_DIRECTORY = path.join(process.cwd(), 'content/posts')
 
@@ -22,7 +23,7 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
                     parseFrontmatter: true,
                     mdxOptions: {
                         remarkPlugins: [remarkGfm],
-                        rehypePlugins: []
+                        rehypePlugins: [rehypeSlug]
                     }
                 })
 

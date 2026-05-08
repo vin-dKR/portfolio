@@ -1,0 +1,255 @@
+---
+title: Building ATARI - A Government-Scale KVK Platform for 700+ Agricultural Centers
+date: 2026-05-08
+description: A simple walkthrough of the freelance build behind ATARI - a multi-tenant data platform for India's KVK network with 180+ form modules, 6-level role hierarchy, and 40+ government reports.
+tags:
+  - react
+  - typescript
+  - express
+  - prisma
+  - postgres
+  - redis
+  - tanstack
+  - vercel
+  - government
+  - freelance
+---
+
+<div className="toc">
+
+**Contents**
+
+- [What ATARI is](#what-atari-is)
+- [Who uses it (the six-level hierarchy)](#who-uses-it-the-six-level-hierarchy)
+- [The shape of the system](#the-shape-of-the-system)
+- [Permissions are the hard part](#permissions-are-the-hard-part)
+- [The config-driven UI bet](#the-config-driven-ui-bet)
+- [The reporting-year normalizer](#the-reporting-year-normalizer)
+- [Mutex 401 refresh - one of my favorite fixes](#mutex-401-refresh---one-of-my-favorite-fixes)
+- [Reports on Vercel](#reports-on-vercel)
+- [S3 migration as five staged PRs](#s3-migration-as-five-staged-prs)
+- [Excel-grade table filters on every form](#excel-grade-table-filters-on-every-form)
+- [Bugs and lessons](#bugs-and-lessons)
+- [How this came together](#how-this-came-together)
+- [Want to work together?](#want-to-work-together)
+
+</div>
+
+## What ATARI is
+
+ATARI is a multi-tenant, role-based data platform for India's <span className="underline-em">Krishi Vigyan Kendra (KVK)</span> network - the country's agricultural extension centers run by the Indian Council of Agricultural Research (ICAR).
+
+Before ATARI, around 700 KVKs each kept their own records in Excel, paper, and USB drives. Reports flowed up the chain by email and post. ATARI replaces that with one web platform - data entry, approvals, photo and document storage, dashboards, and government reporting that rolls up automatically across the whole hierarchy.
+
+It exposes <span className="underline-em">180+ form modules</span> across farm trials, training programs, achievements, performance indicators, infrastructure, awards, publications, meetings, and digital outreach. It produces <span className="underline-em">40+ aggregated reports</span> in PDF, DOCX, and XLSX, and the same templates feed all three formats.
+
+> 📸 IMAGE: Hero shot - the ATARI dashboard showing the 6-level org tree on the left, a form list in the middle, and a small chart of completion rates. Sets the scene.
+
+## Who uses it (the six-level hierarchy)
+
+```
+ICAR  (super admin)
+ └── ATARI Zone (zone admin)
+       └── State (state admin / state user)
+             └── District (district admin / district user)
+                   └── Host Institute / Org (org admin / org user)
+                         └── KVK (kvk admin / kvk user)
+```
+
+Six organizational levels. Ten role names. <span className="underline-em">A user at any level can only see and act on data inside their own subtree</span>. A district admin cannot read another district. A KVK staff member cannot edit another KVK. The hierarchy is encoded in `roleHierarchy.ts` (10 numeric levels) and mirrored in the backend permission resolver.
+
+Admins can only create the roles below them. The map of "who can create what" lives in one constant - `CREATABLE_ROLES_MAP` - and every role-creation route checks it.
+
+> 🖼️ IMAGE: A clean version of the hierarchy tree above, plus arrows showing which roles can create which. Helps a non-technical reader hold the model in their head.
+
+## The shape of the system
+
+| Layer | Stack | Role |
+|---|---|---|
+| **Frontend** | React 19, TypeScript, Vite 7, Tailwind 4, TanStack Query / Table, React Router 7, Recharts | Single Page App, 180+ routes |
+| **Backend** | Node.js, Express 5, Prisma 7 | Strict route → controller → service → repository layering |
+| **Database** | PostgreSQL on Neon (serverless) | 120+ Prisma models split across 146 schema files |
+| **Cache** | Redis (ioredis) | Permission cache, report aggregation cache |
+| **File store** | AWS S3 | Form attachments + module images, presigned PUT/GET |
+| **Reports** | Puppeteer + `@sparticuz/chromium` (PDF), `docx` (DOCX), `exceljs` (XLSX) | Serverless-friendly export pipeline |
+| **Deploy** | Vercel (serverless) + Neon + S3 | No long-lived servers |
+
+A few decisions worth calling out:
+
+- **Strict layering.** Routes never touch Prisma. Controllers never query Postgres directly. Services never know about Express. <span className="underline-em">No layer skipping</span>. It looks bureaucratic for a one-line change. It saves your week when the schema shifts.
+- **Two cross-cutting form middlewares** wrap every `/api/forms` route - `validateFormRobustness` (numeric and date sanity) then `reportingYearNormalizer` (year ↔ ISO date bridge). Every new form route inherits both for free.
+- **Permission resolver as the single source of truth.** `permissionResolverService` hydrates `req.user` with `permissionsByModule`, scoped IDs, and role metadata, backed by Redis with DB fallback. Controllers do not roll their own checks.
+- **Multi-file Prisma schema** (146 files) split into `prisma/superadmin/` (users, roles, permissions, geographic masters) and `prisma/kvk/` (per-KVK operational data). Prisma 7 globs the directory.
+
+> 🖼️ IMAGE: A simple architecture diagram - Browser → Express → Prisma → Postgres, with Redis and S3 on the side, and Puppeteer/docx/exceljs as a "reports" branch. Use Excalidraw or draw.io.
+
+## Permissions are the hard part
+
+The hardest piece of any platform like this is not the forms. It is permissions. <span className="squiggly">A zone admin who creates a state user must be able to grant only the actions they themselves were granted, and only inside their own geography</span>.
+
+I solved it with a <span className="underline-em">two-axis permission model</span>:
+
+- **`RolePermission`** defines the role ceiling. The most a `state_admin` can ever do.
+- **`UserPermission`** is per-user override. An admin can further restrict a specific user they create.
+- **Effective permission = intersection of both.**
+
+Each module's actions are packed into a small bitmask: `VIEW = 1`, `ADD = 2`, `EDIT = 4`, `DELETE = 8`. The full permission map for a user is a small `{moduleCode: bitmask}` object that fits comfortably inside a JWT - no DB round-trip per request.
+
+Geographic IDs (`zoneId`, `stateId`, `districtId`, `orgId`, `kvkId`) travel with the user. Every repository query filters by them. <span className="underline-em">Admins literally cannot read data outside their hierarchy</span> - not because the UI hides it, because the SQL never selects it.
+
+The resolver is cached in Redis at versioned keys (`perm:role:{roleId}:v1`, `perm:user:{userId}:role:{roleId}:v1`) with a 1-hour TTL. Mutations explicitly invalidate both keys. Sub-millisecond p99 on permission checks.
+
+I did not use a third-party authz service. Government compliance, deploy simplicity, and "the rules are stable" all pointed to keeping it in-house.
+
+> 📸 IMAGE: A diagram of the permission flow - Role ceiling × User override × Geographic scope = effective permission. Three boxes intersecting.
+
+## The config-driven UI bet
+
+180+ routes is a lot of pages. The naive way is 180 React components. I did not do that.
+
+Instead I built <span className="underline-em">one component, `DataManagementView`</span>, that reads route metadata plus a `fields` array and renders the form, the table, the filters, and the CRUD wiring. <span className="squiggly">Adding a new module is a route-config entry, not a new page</span>.
+
+The route arrays live in nine files:
+
+| Array | Approx routes | Examples |
+|---|---|---|
+| `allMastersRoutes` | 66 | Crops, seasons, sectors, pay levels, training types |
+| `projectsRoutes` | 44 | ARYA, CFLD, NICRA, FPO, Seed Hub, Agri Drone, DRMR |
+| `aboutKvkRoutes` | 16 | Staff, bank accounts, infrastructure, vehicles, equipment, land |
+| `achievementsRoutes` | 18 | OFT, FLD results, special days, awards |
+| `performanceIndicatorRoutes` | 20 | Financial, infrastructure, linkages, impact |
+| `miscellaneousRoutes` | 7 | Soil-water, NYK training, RAWE-FET, PPV-FRA, VIP visitors |
+| `digitalInformationRoutes` | 5 | Web portal, KMAS, Kisan Sarathi, Mobile App |
+| `swachhtaBharatAbhiyaanRoutes` | 3 | Drives, Pakhwada, Quarterly budget |
+| `meetingsRoutes` | 2 | SAC, ATARI reporting |
+
+`App.tsx` mounts a small set of static routes and `.map()`s the nine arrays into Route elements.
+
+What this enables: a new form is an afternoon, not a week. What it costs: when a form needs an unusual layout, I add an escape hatch (component override on the route config) instead of bending the generic component. Five overrides total - all of OFT, FLD, CFLD multi-step workflows.
+
+The frontend stays at ~67k LOC despite the massive surface area. <span className="underline-em">Most of that is config, not code</span>.
+
+## The reporting-year normalizer
+
+Government agriculture does not run on the calendar year. It runs on a "reporting year" that crosses calendar boundaries. Some legacy tables stored a `year` integer (`2024`). Newer ones store an ISO `reportingYearDate` (`2024-04-01T00:00:00Z`).
+
+I did not want every controller to know about the dual schema. So I wrote a middleware - `reportingYearNormalizer` - that bridges them on the way in.
+
+It owns the conversion for 8 model types. It uses a 60-second in-memory `YearMaster` cache so the bridge is essentially free. Controllers see one canonical shape. The normalizer handles the legacy field for them.
+
+<span className="squiggly">Rewriting 8 schemas to one shape would have been clean and broken every existing record</span>. Bridging in middleware is ugly under the hood and invisible everywhere else.
+
+## Mutex 401 refresh - one of my favorite fixes
+
+Bug in production. A user opens five tabs. Their access token expires. All five tabs fire requests within milliseconds of each other. <span className="squiggly">Five 401s come back. Five refresh requests fire. Five new cookies fight to install</span>. The user sometimes gets logged out. Sometimes a request gets dropped. The bug looks random.
+
+Fix - one mutex inside the API client. ~30 lines.
+
+```ts
+let refreshPromise: Promise<void> | null = null
+
+async function ensureRefreshed() {
+  if (!refreshPromise) {
+    refreshPromise = doRefresh().finally(() => {
+      refreshPromise = null
+    })
+  }
+  return refreshPromise
+}
+
+async function fetchWithRetry(input, init) {
+  const res = await fetch(input, { ...init, credentials: 'include' })
+  if (res.status !== 401) return res
+  await ensureRefreshed()
+  return fetch(input, { ...init, credentials: 'include' })
+}
+```
+
+The first 401 starts the refresh. <span className="underline-em">Every other 401 awaits the same promise</span>. When it resolves, every queued caller retries its original request once. If the refresh itself fails, `setOnSessionExpired` logs the user out cleanly.
+
+Single in-flight refresh. Multiple tabs cooperate. Bug gone.
+
+## Reports on Vercel
+
+40+ report templates, all needing server-side PDF. Vercel functions do not ship Chrome.
+
+Solution: <span className="underline-em">`puppeteer-core` + `@sparticuz/chromium`</span>. The latter is a Lambda-friendly headless Chromium binary tuned to fit inside Vercel's function size limits. The HTML templates render under Puppeteer; a custom `pdfFooterPaginator` adds page numbers and footers consistently across templates.
+
+The same templates also feed DOCX (`docx`) and XLSX (`exceljs`) exports. One template registry, three output formats, one place to fix a bug.
+
+Aggregated report data is cached in Redis. `reportCacheInvalidationService` watches form mutations and invalidates the right keys. <span className="squiggly">No customer ever waits 30 seconds for a national-level roll-up</span> because we did not just compute it on demand.
+
+> 📸 IMAGE: Three screenshots side by side - the same report as PDF, DOCX, and XLSX. Sells the "one template, three formats" idea.
+
+## S3 migration as five staged PRs
+
+The legacy app stored attachments in mixed places - local disk on one server, an old bucket on another, a few in the database itself. <span className="underline-em">Moving 20+ modules to a unified S3 setup at once would have been one giant unreviewable PR</span>.
+
+I shipped it as <span className="underline-em">five sequential PRs</span>:
+
+- **PR-A** - reusable backend "attachment section" binding + frontend "attachment grid" component, plus the first three modules.
+- **PR-B** - ARYA, RAWE, SAC, Award, KVK Staff.
+- **PR-C** - NICRA × 6.
+- **PR-D** - CFLD Technical, Natural Farming × 3, PPV-FRA.
+- **PR-E** - Success Stories + cleanup of legacy paths.
+
+Each PR migrated 3-6 modules. Reviews stayed reviewable. <span className="underline-em">Bugs stayed local</span>. Rollback was per-PR. The backend "binding" service reconciled attachment IDs on save and deleted orphans, so failed uploads or abandoned drafts did not leak files.
+
+This is the boring engineering that does not show up in resumes. It is also the part that decides whether a migration ships at all.
+
+## Excel-grade table filters on every form
+
+Government users compare everything to Excel. They expect per-column filters, sort, and exclude. The stock TanStack Table headers do not do that out of the box.
+
+I built a custom `ColumnFilter` popover with:
+
+- **Text search** plus **checkbox-exclude** (uncheck specific values to hide them)
+- **Single-active sort** (one column at a time, by design)
+- **Draggable card UI** with viewport clamping so it does not get lost off-screen
+- **Per-column reset** plus a global "Reset All" that clears column filters and the global search
+
+Every form table gets it. Built on `@tanstack/react-table` plus `@radix-ui/react-popover`.
+
+> 🎥 VIDEO: 15-second screen recording. Open a form table with 200 rows, click a column header, type a search, uncheck two values, drag the popover, hit "Reset All". Strong visual proof of the Excel parity.
+
+## Bugs and lessons
+
+- **Concurrent-tab refresh storms.** Mutex pattern in the API client. Single in-flight refresh.
+- **Permission cache invalidation drift.** Versioned Redis keys (`v1`) plus explicit invalidation on every mutation that touches a role or permission row.
+- **Year-int ↔ year-ISO schism.** Bridged in middleware instead of refactoring 8 schemas.
+- **Vercel cold starts on PDF generation.** Switched to `puppeteer-core` + `@sparticuz/chromium` and pre-warmed the report aggregation cache so the slow part is not the cold Chromium boot.
+- **Form save dropped attachments.** Built `formAttachmentBinding` to reconcile S3 IDs at save time and delete orphans. No more "I uploaded the file but it disappeared" tickets.
+- **`kvk_amdin` typo in the role table.** I caught the typo on day three. By then real production data was using the misspelled key. <span className="squiggly">The fix would have been a 6-month migration on a live government dataset</span>. I left the typo in place and added a `kvk_admin` alias. Pragmatic over correct.
+
+## How this came together
+
+ATARI is a freelance project. The client is a government-adjacent program managing the KVK network in ATARI Zone IV. They needed a real platform - one that 700 centers could actually use without IT support, that produced reports the upstream ICAR offices already expected, and that survived staff turnover (which is constant in government roles).
+
+Real numbers, drawn from `git log` and the source tree:
+
+- **243 commits authored**
+- **3,114 files touched**
+- **180+ pull requests merged**
+- **62 backend route files, 72 controllers, 65 services, 210 repositories**
+- **146 Prisma schema files**
+- **~180 frontend routes, 9 route-config arrays, 29 per-domain API wrappers, 150+ custom hooks, ~67k LOC**
+
+If you are hiring, what I want you to take from this:
+
+- I can <span className="underline-em">design and ship a real government-scale platform</span> - hierarchy, permissions, reports, audit, the works.
+- I make the boring engineering calls. Five-PR migration over one mega-PR. Versioned Redis keys over "we'll figure it out later". Middleware bridge over schema rewrite. Each one has a stated cost.
+- I close bugs at the root. Mutex refresh, attachment binding, scoped queries - each one ended with code that prevents the bug from coming back.
+- I respect the constraint. The `kvk_amdin` typo is the cleanest example - the right call for the user was to leave it alone. <span className="squiggly">Pragmatic over correct, when correct would break production data</span>.
+
+If that fits what you need, I would love to talk.
+
+## Want to work together?
+
+I am open to full-time roles and freelance projects. If you are building something hard - large schemas, role-based platforms, government or enterprise scale - I would love to talk.
+
+- **Email** - [vinodkumarmurmu62@gmail.com](mailto:vinodkumarmurmu62@gmail.com)
+- **GitHub** - [github.com/vin-dKR](https://github.com/vin-dKR)
+- **LinkedIn** - [linkedin.com/in/vinodkrs](https://linkedin.com/in/vinodkrs)
+- **Twitter** - [@always_VinodKr](https://twitter.com/always_VinodKr)
+
+Drop a message. I read everything.

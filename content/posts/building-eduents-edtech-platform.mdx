@@ -13,6 +13,29 @@ tags:
   - clerk
 ---
 
+<div className="toc">
+
+**Contents**
+
+- [What Eduents is](#what-eduents-is)
+- [What I own vs what my teammate built](#what-i-own-vs-what-my-teammate-built)
+- [Why five small repos, not one big one](#why-five-small-repos-not-one-big-one)
+- [The database design](#the-database-design)
+- [Reordering questions without breaking everything](#reordering-questions-without-breaking-everything)
+- [The PDF maker](#the-pdf-maker)
+- [Math on screen vs math in the PDF](#math-on-screen-vs-math-in-the-pdf)
+- [Live collaboration without scary bugs](#live-collaboration-without-scary-bugs)
+- [One middleware, three jobs](#one-middleware-three-jobs)
+- [Reading questions from PDFs](#reading-questions-from-pdfs)
+- [OMR grading](#omr-grading)
+- [Cross-app calls](#cross-app-calls)
+- [Bugs that ate days](#bugs-that-ate-days)
+- [Things I want to fix next](#things-i-want-to-fix-next)
+- [Why I wrote this](#why-i-wrote-this)
+- [Want to work together?](#want-to-work-together)
+
+</div>
+
 ## What Eduents is
 
 Eduents helps teachers do four things:
@@ -22,7 +45,7 @@ Eduents helps teachers do four things:
 3. Run those exams online, or grade paper OMR sheets.
 4. See how the students did.
 
-I built the main app and the live-collaboration server. My teammate built the Python tools that read PDFs and detect images. We meet at a small set of API rules.
+I built the main app and the live-collaboration server. My teammate built the Python tools that read PDFs and detect images. <span className="underline-em">We meet at a small set of API rules</span>.
 
 ![Eduents dashboard - folders on the left, question list on the right](/images/blogs/building-eduents-edtech-platform/eduents-blog-1.png)
 
@@ -62,7 +85,7 @@ Eduents has two main areas of data, sharing one database.
 
 **Area 2 - the exams.** A test holds questions, students take it, and we save each answer.
 
-One choice was a bit unusual - a `Student` is **not** a `User`. A student who only takes one OMR exam should not have to sign up. So the exam side has its own `Student` model with no login link. Cleaner, fewer accounts to manage.
+One choice was a bit unusual - <span className="squiggly">a `Student` is **not** a `User`</span>. A student who only takes one OMR exam should not have to sign up. So the exam side has its own `Student` model with no login link. Cleaner, fewer accounts to manage.
 
 The `Question` model is shared by four other tables. Prisma asks for unique relation names when this happens, which looks ugly once and then works forever:
 
@@ -85,7 +108,7 @@ When a teacher drags question 5 between question 2 and question 3, two things ca
 1. The app could update every row's number below the move. Slow.
 2. Two users dragging at the same time could fight.
 
-I used a trick called "fractional positions". Instead of integer positions (1, 2, 3...), I use floats (1.0, 2.0, 3.0...). To put a question between 2.0 and 3.0, I just save 2.5. No other rows change. To put one between 2.0 and 2.5, save 2.25. And so on.
+I used a trick called <span className="underline-em">"fractional positions"</span>. Instead of integer positions (1, 2, 3...), I use floats (1.0, 2.0, 3.0...). To put a question between 2.0 and 3.0, I just save 2.5. No other rows change. To put one between 2.0 and 2.5, save 2.25. And so on.
 
 When two users drag at the same time and pick the same number, I break the tie using the question ID. Boring rule, never fails.
 
@@ -118,7 +141,7 @@ export async function getBrowser() {
 
 If Chromium dies, the listener clears the saved one so the next call starts a fresh one.
 
-**Problem 2 - "query engine not found" on Vercel.** Prisma needs a small binary file to talk to the database. With my custom Prisma setup, that file did not get copied to the deploy bundle. The deploy died.
+**Problem 2 - "query engine not found" on Vercel.** Prisma needs a small binary file to talk to the database. With my custom Prisma setup, <span className="squiggly">that file did not get copied to the deploy bundle</span>. The deploy died.
 
 Fix - I added a build step that copies the file into the bundle. Plus a CI check that fails the build if the file is missing. So this bug cannot come back quietly.
 
@@ -139,7 +162,7 @@ The same formula does not look identical in both. So I wrote a small helper call
 
 When two teachers edit the same folder, their changes should show up live. I built a small WebSocket server that does this.
 
-The server is dumb on purpose. It just passes messages around. It does **not** save anything to the database. All saving is done by normal server actions in the main Next.js app.
+The server is <span className="underline-em">dumb on purpose</span>. It just passes messages around. It does **not** save anything to the database. All saving is done by normal server actions in the main Next.js app.
 
 Why split it this way?
 
@@ -181,7 +204,7 @@ In `eduents/lib/school-test/`, my TypeScript code does these steps for each page
 5. Crop out each question image using the boxes from step 3.
 6. Send progress updates to the browser as each page finishes, so the user does not stare at a blank spinner.
 
-Step 2 was the bug that ate the most time. Vision models silently rotated the image. My cropping code did not. So the boxes pointed to the wrong place. Fixing it once, in one place, fixed the bug for the whole pipeline.
+Step 2 was <span className="squiggly">the bug that ate the most time</span>. Vision models silently rotated the image. My cropping code did not. So the boxes pointed to the wrong place. Fixing it once, in one place, fixed the bug for the whole pipeline.
 
 The Python side (the bigger extractor with six different prompts, the OpenCV auto-crop, the FastAPI image cropper) is my teammate's work. My code calls his code over HTTP and gets back JSON.
 
@@ -229,7 +252,7 @@ I built Eduents because a teacher I know was spending six hours a week building 
 
 If you are hiring, what I want you to take from this:
 
-- I can own a full Next.js + Prisma + MongoDB system - schema, middleware, server actions, PDF pipeline, live collab.
+- <span className="underline-em">I can own a full Next.js + Prisma + MongoDB system</span> - schema, middleware, server actions, PDF pipeline, live collab.
 - I work cleanly with code I do not own - my teammate's Python services and mine meet at simple JSON, no shared state.
 - I make trade-offs out loud - keep one browser warm, dumb-relay WebSocket, fractional positions, two math engines. Each one has a stated cost.
 - I close bugs at the root, not at the symptom. Each bug above ended with either a fix or a CI check so it cannot come back quietly.

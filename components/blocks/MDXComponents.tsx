@@ -186,20 +186,29 @@ export function MDXComponents(): MDXComponentsType {
         ),
 
         // Enhanced Link component
-        a: ({ href, children, className }: LinkProps) => (
-            <Link
-                href={href || '#'}
-                target='_blank'
-                className={`
-                    text-blue-600 dark:text-blue-400 
-                    hover:underline 
-                    transition-colors duration-200
-                    ${className || ''}
-                `}
-            >
-                {children}
-            </Link>
-        ),
+        a: ({ href, children, className }: LinkProps) => {
+            const isHash = (href || '').startsWith('#')
+            const isExternal = /^https?:\/\//.test(href || '')
+            const linkClass = `text-blue-600 dark:text-blue-400 hover:underline transition-colors duration-200 ${className || ''}`
+
+            if (isHash) {
+                return (
+                    <a href={href} className={linkClass}>
+                        {children}
+                    </a>
+                )
+            }
+            return (
+                <Link
+                    href={href || '#'}
+                    target={isExternal ? '_blank' : undefined}
+                    rel={isExternal ? 'noopener noreferrer' : undefined}
+                    className={linkClass}
+                >
+                    {children}
+                </Link>
+            )
+        },
 
         // Image with Next.js Image component and lightbox
         img: ImageWithLightbox,

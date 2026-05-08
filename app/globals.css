@@ -145,6 +145,8 @@
 
 html {
   background-color: var(--background);
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
 }
 
 html:not(.dark) {
@@ -197,3 +199,33 @@ body {
     mask-size: 350vmax;
   }
 }
+
+/* Blog inline emphasis */
+.prose .squiggly {
+  text-decoration-line: underline;
+  text-decoration-style: wavy;
+  text-decoration-color: rgb(239 68 68);
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1.5px;
+}
+.prose .underline-em {
+  text-decoration-line: underline;
+  text-decoration-color: rgb(59 130 246);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 2px;
+  font-weight: 600;
+}
+.prose .toc {
+  background: rgb(0 0 0 / 0.04);
+  border: 1px solid rgb(0 0 0 / 0.08);
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+}
+.dark .prose .toc {
+  background: rgb(255 255 255 / 0.04);
+  border-color: rgb(255 255 255 / 0.08);
+}
+.prose .toc a { text-decoration: none; }
+.prose .toc a:hover { text-decoration: underline; }
