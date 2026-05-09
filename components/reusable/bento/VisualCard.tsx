@@ -9,10 +9,12 @@ const VisualCard = ({ visibleOn = "desktop" }) => {
     const visibilityClass =
         visibleOn === "mobile"
             ? "block sm:hidden col-span-3"
-            : "hidden sm:block"
+            : visibleOn === "dektop"
+                ? "hidden sm:block flex-1 min-h-[180px]"
+                : "hidden sm:block sm:col-span-2"
 
     return (
-        <BentoCard className={`${visibilityClass} sm:col-span-2 p-0 overflow-hidden group/visual`}>
+        <BentoCard className={`${visibilityClass} p-0 overflow-hidden group/visual relative`}>
             <motion.div
                 initial={{ filter: "blur(10px)", scale: 1.5 }}
                 animate={{ filter: "blur(0px)", scale: 1 }}

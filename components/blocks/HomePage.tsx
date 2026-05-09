@@ -5,12 +5,16 @@ import HomeHeader from "./HomeHeader";
 import HomeBio from "./Bio";
 import BentoGrid from "./BentoGrid";
 
-const HomePage = () => {
+type Props = {
+    blogPreviews?: BlogPostFrontmatter[]
+}
+
+const HomePage = ({ blogPreviews = [] }: Props) => {
     return (
         <div className="flex flex-col items-center w-full">
             <HomeHeader />
             <HomeBio />
-            <BentoGrid />        
+            <BentoGrid blogPreviews={blogPreviews} />
         </div>
     )
 }

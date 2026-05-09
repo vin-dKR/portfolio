@@ -31,7 +31,7 @@ const Navbar = () => {
 
     if (!mounted) return <div className='size-14' />;
 
-    const expandedHeight = isScrolled ? 60 : 80;
+    const expandedHeight = isScrolled ? 52 : 80;
 
     return (
         <div className="fixed top-0 left-0 right-0 flex justify-center z-[99]">
@@ -50,16 +50,15 @@ const Navbar = () => {
             >
                 <motion.div
                     style={{ opacity }}
-                    className="h-16 flex items-center justify-between px-8 z-[101]"
+                    className={`flex items-center justify-between px-8 z-[101] ${isScrolled ? 'h-[52px]' : 'h-20'}`}
                 >
                     <Link href={"/"}>
                         <Image
                             src={resolvedTheme === "light" ? "/images/logo-dark.svg" : "/images/logo-light.svg"}
                             alt="logo image"
-                            width={70}
-                            height={40}
-                            className='z-[200]!'
-                            style={{ width: "auto", height: "auto" }}
+                            width={110}
+                            height={56}
+                            className={`z-[200]! h-auto transition-all duration-300 ${isScrolled ? 'w-[65px]' : 'w-[90px] sm:w-[100px]'}`}
                         />
                     </Link>
                     <DesktopNav />

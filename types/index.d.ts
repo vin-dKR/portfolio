@@ -12,6 +12,11 @@ declare global {
         username: string;
         avatar: string;
         bio: string
+        publicRepos: number;
+        topLanguages: Array<{ name: string; percentage: number; color: string }>;
+        topRepo: { name: string; stars: number; description: string; url: string } | null;
+        contributions: Array<{ date: string; count: number; level: number }>;
+        totalContributions: number;
         loading: boolean
         error: string | null
     }

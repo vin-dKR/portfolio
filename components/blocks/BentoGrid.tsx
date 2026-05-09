@@ -7,8 +7,13 @@ import ProjectsCard from "../reusable/bento/ProjectsCard";
 import SpotifyStats from "../reusable/bento/SpotifyStats";
 import TechStackCard from "../reusable/bento/TechStack";
 import Planet3D from "../reusable/bento/Planet3D";
- 
-const BentoGrid = () => {
+import BlogPreviewCard from "../reusable/bento/BlogPreviewCard";
+
+type Props = {
+    blogPreviews?: BlogPostFrontmatter[]
+}
+
+const BentoGrid = ({ blogPreviews = [] }: Props) => {
     return (
         <div className="w-full px-2">
             <motion.section
@@ -32,7 +37,11 @@ const BentoGrid = () => {
                     </div>
 
                     <div className="grid grid-cols-9 sm:grid-cols-7 gap-4">
-                        <VisualCard visibleOn="dektop" />
+                        {/* Left column: visual top half + blogs bottom half */}
+                        <div className="hidden sm:flex flex-col gap-4 sm:col-span-2">
+                            <VisualCard visibleOn="dektop" />
+                            <BlogPreviewCard posts={blogPreviews} className="flex-1" />
+                        </div>
                         <TechStackCard />
                         <GithubStats username="vin-dKR" />
                         <ProjectsCard />

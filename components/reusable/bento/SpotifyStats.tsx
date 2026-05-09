@@ -1,22 +1,31 @@
 'use client'
 
-import React from "react";
-import { motion } from "framer-motion";
-import { ArrowUpRight, Music } from "lucide-react";
-import BentoCard from "./BentoCard";
-import { useSpotify } from "@/context/SpotifyContext";
-import Image from "next/image";
+import React from "react"
+import { motion } from "framer-motion"
+import { ArrowUpRight, Music, RefreshCw } from "lucide-react"
+import BentoCard from "./BentoCard"
+import { useSpotify } from "@/context/SpotifyContext"
+import Image from "next/image"
 
 const SpotifyStats = () => {
-    const { currentTrack, isLoading, error, refreshTrack } = useSpotify();
+    const { currentTrack, isLoading, error, refreshTrack } = useSpotify()
 
     return (
         <BentoCard className="col-span-6 sm:col-span-2 group/spotify h-full">
-            <div className="flex items-center space-x-2 mb-3">
-                <Music className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
-                <h3 className="text-sm font-medium bg-gradient-to-r from-green-400 to-green-600 bg-clip-text text-transparent">
-                    {currentTrack?.isPlaying ? "Now Playing" : "Last Played"}
-                </h3>
+            <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center space-x-2">
+                    <Music className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
+                    <h3 className="text-sm font-medium bg-gradient-to-r from-green-400 to-green-600 bg-clip-text text-transparent">
+                        {currentTrack?.isPlaying ? "Now Playing" : "Last Played"}
+                    </h3>
+                </div>
+                <button
+                    onClick={() => refreshTrack()}
+                    aria-label="Refresh"
+                    className="opacity-50 hover:opacity-100 transition-opacity"
+                >
+                    <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
+                </button>
             </div>
 
             {isLoading && !currentTrack ? (
@@ -30,34 +39,44 @@ const SpotifyStats = () => {
             ) : currentTrack ? (
                 <div>
                     <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
+                        initial={{ scale: 0.95, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         className="relative group"
                     >
-                        <div className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-blue-500/20 rounded-lg blur group-hover:blur-xl transition-all duration-300" />
-                        <Image
-                            src={currentTrack.albumArt}
-                            alt={currentTrack.name}
-                            height={200}
-                            width={200}
-                            className={`w-full h-32 object-cover rounded-lg mb-2 relative transition-all duration-300 ${!currentTrack.isPlaying ? "grayscale" : ""}`}
-                        />
+                        <div className="absolute -inset-1 bg-gradient-to-br from-green-500/30 to-emerald-500/20 rounded-2xl blur-xl opacity-50 group-hover:opacity-80 transition-all duration-300" />
+                        {currentTrack.albumArt ? (
+                            <Image
+                                src={currentTrack.albumArt}
+                                alt={currentTrack.name}
+                                height={300}
+                                width={300}
+                                unoptimized
+                                className={`w-full h-32 object-cover rounded-2xl mb-2 relative transition-all duration-300 ${!currentTrack.isPlaying ? "grayscale-[40%]" : ""}`}
+                            />
+                        ) : (
+                            <div className="w-full h-32 bg-gradient-to-br from-green-500/30 to-emerald-500/20 rounded-2xl mb-2 flex items-center justify-center">
+                                <Music className="w-8 h-8 text-white/60" />
+                            </div>
+                        )}
                     </motion.div>
-                    <p className="text-sm font-medium truncate mt-2 text-gray-900 dark:text-gray-100">{currentTrack.name}</p>
-                    <p className="text-xs text-gray-400 truncate">
+                    <p className="text-sm font-semibold truncate mt-2 text-gray-900 dark:text-gray-100">{currentTrack.name}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                         {currentTrack.artist}
                     </p>
 
                     <div className="mt-2 flex items-center">
                         {currentTrack.isPlaying ? (
-                            <div className="flex items-center">
-                                <span className="h-2 w-2 bg-green-500 rounded-full mr-2"></span>
-                                <span className="text-xs text-green-600">Now playing</span>
+                            <div className="flex items-center gap-1.5">
+                                <span className="relative flex h-2 w-2">
+                                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75" />
+                                    <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+                                </span>
+                                <span className="text-xs text-green-600 dark:text-green-400 font-medium">Live</span>
                             </div>
                         ) : (
-                            <div className="flex items-center">
-                                <span className="h-2 w-2 bg-gray-400 rounded-full mr-2"></span>
-                                <span className="text-xs text-gray-600">Last played</span>
+                            <div className="flex items-center gap-1.5">
+                                <span className="h-2 w-2 bg-gray-400 rounded-full" />
+                                <span className="text-xs text-gray-500">Recently played</span>
                             </div>
                         )}
                     </div>
@@ -65,28 +84,28 @@ const SpotifyStats = () => {
             ) : (
                 <div className="flex flex-col items-center justify-center h-40 space-y-3">
                     <motion.div
-                        animate={{
-                            scale: [1, 1.1, 1],
-                            opacity: [0.5, 1, 0.5]
-                        }}
-                        transition={{
-                            repeat: Infinity,
-                            duration: 4
-                        }}
-                        className="relative w-16 h-16 rounded-full bg-gradient-to-r from-green-400 to-blue-500 opacity-20"
+                        animate={{ scale: [1, 1.1, 1], opacity: [0.5, 1, 0.5] }}
+                        transition={{ repeat: Infinity, duration: 4 }}
+                        className="relative w-16 h-16 rounded-full bg-gradient-to-r from-green-400 to-blue-500 opacity-40"
                     >
                         <div className="absolute inset-0 rounded-full bg-gradient-to-r from-green-400 to-blue-500 blur-md opacity-40" />
-                        <div className="absolute inset-3 rounded-full bg-zinc-100 dark:bg-zinc-900" />
+                        <div className="absolute inset-3 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center">
+                            <Music className="w-6 h-6 text-zinc-500" />
+                        </div>
                     </motion.div>
-                    <p className="text-sm text-gray-400">
-                        {error ? "Connection error" : "Not playing"}
+                    <p className="text-sm text-gray-500">
+                        {error ? "Spotify offline" : "Nothing playing"}
                     </p>
                 </div>
             )}
 
             <div
                 className="absolute bottom-2 right-2 opacity-50 group-hover/spotify:opacity-100 transition-opacity duration-300 cursor-pointer"
-                onClick={() => currentTrack?.spotifyUrl ? window.open(currentTrack.spotifyUrl, '_blank') : refreshTrack()}
+                onClick={() =>
+                    currentTrack?.spotifyUrl
+                        ? window.open(currentTrack.spotifyUrl, "_blank")
+                        : refreshTrack()
+                }
             >
                 <ArrowUpRight className="w-4 h-4" />
             </div>

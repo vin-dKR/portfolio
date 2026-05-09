@@ -11,6 +11,11 @@ const initialGithubStats: GithubStatsProps = {
     username: '',
     avatar: '',
     bio: '',
+    publicRepos: 0,
+    topLanguages: [],
+    topRepo: null,
+    contributions: [],
+    totalContributions: 0,
     loading: false,
     error: null
 }

@@ -1,18 +1,22 @@
 export const techStacks = {
-    "Frontend": {
+    "Languages": {
         color: "linear-gradient(to bottom, #f59e0b, #d97706)",
-        techs: ["HTML", "CSS", "JavaScript", "TypeScript", "React JS", "Next JS", "Tailwind CSS", "ShadCN", "Framer"]
+        techs: ["TypeScript", "JavaScript", "Rust", "Solidity", "SQL", "HTML", "CSS"]
     },
-    "Backend": {
+    "Frontend": {
+        color: "linear-gradient(to bottom, #06b6d4, #0891b2)",
+        techs: ["React", "Next.js", "Vite", "Tailwind CSS", "ShadCN", "Framer Motion", "MDX", "Konva"]
+    },
+    "Backend & Realtime": {
         color: "linear-gradient(to bottom, #3b82f6, #2563eb)",
-        techs: ["Node", "Express", "Hono", "Prisma"]
+        techs: ["Node.js", "Bun", "Express", "Hono", "Puppeteer", "WebSocket", "Liveblocks"]
     },
-    "Database": {
+    "Data & State": {
         color: "linear-gradient(to bottom, #10b981, #059669)",
-        techs: ["MongoDB", "PostgreSQL", "Firebase", "SQL"]
+        techs: ["PostgreSQL", "MongoDB", "MariaDB", "Redis", "Firebase", "Prisma", "Zustand", "TanStack Query", "Zod"]
     },
-    "DevOps": {
+    "Services": {
         color: "linear-gradient(to bottom, #8b5cf6, #7c3aed)",
-        techs: ["Docker", "AWS"]
+        techs: ["Clerk", "Supabase", "Razorpay", "OpenAI", "Gemini", "AWS", "Vercel", "Hostinger", "Railway", "Docker"]
     }
 }
