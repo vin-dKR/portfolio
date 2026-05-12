@@ -102,7 +102,7 @@ const GithubStats = ({ username }: GithubStatsProps) => {
                         </div>
 
                         {/* Stats grid */}
-                        <div className="grid grid-cols-3 gap-1.5 mb-3">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 mb-3">
                             {stat.map((item, index) => {
                                 const value = stats[item.key as keyof typeof stats] ?? 0
                                 const Icon = item.Icon
@@ -166,7 +166,7 @@ const GithubStats = ({ username }: GithubStatsProps) => {
                                 href={stats.topRepo.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="block mb-3 rounded-xl border border-black/5 dark:border-white/5 bg-black/[0.03] dark:bg-white/[0.04] hover:bg-black/[0.06] dark:hover:bg-white/[0.07] transition-colors px-2.5 py-2"
+                                className="hidden sm:block mb-3 rounded-xl border border-black/5 dark:border-white/5 bg-black/[0.03] dark:bg-white/[0.04] hover:bg-black/[0.06] dark:hover:bg-white/[0.07] transition-colors px-2.5 py-2"
                             >
                                 <div className="flex items-center justify-between gap-2">
                                     <span className="text-[11px] font-semibold text-zinc-900 dark:text-zinc-100 truncate">
@@ -186,7 +186,7 @@ const GithubStats = ({ username }: GithubStatsProps) => {
                         )}
 
                         {/* Real contribution heatmap (last 6 months) */}
-                        <div>
+                        <div className="hidden sm:block">
                             <div className="flex items-center justify-between mb-1">
                                 <span className="text-[10px] uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
                                     {stats.totalContributions > 0

@@ -38,8 +38,12 @@ const WakatimeStats = () => {
         return () => clearInterval(id)
     }, [refreshStats])
 
+    const avgPerDay = wakatimeStats.totalHours > 0
+        ? Math.round((wakatimeStats.totalHours / 7) * 10) / 10
+        : 0
+
     return (
-        <BentoCard className="col-span-4 sm:col-span-2 group/wakatime h-full relative overflow-hidden">
+        <BentoCard className="relative col-span-4 sm:col-span-2 group/wakatime h-full relative overflow-hidden">
             {/* gradient halo */}
             <div className="pointer-events-none absolute -top-20 -right-16 w-48 h-48 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/15 blur-3xl opacity-70" />
             <div className="pointer-events-none absolute -bottom-20 -left-16 w-44 h-44 rounded-full bg-gradient-to-tr from-purple-500/15 to-pink-500/10 blur-3xl opacity-50" />
@@ -75,26 +79,31 @@ const WakatimeStats = () => {
                             rel="noopener noreferrer"
                             className="block rounded-xl border border-black/5 dark:border-white/5 bg-black/[0.03] dark:bg-white/[0.04] backdrop-blur-sm px-3 py-2.5 mb-3"
                         >
-                            <div className="flex items-end justify-between">
-                                <div>
+                            <div className="flex items-end justify-between gap-2">
+                                <div className="min-w-0">
                                     <motion.div
                                         initial={{ scale: 0.9, opacity: 0 }}
                                         animate={{ scale: 1, opacity: 1 }}
                                         transition={{ type: "spring", stiffness: 120 }}
                                         className="flex items-baseline"
                                     >
-                                        <span className="text-3xl font-bold bg-gradient-to-b from-blue-400 to-purple-600 bg-clip-text text-transparent leading-none">
+                                        <span className="text-2xl sm:text-3xl font-bold bg-gradient-to-b from-blue-400 to-purple-600 bg-clip-text text-transparent leading-none">
                                             {wakatimeStats.totalHours}
                                         </span>
-                                        <span className="ml-1 text-sm font-medium text-blue-500 dark:text-blue-300">hrs</span>
+                                        <span className="ml-1 text-xs sm:text-sm font-medium text-blue-500 dark:text-blue-300">hrs</span>
                                     </motion.div>
                                     <p className="text-[9px] uppercase tracking-wide text-zinc-500 dark:text-zinc-400 mt-0.5">
-                                        last 30 days
+                                        last 7 days
                                     </p>
                                 </div>
-                                <div className="flex items-center gap-1 text-[10px] font-mono text-purple-600 dark:text-purple-300">
-                                    <Zap className="w-3 h-3 fill-current" />
-                                    {wakatimeStats.languages.length} langs
+                                <div className="flex flex-col items-end gap-0.5 shrink-0">
+                                    <span className="text-[10px] font-mono text-blue-600 dark:text-blue-300">
+                                        ~{avgPerDay}h/day
+                                    </span>
+                                    <span className="flex items-center gap-1 text-[10px] font-mono text-purple-600 dark:text-purple-300">
+                                        <Zap className="w-3 h-3 fill-current" />
+                                        {wakatimeStats.languages.length} langs
+                                    </span>
                                 </div>
                             </div>
                         </Link>
@@ -142,15 +151,15 @@ const WakatimeStats = () => {
                     </>
                 )}
 
-                <div className="absolute bottom-0 right-0 opacity-50 group-hover/wakatime:opacity-100 transition-opacity duration-300">
-                    <Link
-                        href="https://wakatime.com/@fb861e4c-0eee-42a3-8d54-a65ccab34573"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <ArrowUpRight className="w-4 h-4 text-black dark:text-white" />
-                    </Link>
-                </div>
+            </div>
+            <div className="absolute bottom-2 right-2 opacity-50 group-hover/wakatime:opacity-100 transition-opacity duration-300">
+                <Link
+                    href="https://wakatime.com/@fb861e4c-0eee-42a3-8d54-a65ccab34573"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <ArrowUpRight className="w-4 h-4 text-black dark:text-white" />
+                </Link>
             </div>
         </BentoCard>
     )
