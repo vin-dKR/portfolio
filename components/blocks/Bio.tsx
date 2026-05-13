@@ -134,7 +134,15 @@ const HomeBio = () => {
                     </p>
 
                     <p>
-                        Beyond coding, I enjoy building things - whether it&apos;s scalable tech or brands. Previously, I helped lead the tech side of an apparel venture as a co-founder.
+                        Beyond coding, I enjoy building things — whether it&apos;s scalable tech or brands. Two startups behind me, both failed: first an apparel venture (Clothing Go) as co-founder leading tech, then{' '}
+                        <Link
+                            href="https://libly.space"
+                            target="_blank"
+                            className="underline decoration-wavy underline-offset-2"
+                        >
+                            libly.space
+                        </Link>
+                        {' '}— a library management platform where I cold-called 600+ librarians across the country. Still didn&apos;t take off. Now building the 3rd: a SaaS ideas platform for indie hackers, vibe-coders, and startup builders.
                     </p>
 
                     <p>
@@ -157,7 +165,7 @@ const HomeBio = () => {
                                 animationDuration={800}
                                 animationDelay={1500}
                             >
-                                3&nbsp;months
+                                5&nbsp;months
                             </RoughNotation>.
                         </span>
                     </p>
