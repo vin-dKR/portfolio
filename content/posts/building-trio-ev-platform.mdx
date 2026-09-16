@@ -1,0 +1,191 @@
+---
+title: Building Trio EV - Problems I Solved on a Multi-App EV Platform
+date: 2026-06-10
+description: Notes from building Trio EV - an EV fleet and charging-infrastructure platform. Not a code tour. The problems that actually cost me time, and what I changed to close them for good.
+tags:
+  - react
+  - typescript
+  - express
+  - postgres
+  - aws
+  - architecture
+  - ev
+---
+
+<div className="toc">
+
+**Contents**
+
+- [What Trio EV is](#what-trio-ev-is)
+- [Keeping validation honest across apps](#keeping-validation-honest-across-apps)
+- [Two kinds of users, two kinds of risk](#two-kinds-of-users-two-kinds-of-risk)
+- [The cross-origin cookie wall](#the-cross-origin-cookie-wall)
+- [When a green pipeline is shipping nothing](#when-a-green-pipeline-is-shipping-nothing)
+- [Images that survive real uploads](#images-that-survive-real-uploads)
+- [Rich content without an injection surface](#rich-content-without-an-injection-surface)
+- [The inbox is the product](#the-inbox-is-the-product)
+- [A dashboard that stays cheap](#a-dashboard-that-stays-cheap)
+- [Knowing when not to rewrite](#knowing-when-not-to-rewrite)
+- [What I took from it](#what-i-took-from-it)
+- [Want to work together?](#want-to-work-together)
+
+</div>
+
+## What Trio EV is
+
+[Trio EV](https://trioev.com) is an electric-mobility company, and the platform is two products that share a spine.
+
+The **mobility side** is the public face of the fleet business - <span className="underline-em">leasing, rentals, transport, and logistics</span>. A visitor reads a service page, looks at the live network map, and submits an inquiry. That inquiry is the conversion event. Everything behind it exists to make sure a human answers fast.
+
+The **charging side** at [charging.trioev.com](https://charging.trioev.com) is the infrastructure arm - <span className="underline-em">charge-point management, charger supply, O&M services, EV-infra consultancy, and premium charging hubs</span>. Same business model, different buyer, different visual language.
+
+Behind both: a shared API, a content system the client runs themselves, and an admin console where the sales team lives all day.
+
+This post is not a code tour. It is the short list of problems that actually cost me time, and what I changed so they would not come back.
+
+> 📸 IMAGE: Hero shot - the Trio marketing site homepage with the animated India network map mid-pulse, beside the admin dashboard KPI row.
+
+## Keeping validation honest across apps
+
+**The problem.** Several frontends and one API all validate the same things - an inquiry, a login, a blog post. The default outcome is that each one grows its own copy of the rules. They drift. <span className="squiggly">The version you find out about is the one a customer hits at 11pm, where the form accepted something the server rejected</span>.
+
+**What I did.** Made the validation schema a first-class piece of the system rather than a detail inside each app. One definition per concept, imported by the API's request validation *and* by every form on every frontend. Not copied - imported.
+
+**Why it holds.** There is nothing to drift *from*. A field that changes shape changes in one place and every consumer either updates or fails to compile. The type errors show up at build time instead of in a support ticket.
+
+**The cost, stated honestly.** Shared source across a multi-app setup complicates the build and container plumbing - every image has to know about the shared piece before it installs anything. That bit me more than once, and the failure looks like a dependency problem when it is actually a packaging problem. I still think the trade is obviously worth it.
+
+## Two kinds of users, two kinds of risk
+
+**The problem.** The admin console and the public site are both browser apps talking to the same API, but they carry very different risk. The admin renders rich content authored by humans and holds the keys to the whole business. The public site holds almost nothing.
+
+Treating them identically means either over-securing the public side into uselessness, or under-securing the admin.
+
+**What I did.** Gave them different credential transports on purpose.
+
+- The **admin** uses a session credential the browser holds but <span className="underline-em">JavaScript can never read</span>, plus a second anti-forgery check. If someone lands a script injection in the admin - and it renders rich text, so that risk is not theoretical - they still cannot walk away with a session.
+- The **public app** uses a simpler token. Lower stakes, less ceremony, no forgery surface to defend.
+
+One API, one auth path, two transports. The anti-forgery check is deliberately conditional: <span className="underline-em">forgery attacks work because browsers attach credentials automatically</span>. A client that has to attach its credential by hand is not exposed, and demanding the extra token from it would be ceremony that breaks every integration for no gain.
+
+**The lesson.** "Use the most secure option everywhere" is not a security posture. Matching the defense to the actual threat for each surface is.
+
+## The cross-origin cookie wall
+
+My most expensive debugging session, and the one I would re-tell in an interview.
+
+**The symptom.** Everything worked locally. On a real deployment, every write from the admin failed. Reads were fine.
+
+**What it actually was** - three separate failures stacked on top of each other, each one hiding the next:
+
+1. **The browser was silently dropping the credential.** Default cookie rules refuse to attach a credential on a request to a different site. Not an error - just absent. Fixing that forces the connection to be fully encrypted, which turns TLS from a launch-week task into a hard prerequisite.
+
+2. **The anti-forgery check could not read its own token.** The scheme needs the client to read a value and echo it back on writes. But <span className="squiggly">a page can only read values scoped to its own address - and this one was scoped to the API's</span>. The read returned empty. Not an error. Empty. So every write went out missing the header, and every write was correctly rejected.
+
+   The fix: stop treating the browser's storage as the source of truth and hold the value in memory for the session, sourced from the response itself. That worked only because the endpoint returned the value in its response body as well as setting it in the browser. When I built it that looked like pointless redundancy. It turned out to be <span className="underline-em">the only thing that made the whole situation recoverable without a redesign</span>.
+
+3. **Third-party credential blocking.** Even with the first two fixed, browsers are progressively refusing this whole category of cross-site credential - and by definition that is exactly what this was.
+
+**The real fix.** I stopped fighting the browser and <span className="underline-em">removed the cross-origin condition entirely</span>, routing API traffic so it is same-origin from the app's point of view. Every one of the three problems evaporated, and the pre-flight round trips went with them.
+
+**The lesson.** I spent days fixing symptoms one at a time. All three shared a root cause I had accepted as a given - *the app and its API live at different addresses*. **When three unrelated-looking bugs cluster, question the assumption underneath them instead of patching each one.**
+
+> 🎥 VIDEO: 20-second screen capture - DevTools Network tab showing a write rejected with the header missing, then the same write succeeding after the fix. Clearest possible before/after.
+
+## When a green pipeline is shipping nothing
+
+**The symptom.** CI passed. Deployments reported success. The live site did not change. For days.
+
+**The cause.** A command-line flag in the wrong position. In that position the build tool treated it as a request for information, printed some help text, and **exited successfully**. Not an error. Not a warning. A success code, a step that finished in under a second, and an empty output folder.
+
+Every guard in the pipeline - lint, typecheck, build - was passing by doing nothing at all. A second, related issue compounded it: the deploy ran in a shell that does not load a normal user environment, so a tool that works when you type it by hand was simply absent there.
+
+**The fix, and the real lesson.** Both share one root cause: <span className="underline-em">a step that "passed" is not the same as a step that ran</span>. I now check pipelines against what they produced, not what they returned. **A build that finishes in under a second is a red flag, not a fast build.** If a step claims success and the output is empty, something downstream should refuse to continue.
+
+## Images that survive real uploads
+
+**The problem.** Content editors upload whatever their phone produced. Nobody is going to resize anything, and nobody should have to.
+
+**What the system does with one upload:**
+
+- **Re-encodes to a modern format** at a sane quality, and generates a set of responsive sizes plus a square thumbnail.
+- **Bakes in the camera's rotation data.** Skip this one step and <span className="squiggly">every portrait photo from a phone is sideways in one browser and upright in another</span>. It is the single most common image bug I see in the wild.
+- **Never upscales.** A small upload is not inflated into a larger "variant" that is bigger *and* blurrier than the original.
+- **Records what actually exists in storage**, not what was uploaded. Storing the original's format after converting it is a lie the frontend will act on.
+- **Discards the user's filename entirely.** Stored names are generated, and the file type is checked against a strict allowlist. User-supplied text never becomes part of a storage path.
+- **Caches aggressively forever** - which is only safe *because* names are generated. A changed image is a new name, so there is no cache to bust.
+
+Video takes a different path deliberately: size-capped, type-restricted, and **not** re-encoded. <span className="underline-em">Re-encoding video inside the request path would stall the API for minutes</span>. That is a background-worker problem, and the project did not need one.
+
+## Rich content without an injection surface
+
+**The problem.** The client wanted a real editor for their blog - headings, images, embeds, formatting. The obvious implementation is to store what the editor produces and inject it into the page later. That means <span className="squiggly">permanently storing markup you did not write and rendering it with the browser's safety rails off</span>.
+
+**What I did.** Stored the content as **structured data rather than markup**, and wrote a small renderer that walks that structure and produces page elements.
+
+**Why it is better.** The renderer is <span className="underline-em">an allowlist by construction</span>. If a content type is not something the renderer explicitly knows how to draw, it renders as nothing - rather than as an injection. There is no "off" switch to forget.
+
+The second benefit was accidental and turned out to matter as much: because the renderer is shared, **the editor's preview and the published page run through the exact same code**. Preview mismatch is a whole class of bug that simply never appeared.
+
+## The inbox is the product
+
+Every page on both sites funnels to one form. So the inquiry system got more care than anything else.
+
+An inquiry moves through a clear lifecycle, can be assigned to a person, and carries two distinct kinds of history: **private internal notes**, and **the replies that actually went out**.
+
+That second one matters more than it looks. <span className="underline-em">The reply is stored, not just sent.</span> Six weeks later, "what exactly did we tell this customer?" has an answer that is not buried in one salesperson's mail client.
+
+Around that:
+
+- **Two kinds of automatic reply.** An instant acknowledgement that always fires, *and* a library of named canned responses a human picks from. The client wanted both, and they are genuinely different jobs - one is a receipt, the other is an answer.
+- **Everything works in bulk.** Select many, then change status, delete, or reply across all of them. I built the bulk capability into the API first and the UI second. <span className="underline-em">The real Monday morning is forty inquiries, not one thoughtful conversation.</span>
+- **Spam handling that does not punish humans.** Rate limiting plus a decoy field positioned out of view rather than hidden by the obvious method - <span className="squiggly">which the less lazy bots now check for</span>. Cheap, and it catches the majority.
+- **Instant-feeling updates.** Status changes apply locally the moment you click and roll back if the server disagrees. The sales team is doing this forty times in a row; a spinner each time is the difference between a tool they like and one they tolerate.
+- **Mail failures degrade, not crash.** With no mail credentials configured the system records what it *would* have sent instead of throwing. Local work and automated checks should never need production mail access to exercise the reply flow.
+
+## A dashboard that stays cheap
+
+**The problem.** The admin landing page shows a dozen-plus numbers - totals, month-over-month movement, response rate, visitor counts, breakdowns, a rolling trend, top sources. Computed naively, that is a pile of database work on every single page load, and the team opens this page constantly.
+
+**The obvious answer** is a caching layer. A whole additional piece of infrastructure to run, monitor, and pay for.
+
+**What I did instead.** Fired all of the queries concurrently rather than in sequence, and held the assembled result in the application's own memory for sixty seconds.
+
+That is roughly a dozen lines. No extra service, no invalidation protocol, no new failure mode. <span className="underline-em">One service, one small team, and a set of numbers nobody acts on within the same minute</span> - the constraints made the simple answer the correct one. If it ever runs on several machines, each keeps its own brief view, and for a KPI tile that is still fine.
+
+One detail I am glad I handled: growth percentages against a previous value of zero. There is no honest percentage there, so the calculation returns nothing at all and **the interface shows a dash rather than a number that means nothing**.
+
+## Knowing when not to rewrite
+
+The network section renders a live map of India - pulsing location markers, region hover cards, an animated vehicle tracing routes. It is intricate, hand-tuned, and **not** built with the same UI framework as the rest of the site.
+
+The instinct is to port it. I did not.
+
+Rewriting it meant either injecting the whole thing wholesale - which defeats the point - or spending a week rebuilding animation logic into a framework's lifecycle. And after that week, <span className="squiggly">every future visual tweak becomes a framework problem instead of a drawing problem</span>.
+
+So it stays what it is, embedded with a hard boundary around it. That boundary turned out to be a feature: **its styles cannot leak into the app, and the app's styling cannot reach in and break it.** Exactly two things cross - the address it fetches live location data from, and the current light/dark theme.
+
+On that theme: its dark mode is a warm near-black with soft slate text, not black-and-white inversion, and the landmass is *lifted* slightly above the background so it reads as raised material rather than <span className="underline-em">a hole punched through the page</span>.
+
+**The lesson.** "It does not match our stack" is not by itself a reason to rewrite working, finished code. <span className="underline-em">Isolate it, define the contract across the boundary, and move on.</span>
+
+## What I took from it
+
+If you are hiring, this is what I would want you to take from the project:
+
+- **I debug through the stack, not around it.** The credential bug looked like three unrelated problems. It was one assumption. I found it by questioning the premise instead of patching symptoms.
+- **I make security decisions with a stated threat model.** Unreadable session credentials for the surface that renders untrusted content, something simpler for the surface that does not, and a check that is conditional *on purpose* rather than by omission.
+- **I build contracts before features.** One definition per concept, imported everywhere - and I accept the packaging tax that comes with it, out loud.
+- **I know when the simple answer is the correct one.** A dozen lines of in-memory caching instead of a new service. Leaving working code alone instead of a week-long rewrite. <span className="underline-em">Both defensible, both written down at the time.</span>
+- **I do not trust green checkmarks.** A pipeline that passes is not a pipeline that ran, and I check the artifacts now.
+
+## Want to work together?
+
+I am open to full-time roles and freelance projects. If you are building something hard - multi-app platforms, real internal tooling, or delivery pipelines that have to survive contact with production - I would love to talk.
+
+- **Email** - [vinodkumarmurmu62@gmail.com](mailto:vinodkumarmurmu62@gmail.com)
+- **GitHub** - [github.com/vin-dKR](https://github.com/vin-dKR)
+- **LinkedIn** - [linkedin.com/in/vinodkrs](https://linkedin.com/in/vinodkrs)
+- **Twitter** - [@always_VinodKr](https://twitter.com/always_VinodKr)
+
+Drop a message. I read everything.

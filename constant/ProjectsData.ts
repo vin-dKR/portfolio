@@ -1,5 +1,14 @@
 export const projectsData: ProjectsData[] = [
     {
+        name: "Trio EV",
+        desc: "EV fleet leasing, rentals, transport & logistics plus a charging-infrastructure arm, with a self-serve content system and sales console.",
+        video: "",
+        timeline: "Apr 26 - Jun 26",
+        techStacks: ["react", "typescript", "node js", "postgresql", "prisma", "tanstack", "zod", "tailwind css"],
+        sourceCode: "",
+        liveOn: "https://trioev.com"
+    },
+    {
         name: "Atari",
         desc: "Revamp of ICAR-ATARI's agricultural management portal with a new backend architecture for extension education tracking.",
         video: "",
