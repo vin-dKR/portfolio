@@ -20,15 +20,6 @@ declare global {
         loading: boolean
         error: string | null
     }
-    interface WakaTimeStatsProps {
-        wakaTimeStats: {
-            totalHours: number;
-            languages: Array<{
-                name: string;
-                percentage: number;
-            }>
-        }
-    }
     interface SpotifyStatsProps {
         currentTrack: {
             name: string;
@@ -83,29 +74,6 @@ declare global {
         project: ProjectsData,
         onClose: () => void
     }
-
-    interface WakatimeLangType {
-        name: string
-        percentage: number
-    }
-
-    interface WakatimeStatsType {
-        totalHours: number
-        languages: WakatimeLangType[]
-    }
-
-    interface WakatimeContextType {
-        wakatimeStats: WakatimeStatsType
-        isLoading: boolean
-        errors: string | null
-        refreshStats: () => Promise<void>
-    }
-
-    interface WakatimeProviderProps {
-        children: ReactNode,
-        initialState?: WakatimeStatsType
-    }
-
 
     interface CurrentTrackType {
         name: string;

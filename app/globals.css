@@ -137,10 +137,15 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not(.light) {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
+}
+
+:root.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
 }
 
 html {
@@ -149,54 +154,17 @@ html {
   scroll-padding-top: 6rem;
 }
 
-html:not(.dark) {
-  background-color: #ffffff;
-}
-
-html.dark {
-  background-color: #0a0a0a;
-}
-
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: "Lenia", Arial, sans-serif;
-  transition: background-color 0s;
 }
 
-::view-transition-new(root) {
-  mask: url('/images/batman.svg') center / 0 no-repeat;
-  animation: scale 1s forwards;
-  background-color: #ffffff;
-}
-
-.dark::view-transition-new(root) {
-  background-color: #0a0a0a;
-}
-
-::view-transition-old(root) {
-  animation: none;
-  z-index: -1;
-  background-color: #ffffff;
-}
-
-.dark::view-transition-old(root) {
-  animation: none;
-  z-index: -1;
-  background-color: #0a0a0a;
-}
-
-::view-transition-group(root) {
-  background-color: #ffffff;
-}
-
-.dark::view-transition-group(root) {
-  background-color: #0a0a0a;
-}
-
-@keyframes scale {
-  to {
-    mask-size: 350vmax;
+@media (prefers-reduced-motion: no-preference) {
+  .theme-motion,
+  .theme-motion body,
+  .theme-motion .theme-surface {
+    transition: background-color 240ms ease, color 240ms ease;
   }
 }
 
@@ -229,3 +197,18 @@ body {
 }
 .prose .toc a { text-decoration: none; }
 .prose .toc a:hover { text-decoration: underline; }
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .bento-mark {
+      animation: bento-mark-entry linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 100%;
+    }
+
+    @keyframes bento-mark-entry {
+      from { transform: rotate(-35deg) scale(0.8); }
+      to { transform: rotate(0) scale(1); }
+    }
+  }
+}

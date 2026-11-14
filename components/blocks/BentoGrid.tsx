@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { Sparkle } from "lucide-react";
 import VisualCard from "../reusable/bento/VisualCard";
 import GithubStats from "../reusable/bento/GithubStats";
 import WakatimeStats from "../reusable/bento/WakatimeStats";
@@ -6,54 +6,38 @@ import SocialLinksCard from "../reusable/bento/SocialLinks";
 import ProjectsCard from "../reusable/bento/ProjectsCard";
 import SpotifyStats from "../reusable/bento/SpotifyStats";
 import TechStackCard from "../reusable/bento/TechStack";
-import Planet3D from "../reusable/bento/Planet3D";
 import BlogPreviewCard from "../reusable/bento/BlogPreviewCard";
 
 type Props = {
-    blogPreviews?: BlogPostFrontmatter[]
-}
-
-const BentoGrid = ({ blogPreviews = [] }: Props) => {
-    return (
-        <div className="w-full px-2">
-            <motion.section
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.8 }}
-            >
-                <div className="mt-8">
-                    <div className="flex items-center gap-2 mb-6">
-                        <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            transition={{ type: "spring", stiffness: 300, delay: 0.2 }}
-                            className="relative"
-                        >
-                            <Planet3D />
-                        </motion.div>
-                        <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-blue-500">
-                            Bento
-                        </h2>
-                    </div>
-
-                    <div className="grid grid-cols-9 sm:grid-cols-7 gap-4">
-                        {/* Left column: visual top half + blogs bottom half */}
-                        <div className="hidden sm:flex flex-col gap-4 sm:col-span-2">
-                            <VisualCard visibleOn="dektop" />
-                            <BlogPreviewCard posts={blogPreviews} className="flex-1" />
-                        </div>
-                        <TechStackCard />
-                        <GithubStats username="vin-dKR" />
-                        <ProjectsCard />
-                        <WakatimeStats />
-                        <SocialLinksCard />
-                        <SpotifyStats />
-                        <VisualCard visibleOn="mobile"/>
-                    </div>
-                </div>
-            </motion.section>
-        </div>
-    );
+    blogPreviews?: BlogPostFrontmatter[];
 };
 
-export default BentoGrid;
+export default function BentoGrid({ blogPreviews = [] }: Props) {
+    return (
+        <section aria-labelledby="bento-heading" className="mt-10 w-full">
+            <div className="group mb-5 flex items-center gap-3">
+                <span aria-hidden="true" className="bento-mark relative grid size-9 shrink-0 place-items-center rounded-xl border border-violet-500/20 bg-violet-500/8 text-violet-700 dark:text-violet-300">
+                    <Sparkle className="size-4 motion-safe:transition-transform motion-safe:duration-500 motion-safe:group-hover:rotate-90" />
+                    <span className="absolute top-1.5 right-1.5 size-1 rounded-full bg-cyan-500 motion-safe:transition-transform motion-safe:duration-500 motion-safe:group-hover:-translate-x-5 motion-safe:group-hover:translate-y-5" />
+                </span>
+                <h2 id="bento-heading" className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
+                    Bento
+                </h2>
+                <span aria-hidden="true" className="h-px grow bg-gradient-to-r from-violet-500/25 to-transparent" />
+            </div>
+
+            <div className="grid grid-cols-9 gap-3 sm:grid-cols-7 sm:gap-4">
+                <div className="col-span-9 grid min-w-0 grid-cols-3 gap-3 sm:col-span-2 sm:flex sm:flex-col sm:gap-4">
+                    <VisualCard />
+                    <BlogPreviewCard posts={blogPreviews} className="col-span-2 sm:shrink-0" />
+                </div>
+                <TechStackCard />
+                <GithubStats username="vin-dKR" />
+                <ProjectsCard />
+                <WakatimeStats />
+                <SocialLinksCard />
+                <SpotifyStats />
+            </div>
+        </section>
+    );
+}

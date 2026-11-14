@@ -1,23 +1,43 @@
-import { getTechIconSvg } from "@/constant/ProjectsData";
+import TechIcon from "./TechIcon";
 import { GithubIcon, Globe } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
+    const dialogRef = useRef<HTMLDialogElement>(null);
+    const titleId = useId();
     const [videoError, setVideoError] = useState(false);
-    
+
+    useEffect(() => {
+        const dialog = dialogRef.current;
+        if (!dialog || !project) return;
+
+        dialog.showModal();
+        return () => dialog.close();
+    }, [project]);
+
+    const close = () => {
+        dialogRef.current?.close();
+        onClose();
+    };
+
     if (!project) return null;
 
     return (
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8 backdrop-blur-sm bg-black/20 dark:bg-black/40 pt-16"
-            onClick={onClose}
+        <dialog
+            ref={dialogRef}
+            aria-labelledby={titleId}
+            onCancel={(event) => {
+                event.preventDefault();
+                close();
+            }}
+            onClick={(event) => {
+                if (event.target === event.currentTarget) close();
+            }}
+            className="m-auto w-[calc(100%-2rem)] max-w-3xl max-h-[85dvh] overflow-hidden rounded-2xl border border-zinc-950/10 bg-white font-lenia shadow-2xl backdrop:bg-zinc-950/55 dark:border-white/10 dark:bg-zinc-900"
         >
-            <div
-                className="relative bg-color-1 dark:bg-color-1 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] border border-black/4 dark:border-white/4 font-lenia overflow-hidden"
-                onClick={(e) => e.stopPropagation()}
-            >
+            <div className="max-h-[85dvh] overflow-y-auto overscroll-contain">
                 {/* Mac-style header */}
-                <div className="px-4 py-3 dark:bg-white/2 bg-black/10 border-b border-black/4 dark:border-white/4 flex items-center sticky top-0 z-10 backdrop-blur-sm">
+                <div className="sticky top-0 z-10 flex items-center border-b border-zinc-950/10 bg-white/95 px-4 py-2 backdrop-blur-sm dark:border-white/10 dark:bg-zinc-900/95">
                     <div className="flex space-x-2">
                         <div className="w-2 h-2 rounded-full bg-red-500"></div>
                         <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
@@ -29,8 +49,10 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
                     </div>
 
                     <button
-                        onClick={onClose}
-                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+                        type="button"
+                        onClick={close}
+                        aria-label="Close project details"
+                        className="cursor-pointer rounded p-1 text-zinc-600 focus-visible:outline-2 focus-visible:outline-violet-500 dark:text-zinc-400"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -39,49 +61,29 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
                 </div>
 
                 {/* Project content */}
-                <div className="p-4 sm:p-6 overflow-y-auto max-h-[calc(90vh-60px)]">
-                    {/* Video */}
-                    <div className="relative mb-6 rounded-lg overflow-hidden border border-white/5 dark:border-white/5">
-                        <div className="relative p-1 overflow-hidden border border-white/5 rounded-lg bg-white/10 shadow-xl">
-                            <div className="flex flex-row w-full justify-between items-center">
-                                <div className="absolute flex space-x-2 z-10">
-                                    <div className="w-2 h-2 rounded-full bg-red-500" />
-                                    <div className="w-2 h-2 rounded-full bg-yellow-500" />
-                                    <div className="w-2 h-2 rounded-full bg-green-500" />
-                                </div>
-                                <div className="mx-auto bg-black/70 dark:bg-black/30 text-white dark:text-gray-200 w-1/3 text-center text-[10px] px-4 rounded-sm mb-1 z-10 relative">{project.name}</div>
-                            </div>
-                            {!videoError ? (
+                <div className="p-4 sm:p-6">
+                    {project.video && (
+                        <div className="mb-6 overflow-hidden rounded-xl bg-zinc-950">
+                            {videoError ? (
+                                <p className="p-5 text-sm text-zinc-300">Project preview unavailable.</p>
+                            ) : (
                                 <video
                                     src={project.video}
-                                    autoPlay
-                                    muted
-                                    loop
+                                    controls
                                     playsInline
-                                    preload="metadata"
-                                    className="w-full object-cover rounded-lg"
+                                    preload="none"
+                                    aria-label={`${project.name} video preview`}
+                                    className="aspect-video w-full object-contain"
                                     onError={() => setVideoError(true)}
-                                    onLoadStart={() => setVideoError(false)}
                                 />
-                            ) : (
-                                <div className="flex flex-col items-center justify-center p-12 text-center bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-lg min-h-[300px]">
-                                    <div className="w-20 h-20 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center mb-4">
-                                        <svg className="w-10 h-10 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                        </svg>
-                                    </div>
-                                    <p className="text-base text-gray-700 dark:text-gray-300 font-medium mb-1">{project.name}</p>
-                                    <p className="text-sm text-gray-500 dark:text-gray-500">Video unavailable</p>
-                                </div>
                             )}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-20 dark:opacity-60 pt-8"></div>
                         </div>
-                    </div>
+                    )}
 
                     {/* Project details */}
                     <div className="space-y-4 sm:space-y-6">
                         <div>
-                            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white mb-2">{project.name}</h2>
+                            <h2 id={titleId} className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white mb-2">{project.name}</h2>
                             <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-3">
                                 <span className="flex items-center">
                                     <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -98,23 +100,12 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
                             <h3 className="text-sm sm:text-base font-medium text-gray-700 dark:text-gray-300 mb-2">Technologies</h3>
                             <div className="flex flex-wrap gap-2">
                                 {project.techStacks.map((tech, index) => {
-                                    const iconSvg = getTechIconSvg(tech);
-
                                     return (
                                         <div
                                             key={index}
                                             className="flex items-center gap-2 px-3 py-1.5 bg-black/40 dark:bg-black/10 rounded-lg border border-gray-700/50 dark:border-gray-600/30 cursor-default transition-all hover:bg-gray-700/50 dark:hover:bg-gray-600/40"
                                         >
-                                            {iconSvg ? (
-                                                <div 
-                                                    className="w-4 h-4 flex-shrink-0 flex items-center justify-center fill-white dark:fill-white"
-                                                    dangerouslySetInnerHTML={{ __html: iconSvg }}
-                                                />
-                                            ) : (
-                                                <div className="w-5 h-5 rounded bg-black/40 dark:bg-white/10 flex items-center justify-center text-[8px] font-bold text-white">
-                                                    {tech.charAt(0).toUpperCase()}
-                                                </div>
-                                            )}
+                                            <TechIcon name={tech} />
                                             <span className="text-xs font-medium text-gray-200 dark:text-gray-300">
                                                 {tech}
                                             </span>
@@ -173,7 +164,7 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </dialog>
     )
 }
 

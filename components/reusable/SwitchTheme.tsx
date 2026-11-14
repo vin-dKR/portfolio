@@ -1,48 +1,39 @@
-"use client"
+"use client";
 
+import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Sun, Moon } from 'lucide-react';
 import { useEffect, useState } from "react";
 
-const SwitchTheme = () => {
+export default function SwitchTheme() {
     const { setTheme, resolvedTheme } = useTheme();
-    const [mounted, setMounted] = useState<boolean>(false)
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        setMounted(true)
-    }, [])
-
-    if (!mounted) return <div className="size-14"></div>
-
-    const switchTheme = () => {
-        const newTheme = resolvedTheme === 'dark' ? 'light' : 'dark'
-        const html = document.documentElement
-        // Set background immediately to prevent flash
-        if (newTheme === 'dark') {
-            html.style.backgroundColor = '#0a0a0a'
-        } else {
-            html.style.backgroundColor = '#ffffff'
-        }
-        setTheme(newTheme)
-        console.log(resolvedTheme)
-    }
+        setMounted(true);
+    }, []);
 
     const toggleTheme = () => {
-        if (!document.startViewTransition) {
-            switchTheme()
-        } else {
-            document.startViewTransition(switchTheme)
-        }
-    }
+        const root = document.documentElement;
+        root.classList.add("theme-motion");
+        setTheme(root.classList.contains("dark") ? "light" : "dark");
+    };
 
     return (
-        <button 
-          onClick={toggleTheme}
-          className="p-2 rounded-xl bg-zinc-800/50 hover:bg-zinc-700/50 transition-colors z-[100]"
+        <button
+            type="button"
+            aria-label="Dark theme"
+            aria-pressed={mounted ? resolvedTheme === "dark" : undefined}
+            onClick={toggleTheme}
+            className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-xl bg-black/5 text-zinc-700 hover:bg-black/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 dark:bg-white/8 dark:text-zinc-100 dark:hover:bg-white/14 motion-safe:transition-colors"
         >
-          {resolvedTheme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            <Moon
+                aria-hidden="true"
+                className="col-start-1 row-start-1 size-[18px] dark:scale-75 dark:rotate-45 dark:opacity-0 motion-safe:transition-[opacity,rotate,scale] motion-safe:duration-200"
+            />
+            <Sun
+                aria-hidden="true"
+                className="col-start-1 row-start-1 size-[18px] scale-75 -rotate-45 opacity-0 dark:scale-100 dark:rotate-0 dark:opacity-100 motion-safe:transition-[opacity,rotate,scale] motion-safe:duration-200"
+            />
         </button>
-    )
+    );
 }
-
-export default SwitchTheme;

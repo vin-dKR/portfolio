@@ -32,20 +32,27 @@ export const timelineData: TimelineEntry[] = [
         ],
         summaryPoints: ['• Website Development & Management ', '• UI/UX Design', '• Business Strategy & Digital Presence'],
     }, {
-        title: 'HCL Tech',
+        title: 'HCLTech',
         content: 'Intern',
         image: [
             { 
                 id: 1, 
                 src: '/images/hcltech/hcltech1.jpg', 
-                alt: 'First image' 
-            }, { 
-                id: 2, 
-                src: '/images/hcltech/hcltech2.jpeg', 
-                alt: 'Second image' 
+                alt: 'During my HCLTech internship'
             }
         ],
         date: 'Sep 2024 - Feb 2025',
         summaryPoints: ['Financial Systems Support •', 'Incident Handling & Support •', 'System Monitoring & Maintenance •'],
+    }, {
+        title: 'Freelancer',
+        content: 'Independent web developer',
+        date: 'Dec 2025 - Present',
+        image: [
+            {
+                id: 1,
+                src: '/images/freelance-workspace.webp',
+                alt: 'My desk with a Mac mini, a monitor showing a terminal, and a keyboard',
+            },
+        ],
     },
 ]

@@ -1,7 +1,7 @@
 "use client"
 
-import React from "react"
-import { motion } from "framer-motion"
+import { useRef } from "react"
+import { motion, useInView } from "framer-motion"
 import {
     ArrowUpRight,
     Github,
@@ -14,6 +14,7 @@ import {
     BookMarked,
 } from "lucide-react"
 import BentoCard from "./BentoCard"
+import { GithubProvider } from "@/context/GithubContext"
 import { useGithubData } from "@/hooks/github"
 import Link from "next/link"
 import Image from "next/image"
@@ -32,7 +33,9 @@ const intensityClass = (n: number) =>
     ][n] || "bg-zinc-200"
 
 const GithubStats = ({ username }: GithubStatsProps) => {
-    const stats = useGithubData(username)
+    const card = useRef<HTMLDivElement>(null)
+    const isNearViewport = useInView(card, { margin: "160px", once: true })
+    const stats = useGithubData(isNearViewport ? username : "")
 
     const stat = [
         { key: "followers", label: "Followers", Icon: Users },
@@ -49,12 +52,12 @@ const GithubStats = ({ username }: GithubStatsProps) => {
     while (slice.length % 7 !== 0) slice.unshift({ date: '', count: 0, level: 0 })
 
     return (
-        <BentoCard className="col-span-4 sm:col-span-1 md:col-span-3 row-span-1 group/github relative overflow-hidden">
+        <BentoCard className="col-span-4 sm:col-span-3 row-span-1 group/github relative overflow-hidden">
             {/* gradient halo */}
             <div className="pointer-events-none absolute -top-16 -right-16 w-44 h-44 rounded-full bg-gradient-to-br from-violet-500/25 to-fuchsia-500/15 blur-3xl opacity-70" />
             <div className="pointer-events-none absolute -bottom-20 -left-10 w-40 h-40 rounded-full bg-gradient-to-tr from-fuchsia-500/15 to-cyan-500/10 blur-3xl opacity-50" />
 
-            <div className="relative">
+            <div ref={card} className="relative">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center space-x-2">
@@ -65,8 +68,8 @@ const GithubStats = ({ username }: GithubStatsProps) => {
                     </div>
                 </div>
 
-                {stats.loading ? (
-                    <div className="flex items-center justify-center h-32">
+                {!isNearViewport || stats.loading || (!stats.username && !stats.error) ? (
+                    <div className="flex items-center justify-center h-32" aria-label="Loading GitHub statistics">
                         <Loader2 className="w-5 h-5 animate-spin text-zinc-500" />
                     </div>
                 ) : stats.error ? (
@@ -229,4 +232,10 @@ const GithubStats = ({ username }: GithubStatsProps) => {
     )
 }
 
-export default GithubStats
+export default function GithubStatsCard({ username }: GithubStatsProps) {
+    return (
+        <GithubProvider>
+            <GithubStats username={username} />
+        </GithubProvider>
+    )
+}

@@ -1,8 +1,5 @@
-"use client"
-
 import React from "react"
 import BentoCard from "./BentoCard"
-import { motion } from "framer-motion"
 import { ArrowUpRight, ExternalLink, Mail } from "lucide-react"
 import { socialMedia } from "@/constant/SocialMedia"
 import Image from "next/image"
@@ -22,7 +19,7 @@ const SocialLinksCard = () => {
             case "github":
                 return <Image src="/images/socials/github.svg" width={20} height={20} alt="" className={`${cls} dark:invert`} />
             case "twitter":
-                return <Image src="/images/socials/xcom.svg" width={20} height={20} alt="" className={cls} />
+                return <Image src="/images/socials/xcom.svg" width={20} height={20} alt="" className={`${cls} dark:invert`} />
             case "linkedin":
                 return <Image src="/images/socials/linkedin.svg" width={20} height={20} alt="" className={cls} />
             case "discord":
@@ -35,7 +32,7 @@ const SocialLinksCard = () => {
     }
 
     return (
-        <BentoCard className="col-span-5 sm:col-span-3 row-span-1 group/social h-full relative overflow-hidden">
+        <BentoCard className="col-span-5 sm:col-span-4 row-span-1 group/social h-full relative overflow-hidden">
             <div className="pointer-events-none absolute -top-16 -right-16 w-48 h-48 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/15 blur-3xl opacity-60" />
             <div className="pointer-events-none absolute -bottom-16 -left-12 w-40 h-40 rounded-full bg-gradient-to-tr from-pink-500/15 to-amber-500/10 blur-3xl opacity-50" />
 
@@ -57,17 +54,14 @@ const SocialLinksCard = () => {
                 </div>
 
                 <div className="space-y-1 flex-1">
-                    {socialMedia.map((s, i) => {
+                    {socialMedia.map((s) => {
                         const b = brand[s.name.toLowerCase()] || brand.github
                         return (
-                            <motion.a
+                            <a
                                 key={s.name}
                                 href={s.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                initial={{ x: -8, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                transition={{ delay: 0.05 * i }}
                                 className="group/row relative flex items-center gap-2.5 rounded-lg pl-3 pr-2 py-1.5 hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors"
                             >
                                 {/* accent rail */}
@@ -89,7 +83,7 @@ const SocialLinksCard = () => {
                                 </div>
 
                                 <ArrowUpRight className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500 group-hover/row:text-zinc-900 dark:group-hover/row:text-white group-hover/row:translate-x-0.5 group-hover/row:-translate-y-0.5 transition-all shrink-0" />
-                            </motion.a>
+                            </a>
                         )
                     })}
                 </div>

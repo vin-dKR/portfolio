@@ -1,10 +1,10 @@
 "use client"
 
-import React from "react"
-import { motion } from "framer-motion"
+import { useRef } from "react"
+import { motion, useInView } from "framer-motion"
 import { ArrowUpRight, Music, RefreshCw, Play } from "lucide-react"
 import BentoCard from "./BentoCard"
-import { useSpotify } from "@/context/SpotifyContext"
+import { SpotifyProvider, useSpotify } from "@/context/SpotifyContext"
 import Image from "next/image"
 
 const Equalizer = () => (
@@ -21,11 +21,11 @@ const Equalizer = () => (
     </div>
 )
 
-const SpotifyStats = () => {
+const SpotifyContent = () => {
     const { currentTrack, isLoading, error, refreshTrack } = useSpotify()
 
     return (
-        <BentoCard className="col-span-6 sm:col-span-2 group/spotify h-full relative overflow-hidden">
+        <>
             <div className="pointer-events-none absolute -top-16 -right-12 w-40 h-40 rounded-full bg-gradient-to-br from-green-500/25 to-emerald-500/15 blur-3xl opacity-70" />
             <div className="pointer-events-none absolute -bottom-16 -left-12 w-36 h-36 rounded-full bg-gradient-to-tr from-emerald-500/15 to-teal-500/10 blur-3xl opacity-50" />
 
@@ -55,18 +55,18 @@ const SpotifyStats = () => {
                         />
                     </div>
                 ) : currentTrack ? (
-                    <div>
+                    <div className="flex items-center gap-3">
                         <motion.div
                             initial={{ scale: 0.95, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            className="relative rounded-2xl overflow-hidden mb-2.5 aspect-square"
+                            className="relative size-16 shrink-0 overflow-hidden rounded-xl sm:size-20"
                         >
                             {currentTrack.albumArt ? (
                                 <Image
                                     src={currentTrack.albumArt}
                                     alt={currentTrack.name}
-                                    height={400}
-                                    width={400}
+                                    height={80}
+                                    width={80}
                                     unoptimized
                                     className={`w-full h-full object-cover transition-all duration-500 group-hover/spotify:scale-105 ${!currentTrack.isPlaying ? "grayscale-[40%]" : ""}`}
                                 />
@@ -84,37 +84,39 @@ const SpotifyStats = () => {
                             </div>
                         </motion.div>
 
-                        <div className="flex items-start gap-2">
-                            <div className="flex-1 min-w-0">
-                                <p className="text-sm font-semibold truncate text-gray-900 dark:text-gray-100">
-                                    {currentTrack.name}
-                                </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                                    {currentTrack.artist}
-                                </p>
+                        <div className="min-w-0">
+                            <div className="flex items-start gap-2">
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-semibold truncate text-gray-900 dark:text-gray-100">
+                                        {currentTrack.name}
+                                    </p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                        {currentTrack.artist}
+                                    </p>
+                                </div>
+                                {currentTrack.isPlaying && (
+                                    <div className="shrink-0 mt-0.5">
+                                        <Equalizer />
+                                    </div>
+                                )}
                             </div>
-                            {currentTrack.isPlaying && (
-                                <div className="shrink-0 mt-0.5">
-                                    <Equalizer />
-                                </div>
-                            )}
-                        </div>
 
-                        <div className="mt-2 flex items-center">
-                            {currentTrack.isPlaying ? (
-                                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-green-500/15 border border-green-500/30">
-                                    <span className="relative flex h-1.5 w-1.5">
-                                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75" />
-                                        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-500" />
-                                    </span>
-                                    <span className="text-[10px] text-green-700 dark:text-green-300 font-medium">Live</span>
-                                </div>
-                            ) : (
-                                <div className="flex items-center gap-1.5 text-[10px] text-zinc-500">
-                                    <span className="h-1.5 w-1.5 bg-zinc-400 rounded-full" />
-                                    Recently played
-                                </div>
-                            )}
+                            <div className="mt-2 flex items-center">
+                                {currentTrack.isPlaying ? (
+                                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-green-500/15 border border-green-500/30">
+                                        <span className="relative flex h-1.5 w-1.5">
+                                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75" />
+                                            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-500" />
+                                        </span>
+                                        <span className="text-[10px] text-green-700 dark:text-green-300 font-medium">Live</span>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-1.5 text-[10px] text-zinc-500">
+                                        <span className="h-1.5 w-1.5 bg-zinc-400 rounded-full" />
+                                        Recently played
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 ) : (
@@ -133,19 +135,40 @@ const SpotifyStats = () => {
                     </div>
                 )}
 
-                <div
-                    className="absolute bottom-0 right-0 opacity-50 group-hover/spotify:opacity-100 transition-opacity duration-300 cursor-pointer"
-                    onClick={() =>
-                        currentTrack?.spotifyUrl
-                            ? window.open(currentTrack.spotifyUrl, "_blank")
-                            : refreshTrack()
-                    }
-                >
-                    <ArrowUpRight className="w-4 h-4" />
-                </div>
+                {currentTrack?.spotifyUrl && (
+                    <a
+                        className="absolute right-0 bottom-0 rounded p-1 text-zinc-500 hover:text-green-700 focus-visible:outline-2 focus-visible:outline-green-500 dark:text-zinc-400 dark:hover:text-green-300"
+                        href={currentTrack.spotifyUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label="Open track on Spotify"
+                    >
+                        <ArrowUpRight aria-hidden="true" className="size-4" />
+                    </a>
+                )}
+            </div>
+        </>
+    )
+}
+
+export default function SpotifyStats() {
+    const card = useRef<HTMLDivElement>(null)
+    const isNearViewport = useInView(card, { margin: "160px", once: true })
+
+    return (
+        <BentoCard className="col-span-9 sm:col-span-7 group/spotify">
+            <div ref={card} className="min-h-32">
+                {isNearViewport ? (
+                    <SpotifyProvider>
+                        <SpotifyContent />
+                    </SpotifyProvider>
+                ) : (
+                    <h3 className="flex items-center gap-2 text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                        <Music aria-hidden="true" className="size-4 text-green-600 dark:text-green-400" />
+                        Last Played
+                    </h3>
+                )}
             </div>
         </BentoCard>
     )
 }
-
-export default SpotifyStats

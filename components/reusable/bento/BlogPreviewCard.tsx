@@ -16,11 +16,12 @@ const BlogRow = ({ p, i }: { p: BlogPostFrontmatter; i: number }) => {
     const ref = useRef<HTMLAnchorElement | null>(null)
     const [hover, setHover] = useState(false)
     const [pos, setPos] = useState<{ top: number; left: number } | null>(null)
-    const [mounted, setMounted] = useState(false)
     const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
     useEffect(() => {
-        setMounted(true)
+        return () => {
+            if (timer.current) clearTimeout(timer.current)
+        }
     }, [])
 
     const showTooltip = () => {
@@ -62,11 +63,12 @@ const BlogRow = ({ p, i }: { p: BlogPostFrontmatter; i: number }) => {
             <Link
                 ref={ref}
                 href={`/posts/${p.slug}`}
+                prefetch={false}
                 onMouseEnter={onEnter}
                 onMouseLeave={onLeave}
                 onFocus={onEnter}
                 onBlur={onLeave}
-                className="block rounded-md px-1.5 py-1 hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors"
+                className="block rounded-md px-1.5 py-1 transition-colors hover:bg-black/4 focus-visible:outline-2 focus-visible:outline-violet-500 dark:hover:bg-white/5"
             >
                 <p className="text-[11px] font-medium text-zinc-800 dark:text-zinc-100 line-clamp-2 leading-snug">
                     {p.title}
@@ -76,7 +78,7 @@ const BlogRow = ({ p, i }: { p: BlogPostFrontmatter; i: number }) => {
                 </span>
             </Link>
 
-            {mounted && hover && pos &&
+            {hover && pos &&
                 createPortal(
                     <div
                         className="absolute z-[100]"
@@ -86,6 +88,7 @@ const BlogRow = ({ p, i }: { p: BlogPostFrontmatter; i: number }) => {
                     >
                         <Link
                             href={`/posts/${p.slug}`}
+                            prefetch={false}
                             className="block w-72 max-w-[20rem] rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-900 shadow-2xl px-3 py-2 animate-in fade-in zoom-in-95 duration-150 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
                         >
                             <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 leading-snug">
@@ -124,9 +127,11 @@ const BlogPreviewCard = ({ posts, className }: Props) => {
                     </div>
                     <Link
                         href="/posts"
-                        className="opacity-50 hover:opacity-100 transition-opacity"
+                        prefetch={false}
+                        aria-label="View all posts"
+                        className="rounded p-1 text-zinc-500 hover:text-violet-600 focus-visible:outline-2 focus-visible:outline-violet-500 dark:text-zinc-400"
                     >
-                        <ArrowUpRight className="w-3.5 h-3.5" />
+                        <ArrowUpRight aria-hidden="true" className="size-3.5" />
                     </Link>
                 </div>
 

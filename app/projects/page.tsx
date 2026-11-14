@@ -1,5 +1,4 @@
 "use client"
-import Navbar from "@/components/blocks/Navbar";
 import React, { useState } from "react";
 import { projectsData } from "@/constant/ProjectsData";
 import Project from "@/components/reusable/projects/Project";
@@ -39,14 +38,9 @@ const ProjectsPage = () => {
     ];
 
     return (
-        <div className="flex min-h-screen flex-col items-center dark:bg-purple-500/5 bg-white font-lenia">
+        <div className="flex min-h-screen flex-col items-center theme-surface dark:bg-purple-500/5 bg-white font-lenia">
             {/* Main container with responsive padding */}
             <div className="w-full max-w-2xl px-4 sm:px-6 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-24 md:pb-8 sm:pb-12 lg:pb-16 mx-auto">
-                {/* Navbar */}
-                <div className="w-full mb-8 sm:mb-12">
-                    <Navbar />
-                </div>
-
                 {/* Tabs Section */}
                 <div className="w-full">
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="">

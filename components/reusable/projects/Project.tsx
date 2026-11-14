@@ -2,17 +2,12 @@
 
 import React, { useState } from "react";
 import ProjectModal from "./ProjectModal";
-import { getTechIconSvg } from "@/constant/ProjectsData";
-import { GithubIcon, Globe } from "lucide-react";
+import TechIcon from "./TechIcon";
+import { ArrowUpRight, GithubIcon, Globe } from "lucide-react";
 
 const Project = (props: ProjectsData) => {
     const { name, desc, timeline, techStacks, video, sourceCode, liveOn } = props;
     const [showModal, setShowModal] = useState(false);
-    const [videoError, setVideoError] = useState(false);
-
-    const handleCardClick = () => {
-        setShowModal(true);
-    };
 
     const handleCloseModal = () => {
         setShowModal(false);
@@ -21,59 +16,7 @@ const Project = (props: ProjectsData) => {
     return (
         <>
             <div className={`flex flex-col gap-0 font-lenia items-stretch dark:bg-white/2 bg-black/10 border border-black/4 dark:border-white/4 rounded-xl shadow-lg hover:shadow-xl overflow-hidden`}>
-                {/* Project Image with Mac-style frame */}
-                <div className="w-full p-4 sm:p-6 relative">
-                    <div
-                        className="relative p-1 overflow-hidden border border-white/5 rounded-lg bg-white/10 shadow-xl transition-all duration-300 hover:shadow-2xl group cursor-pointer transform hover:-translate-y-1"
-                        onClick={handleCardClick}
-                    >
-                        <div className="flex flex-row w-full justify-between items-center ">
-                            {/* Mac-style header */}
-
-                            <div className="absolute flex space-x-2 z-10">
-                                <div className="w-2 h-2 rounded-full bg-red-500" />
-                                <div className="w-2 h-2 rounded-full bg-yellow-500" />
-                                <div className="w-2 h-2 rounded-full bg-green-500" />
-                            </div>
-
-                            <div className="mx-auto bg-black/70 dark:bg-black/30 text-white dark:text-gray-200 w-1/3 text-center text-[10px] px-4 rounded-sm mb-1 z-10 relative">{name}</div>
-                        </div>
-                        <div className="relative rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 min-h-[200px] flex items-center justify-center">
-                            {!videoError ? (
-                                <video
-                                    src={video}
-                                    autoPlay
-                                    muted
-                                    loop
-                                    playsInline
-                                    preload="metadata"
-                                    className="w-full object-cover rounded-lg"
-                                    onError={() => setVideoError(true)}
-                                    onLoadStart={() => setVideoError(false)}
-                                />
-                            ) : (
-                                <div className="flex flex-col items-center justify-center p-8 text-center">
-                                    <div className="w-16 h-16 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center mb-4">
-                                        <svg className="w-8 h-8 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                        </svg>
-                                    </div>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">{name}</p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">Video unavailable</p>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Image */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-20 dark:opacity-60 pt-8"></div>
-                    </div>
-                </div>
-
-                {/* Project Details */}
-                <div
-                    className="w-full space-y-2 sm:space-y-3 p-4 sm:p-6 transition-all cursor-pointer flex flex-col"
-                    onClick={handleCardClick}
-                >
+                <div className="w-full space-y-3 p-4 sm:p-6">
                     <h2 className="text-2xl font-bold text-gray-800 dark:text-white">{name}</h2>
 
                     <p className="text-gray-600 dark:text-gray-300">{desc}</p>
@@ -91,23 +34,12 @@ const Project = (props: ProjectsData) => {
                         <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Technologies</h3>
                         <div className="flex flex-wrap gap-2">
                             {techStacks.map((tech, index) => {
-                                const iconSvg = getTechIconSvg(tech);
-
                                 return (
                                     <div
                                         key={index}
                                         className="flex items-center gap-2 px-3 py-1.5 bg-black/40 dark:bg-black/10 rounded-lg border border-gray-700/50 dark:border-gray-600/30 cursor-default transition-all hover:bg-gray-700/50 dark:hover:bg-gray-600/40"
                                     >
-                                        {iconSvg ? (
-                                            <div 
-                                                className="w-4 h-4 flex-shrink-0 flex items-center justify-center fill-white dark:fill-white"
-                                                dangerouslySetInnerHTML={{ __html: iconSvg }}
-                                            />
-                                        ) : (
-                                            <div className="w-5 h-5 rounded bg-black/40 dark:bg-white/10 flex items-center justify-center text-[8px] font-bold text-white">
-                                                {tech.charAt(0).toUpperCase()}
-                                            </div>
-                                        )}
+                                        <TechIcon name={tech} />
                                         <span className="text-xs font-medium text-gray-200 dark:text-gray-300">
                                             {tech}
                                         </span>
@@ -144,17 +76,19 @@ const Project = (props: ProjectsData) => {
                                 </a>
                             )}
                         </div>
-                        <span 
-                            className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 cursor-pointer"
-                            onClick={handleCardClick}
+                        <button
+                            type="button"
+                            className="inline-flex min-h-9 cursor-pointer items-center gap-1 rounded text-sm font-medium text-blue-700 focus-visible:outline-2 focus-visible:outline-violet-500 dark:text-blue-300"
+                            onClick={() => setShowModal(true)}
+                            aria-label={`View ${name} details`}
                         >
-                            View Details
-                            <span className="font-ltserif">→</span>
-                        </span>
+                            {video ? "Details & preview" : "View details"}
+                            <ArrowUpRight aria-hidden="true" className="size-4" />
+                        </button>
                     </div>
                 </div>
-                {showModal && <ProjectModal project={props} onClose={handleCloseModal} />}
             </div>
+            {showModal && <ProjectModal project={props} onClose={handleCloseModal} />}
         </>
     );
 };
