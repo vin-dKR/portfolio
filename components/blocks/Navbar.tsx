@@ -1,40 +1,45 @@
-import { ArrowUpRight, Mail } from "lucide-react";
-import Link from "next/link";
-import { contact } from "@/constant/Portfolio";
+"use client";
+
+import { useEffect, useState } from "react";
 import SwitchTheme from "../reusable/SwitchTheme";
+import Image from "next/image";
 import { DesktopNav } from "../reusable/navbar/DesktopNav";
 import MobileBottomNav from "../reusable/navbar/MobileBottomNav";
+import Link from "next/link";
 import "./Navbar.css";
 
 export default function Navbar() {
+    const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => {
+        const update = () => setScrolled(window.scrollY > 24);
+        update();
+        window.addEventListener("scroll", update, { passive: true });
+        return () => window.removeEventListener("scroll", update);
+    }, []);
+
     return (
         <>
-            <header className="portfolio-header">
-                <div className="site-container portfolio-header-inner">
-                    <div aria-hidden="true" className="portfolio-aurora">
-                        <span />
-                    </div>
-                    <div className="portfolio-nav-bar theme-surface">
-                        <Link href="/" prefetch={false} aria-label="Vinod KR home" className="portfolio-brand">
-                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true">
-                                <path d="m3.75 6.75 5.5 10.5L14.5 6.75m3 0v10.5m3-10.5-3 4 3 3.25" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                            <span>Vinod KR</span>
-                        </Link>
-
-                        <DesktopNav />
-
-                        <div className="portfolio-nav-actions">
-                            <SwitchTheme />
-                            <a href={`mailto:${contact.email}`} className="portfolio-nav-contact" aria-label="Get in touch by email">
-                                <Mail aria-hidden="true" size={16} className="portfolio-nav-mail" />
-                                <span>Get in touch</span>
-                                <ArrowUpRight aria-hidden="true" size={15} className="portfolio-nav-arrow" />
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </header>
+            <div className="pointer-events-none fixed inset-x-0 top-0 z-[99] flex justify-center px-3">
+                <nav
+                    aria-label="Main navigation"
+                    className={`pointer-events-auto relative isolate flex w-full items-center justify-between gap-4 rounded-b-2xl border-x border-b border-zinc-950/8 bg-white/90 px-4 shadow-sm backdrop-blur-md sm:px-6 dark:border-white/10 dark:bg-zinc-950/85 motion-safe:transition-[max-width,height,background-color] motion-safe:duration-200 ${scrolled ? "h-14 max-w-[40rem]" : "h-16 max-w-[44rem] md:h-[76px]"}`}
+                >
+                    <div aria-hidden="true" className="portfolio-aurora"><span /></div>
+                    <Link href="/" prefetch={false} aria-label="Vinod KR home" className="shrink-0 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-500">
+                        <Image
+                            src="/images/logo-dark.svg"
+                            alt=""
+                            width={72}
+                            height={44}
+                            loading="eager"
+                            className={`h-auto transition-[width] duration-200 motion-reduce:transition-none dark:invert ${scrolled ? "w-14" : "w-16 sm:w-[4.5rem]"}`}
+                        />
+                    </Link>
+                    <DesktopNav />
+                    <SwitchTheme />
+                </nav>
+            </div>
             <MobileBottomNav />
         </>
     );

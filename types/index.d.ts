@@ -5,15 +5,42 @@ export { }
 declare global {
     interface GithubStatsProps {
         followers: number;
+        following: number;
+        stars: number;
+        issues: number;
+        prs: number;
         username: string;
+        avatar: string;
+        bio: string
         publicRepos: number;
+        topLanguages: Array<{ name: string; percentage: number; color: string }>;
+        topRepo: { name: string; stars: number; description: string; url: string } | null;
         contributions: Array<{ date: string; count: number; level: number }>;
         totalContributions: number;
+        loading: boolean
         error: string | null
     }
+    interface BentoGridProps {
+        techStacks: TechStackCardProps['techStacks'];
+    }
+    interface BentoCardProps {
+        children: ReactNode;
+        className?: string;
+        hoverable?: boolean;
+    }
+
     interface MobileDropdownProps {
         isOpen: boolean;
         setIsOpen: (value: boolean) => void;
+    }
+
+    interface TechStackCardProps {
+        techStacks: {
+            [category: string]: {
+                color: string;
+                techs: string[];
+            }
+        }
     }
 
     interface SocialMediaProps {

@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "./portfolio.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -130,6 +129,35 @@
   font-weight: 200 700;
   font-display: swap;
   src: url("/fonts/InstruItalic.ttf");
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+:root.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
+
+html {
+  background-color: var(--background);
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: "Lenia", Arial, sans-serif;
 }
 
 /* Blog inline emphasis */

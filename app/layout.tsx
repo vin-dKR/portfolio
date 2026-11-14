@@ -1,33 +1,49 @@
-import type { Metadata } from "next"
-import type { ReactNode } from "react"
-import "./globals.css"
-import { ThemeProvider } from "@/context/ThemeProvider"
-import Navbar from "@/components/blocks/Navbar"
-import PortfolioFooter from "@/components/portfolio/PortfolioFooter"
+import type { Metadata } from "next";
+import "./globals.css";
+import { ThemeProvider } from "@/context/ThemeProvider";
+import { ReactNode } from "react";
+import Navbar from "@/components/blocks/Navbar";
 
 export const metadata: Metadata = {
     metadataBase: new URL("https://vinodkr.in"),
-    title: "Vinod KR | Full-Stack Developer",
-    description: "Vinod KR builds web products with React, Next.js, and TypeScript. Explore selected work, experience, and engineering notes.",
+    title: "Vinod KR",
+    description: "Full Stack Portfolio",
     openGraph: {
-        title: "Vinod KR | Full-Stack Developer",
-        description: "Selected projects, experience, and engineering notes.",
-        images: [{ url: "/images/vinod-kr.png", width: 1200, height: 630, alt: "Vinod KR Portfolio" }],
+        title: "Vinod KR",
+        description: "Full Stack Portfolio",
+        images: [
+            {
+                url: "/images/vinod-kr.png",
+                width: 1200,
+                height: 630,
+                alt: "Vinod KR Portfolio",
+            },
+        ],
     },
-    twitter: { card: "summary_large_image", images: ["/images/vinod-kr.png"] },
-}
+    twitter: {
+        card: "summary_large_image",
+        title: "Vinod KR",
+        description: "Full Stack Portfolio",
+        images: ["/images/vinod-kr.png"],
+    },
+};
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+    children,
+}: {
+    children: ReactNode;
+}) {
     return (
         <html lang="en" suppressHydrationWarning>
-            <body className="antialiased">
-                <ThemeProvider attribute="class" enableSystem>
-                    <a href="#main-content" className="skip-link">Skip to content</a>
+            <body className="antialiased font-lenia w-full">
+                <ThemeProvider
+                    attribute="class"
+                    enableSystem
+                >
                     <Navbar />
                     {children}
-                    <PortfolioFooter />
                 </ThemeProvider>
             </body>
         </html>
-    )
+    );
 }

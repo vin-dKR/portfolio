@@ -1,107 +1,125 @@
 "use client"
 
-import { useEffect, useId, useRef } from "react"
+import { useEffect, useId, useRef, type CSSProperties } from "react"
+import { twMerge } from "tailwind-merge"
 import ImageCarousel from "./ImageCarousel"
 import "./Timeline.css"
 
-export default function Timeline({ data }: Pick<TimelineProps, "data">) {
-    const timelineRef = useRef<HTMLDivElement>(null)
+export default function Timeline({
+    data,
+    styleClass,
+    entriesGap = "4.5rem",
+    entryGap = "0.875rem",
+    titleGap = "0.2rem",
+    pathWidth = "2px",
+    titleMaxWidth = "20rem",
+    pathColor,
+    gradientColors = ["#3b82f6", "#7f00ff"],
+}: TimelineProps) {
+    const wrapperRef = useRef<HTMLDivElement>(null)
+    const entriesRef = useRef<(HTMLLIElement | null)[]>([])
+    const dotsRef = useRef<(HTMLSpanElement | null)[]>([])
     const trackRef = useRef<SVGPathElement>(null)
     const gradientRef = useRef<SVGLinearGradientElement>(null)
     const progressRef = useRef<SVGRectElement>(null)
-    const pathId = useId()
     const gradientId = useId()
+    const pathId = useId()
     const clipId = useId()
 
     useEffect(() => {
-        const timeline = timelineRef.current
+        const wrapper = wrapperRef.current
         const track = trackRef.current
         const gradient = gradientRef.current
         const progress = progressRef.current
-        if (!timeline || !track || !gradient || !progress) return
+        if (!wrapper || !track || !gradient || !progress) return
 
-        const entries = Array.from(timeline.querySelectorAll<HTMLElement>(".om-timeline-entry"))
-        const dots = entries.map((entry) => entry.querySelector<HTMLElement>(".om-timeline-dot")!)
-        let frame = 0
+        let scrollFrame = 0
         let height = 0
 
-        const paint = () => {
-            frame = 0
-            const top = timeline.getBoundingClientRect().top
-            const viewport = window.innerHeight
-            const remainingScroll = Math.max(0, document.documentElement.scrollHeight - window.scrollY - viewport)
-            const visibleY = viewport - Math.min(viewport * 0.12, remainingScroll) - top
+        const updateProgress = () => {
+            scrollFrame = 0
+            const { top } = wrapper.getBoundingClientRect()
+            const viewportHeight = window.innerHeight
+            const remainingScroll = Math.max(0, document.documentElement.scrollHeight - window.scrollY - viewportHeight)
+            const visibleY = viewportHeight - Math.min(viewportHeight * 0.12, remainingScroll) - top
 
-            // The leading edge follows viewport height so a wide turn can't delay the next entry.
+            // Track the viewport rather than the curved path length, so wide turns cannot delay the color.
             progress.setAttribute("height", String(Math.min(height, Math.max(0, visibleY))))
         }
 
-        const trace = () => {
-            const bounds = timeline.getBoundingClientRect()
+        const updatePath = () => {
+            const bounds = wrapper.getBoundingClientRect()
             height = bounds.height
-            const anchors = entries.map((entry, index) => {
-                const marker = dots[index].getBoundingClientRect()
-                const row = entry.getBoundingClientRect()
-
-                return {
+            const anchors = entriesRef.current.flatMap((entry, index) => {
+                const dot = dotsRef.current[index]
+                if (!entry || !dot) return []
+                const marker = dot.getBoundingClientRect()
+                return [{
                     x: marker.left + marker.width / 2 - bounds.left,
                     y: marker.top + marker.height / 2 - bounds.top,
-                    rowStart: row.top - bounds.top,
-                    rowEnd: row.bottom - bounds.top,
-                }
+                    bottom: entry.getBoundingClientRect().bottom - bounds.top,
+                }]
             })
-
             if (!anchors.length) return
 
-            let path = `M ${anchors[0].x} 0`
+            let path = `M ${anchors[0].x},0`
             anchors.forEach((anchor, index) => {
                 const next = anchors[index + 1]
                 if (!next) {
-                    path += ` L ${anchor.x} ${height - 1}`
+                    path += ` L ${anchor.x},${height - 1}`
                     return
                 }
 
-                const turnStart = anchor.rowEnd + 6
-                const turnEnd = next.rowStart - 6
-                const middle = (turnStart + turnEnd) / 2
-
-                path += ` L ${anchor.x} ${turnStart} C ${anchor.x} ${middle} ${next.x} ${middle} ${next.x} ${turnEnd} L ${next.x} ${next.y}`
+                const turnStart = Math.max(anchor.y, Math.min(anchor.bottom + 12, next.y - 24))
+                const middle = (turnStart + next.y) / 2
+                path += ` L ${anchor.x},${turnStart} C ${anchor.x},${middle} ${next.x},${middle} ${next.x},${next.y}`
             })
 
             track.setAttribute("d", path)
             gradient.setAttribute("y2", String(height))
-            if (frame) window.cancelAnimationFrame(frame)
-            paint()
+            if (scrollFrame) window.cancelAnimationFrame(scrollFrame)
+            updateProgress()
         }
 
-        const schedulePaint = () => {
-            if (!frame) frame = window.requestAnimationFrame(paint)
+        const scheduleProgress = () => {
+            if (!scrollFrame) scrollFrame = window.requestAnimationFrame(updateProgress)
         }
 
-        const resize = new ResizeObserver(trace)
-        resize.observe(timeline)
-        entries.forEach((entry) => resize.observe(entry))
-        window.addEventListener("scroll", schedulePaint, { passive: true })
-        window.addEventListener("resize", trace)
-        trace()
+        const observer = new ResizeObserver(updatePath)
+        observer.observe(wrapper)
+        entriesRef.current.forEach((entry) => {
+            if (entry) observer.observe(entry)
+        })
+        window.addEventListener("scroll", scheduleProgress, { passive: true })
+        window.addEventListener("resize", updatePath)
+        updatePath()
 
         return () => {
-            resize.disconnect()
-            window.removeEventListener("scroll", schedulePaint)
-            window.removeEventListener("resize", trace)
-            window.cancelAnimationFrame(frame)
+            observer.disconnect()
+            window.removeEventListener("scroll", scheduleProgress)
+            window.removeEventListener("resize", updatePath)
+            window.cancelAnimationFrame(scrollFrame)
         }
     }, [data])
 
+    const customStyles = {
+        "--timeline-entries-gap": entriesGap,
+        "--timeline-entry-gap": entryGap,
+        "--timeline-title-gap": titleGap,
+        "--timeline-path-width": pathWidth,
+        "--timeline-title-max-width": titleMaxWidth,
+        "--timeline-path-color": pathColor,
+    } as CSSProperties
+
     return (
-        <div ref={timelineRef} className="om-timeline">
+        <div ref={wrapperRef} className={twMerge("om-timeline", styleClass)} style={customStyles}>
             <svg className="om-timeline-svg" aria-hidden="true" focusable="false">
                 <defs>
                     <linearGradient id={gradientId} ref={gradientRef} gradientUnits="userSpaceOnUse" x1="0" x2="0" y1="0" y2="1">
-                        <stop className="om-timeline-copper" offset="0%" />
-                        <stop className="om-timeline-dusk" offset="45%" />
-                        <stop className="om-timeline-tide" offset="82%" />
-                        <stop className="om-timeline-tide" offset="100%" />
+                        <stop offset="0%" stopColor={gradientColors[1]} />
+                        <stop offset="38%" stopColor={gradientColors[1]} />
+                        <stop offset="90%" stopColor={gradientColors[0]} />
+                        <stop offset="100%" stopColor={gradientColors[0]} />
                     </linearGradient>
                     <clipPath id={clipId}>
                         <rect ref={progressRef} width="100%" height="0" />
@@ -109,31 +127,28 @@ export default function Timeline({ data }: Pick<TimelineProps, "data">) {
                     <path id={pathId} ref={trackRef} />
                 </defs>
                 <g stroke={`url(#${gradientId})`}>
-                    <use href={`#${pathId}`} className="om-timeline-track" />
-                    <g className="om-timeline-progress" clipPath={`url(#${clipId})`}>
-                        <use href={`#${pathId}`} className="om-timeline-glow" />
-                        <use href={`#${pathId}`} className="om-timeline-fill" />
-                    </g>
+                    <use href={`#${pathId}`} className="om-timeline-path" />
+                    <use href={`#${pathId}`} className="om-timeline-fill" clipPath={`url(#${clipId})`} />
                 </g>
             </svg>
 
             <ol className="om-timeline-entries" aria-label="Career timeline">
-                {data.map((item) => (
-                    <li key={item.title} className="om-timeline-entry">
-                        <span className="om-timeline-dot" aria-hidden="true" />
-                        <article className="site-panel om-timeline-card">
-                            <div className="om-timeline-copy">
-                                {item.date && <p className="eyebrow om-timeline-date">{item.date}</p>}
-                                <h2 className="om-timeline-title">{item.title}</h2>
-                                <p className="om-timeline-role">{item.content}</p>
-                                {item.summaryPoints && (
-                                    <ul className="om-timeline-responsibilities">
-                                        {item.summaryPoints.map((point) => <li key={point}>{point}</li>)}
-                                    </ul>
-                                )}
-                            </div>
-                            {!!item.image?.length && <ImageCarousel images={item.image} label={item.title} />}
-                        </article>
+                {data.map((item, index) => (
+                    <li key={item.title} ref={(element) => { entriesRef.current[index] = element }} className="om-timeline-entry">
+                        <span ref={(element) => { dotsRef.current[index] = element }} className="om-timeline-dot" aria-hidden="true" />
+                        <div className="om-timeline-entry-heading">
+                            <h2 className="text-lg font-semibold text-black dark:text-white">{item.title}</h2>
+                            {item.date && <p className="text-sm text-neutral-600 dark:text-neutral-400">{item.date}</p>}
+                        </div>
+                        {item.image && <ImageCarousel images={item.image} />}
+                        <div>
+                            <p className="text-sm font-semibold text-black dark:text-white">{item.content}</p>
+                            {item.summaryPoints && (
+                                <ul className="mt-2 space-y-1 text-sm text-neutral-600 dark:text-neutral-400">
+                                    {item.summaryPoints.map((point) => <li key={point} className="om-timeline-point">{point}</li>)}
+                                </ul>
+                            )}
+                        </div>
                     </li>
                 ))}
             </ol>

@@ -5,6 +5,7 @@ import createMDX from '@next/mdx'
 const nextConfig: NextConfig = {
     images: {
         remotePatterns: [
+            { protocol: 'https', hostname: 'cdn.simpleicons.org' },
             { protocol: 'https', hostname: 'platform-lookaside.fbsbx.com' },
             { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
             { protocol: 'https', hostname: 'miro.medium.com' },

@@ -4,10 +4,19 @@ import React, { createContext, useContext, useReducer, ReactNode } from "react";
 
 const initialGithubStats: GithubStatsProps = {
     followers: 0,
+    following: 0,
+    stars: 0,
+    issues: 0,
+    prs: 0,
     username: '',
+    avatar: '',
+    bio: '',
     publicRepos: 0,
+    topLanguages: [],
+    topRepo: null,
     contributions: [],
     totalContributions: 0,
+    loading: false,
     error: null
 }
 
@@ -29,11 +38,11 @@ const GithubContext = createContext<{
 const githubReducer = (state: GithubStatsProps, action: ActionType) => {
     switch (action.type) {
         case 'FETCH_GITHUB_START':
-            return { ...state, error: null }
+            return { ...state, loading: true, error: null }
         case 'FETCH_GITHUB_SUCCESS': 
-            return { ...state, ...action.payload }
+            return { ...state, ...action.payload, loading: false }
         case 'FETCH_GITHUB_ERROR':
-            return { ...state, error: action.payload }
+            return { ...state, loading: false, error: action.payload }
     }
 }
 
