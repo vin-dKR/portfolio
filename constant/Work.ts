@@ -4,48 +4,56 @@ export const timelineData: TimelineEntry[] = [
         content: 'Co-Founder & CTO',
         date: 'July 2022 - Dec 2023',
         image: [
-            { 
-                id: 1, 
-                src: '/images/clothinggo/clothinggo.jpg', 
-                alt: 'First image' 
-            }, { 
-                id: 2, 
-                src: '/images/clothinggo/clothinggo1.jpg', 
-                alt: 'Second image' 
-            }, { 
-                id: 3, 
-                src: '/images/clothinggo/clothinggo2.jpg', 
-                alt: 'Second image' 
-            }, { 
-                id: 4, 
-                src: '/images/clothinggo/clothinggo3.jpg', 
-                alt: 'Second image' 
-            }, { 
-                id: 5, 
-                src: '/images/clothinggo/clothinggo4.jpg', 
-                alt: 'Second image' 
-            }, { 
-                id: 6, 
-                src: '/images/clothinggo/clothinggo5.jpeg', 
-                alt: 'Second image' 
+            {
+                id: 1,
+                src: '/images/clothinggo/clothinggo.jpg',
+                alt: 'Vinod wearing a Clothing GO shirt'
+            }, {
+                id: 2,
+                src: '/images/clothinggo/clothinggo1.jpg',
+                alt: 'Clothing GO brand photo'
+            }, {
+                id: 3,
+                src: '/images/clothinggo/clothinggo2.jpg',
+                alt: 'Clothing GO brand photo'
+            }, {
+                id: 4,
+                src: '/images/clothinggo/clothinggo3.jpg',
+                alt: 'Clothing GO brand photo'
+            }, {
+                id: 5,
+                src: '/images/clothinggo/clothinggo4.jpg',
+                alt: 'Clothing GO brand photo'
+            }, {
+                id: 6,
+                src: '/images/clothinggo/clothinggo5.jpeg',
+                alt: 'Clothing GO brand photo'
             },
         ],
-        summaryPoints: ['• Website Development & Management ', '• UI/UX Design', '• Business Strategy & Digital Presence'],
+        summaryPoints: ['Website development and management', 'UI and UX design', 'Business strategy and digital presence'],
     }, {
-        title: 'HCL Tech',
+        title: 'HCLTech',
         content: 'Intern',
         image: [
-            { 
-                id: 1, 
-                src: '/images/hcltech/hcltech1.jpg', 
-                alt: 'First image' 
-            }, { 
-                id: 2, 
-                src: '/images/hcltech/hcltech2.jpeg', 
-                alt: 'Second image' 
+            {
+                id: 1,
+                src: '/images/hcltech/hcltech1.jpg',
+                alt: 'During my HCLTech internship'
             }
         ],
         date: 'Sep 2024 - Feb 2025',
-        summaryPoints: ['Financial Systems Support •', 'Incident Handling & Support •', 'System Monitoring & Maintenance •'],
+        summaryPoints: ['Financial systems support', 'Incident handling and support', 'System monitoring and maintenance'],
+    }, {
+        title: 'Freelancer',
+        content: 'Independent web developer',
+        date: 'Dec 2025 - Present',
+        image: [
+            {
+                id: 1,
+                src: '/images/freelance-workspace.webp',
+                alt: 'My desk with a Mac mini, a monitor showing a terminal, and a keyboard',
+            },
+        ],
+        summaryPoints: ['Built full-stack web applications for Atari, Pagz, and Trio EV', 'Delivered reporting tools, e-commerce workflows, and client-managed content'],
     },
 ]

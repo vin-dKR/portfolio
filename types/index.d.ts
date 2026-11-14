@@ -20,23 +20,6 @@ declare global {
         loading: boolean
         error: string | null
     }
-    interface WakaTimeStatsProps {
-        wakaTimeStats: {
-            totalHours: number;
-            languages: Array<{
-                name: string;
-                percentage: number;
-            }>
-        }
-    }
-    interface SpotifyStatsProps {
-        currentTrack: {
-            name: string;
-            artist: string;
-            albumArt: string;
-        } | null;
-    }
-
     interface BentoGridProps {
         techStacks: TechStackCardProps['techStacks'];
     }
@@ -83,54 +66,6 @@ declare global {
         project: ProjectsData,
         onClose: () => void
     }
-
-    interface WakatimeLangType {
-        name: string
-        percentage: number
-    }
-
-    interface WakatimeStatsType {
-        totalHours: number
-        languages: WakatimeLangType[]
-    }
-
-    interface WakatimeContextType {
-        wakatimeStats: WakatimeStatsType
-        isLoading: boolean
-        errors: string | null
-        refreshStats: () => Promise<void>
-    }
-
-    interface WakatimeProviderProps {
-        children: ReactNode,
-        initialState?: WakatimeStatsType
-    }
-
-
-    interface CurrentTrackType {
-        name: string;
-        artist: string;
-        albumArt: string;
-        isPlaying: boolean;
-        spotifyUrl: string;
-        lastPlayed?: string
-    }
-
-    interface SpotifyContextType {
-        currentTrack: CurrentTrack;
-        isLoading: boolean;
-        error: string | null;
-        refreshTrack: () => Promise<void>;
-    }
-
-    interface SpotifyTokenResponse {
-        access_token: string;
-        token_type: string;
-        expires_in: number;
-        refresh_token: string;
-        scope: string;
-    }
-
 
     interface TimelineEntry {
         title: string;

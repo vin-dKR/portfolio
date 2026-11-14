@@ -3,8 +3,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { NAV_ITEMS } from '@/constant/NavItems';
-import { motion } from 'framer-motion';
-import { useTheme } from 'next-themes';
 
 // Custom SVG Icons
 const ProjectsIcon = ({ className }: { className?: string }) => (
@@ -51,47 +49,34 @@ const iconMap = {
 
 const MobileBottomNav = () => {
     const pathname = usePathname();
-    const { resolvedTheme } = useTheme();
-    const isDark = resolvedTheme === 'dark';
 
     return (
-        <nav className="fixed bottom-0 left-0 right-0 z-[99] md:hidden flex items-end justify-center pb-4 px-4 pointer-events-none">
-            <div
-                className="flex items-center justify-around backdrop-blur-xl bg-white/70 dark:bg-white/[0.04] rounded-3xl shadow-2xl border border-black/8 dark:border-white/8 px-2 py-2 min-h-[64px] max-w-[90%] pointer-events-auto safe-area-inset-bottom"
-                style={{
-                    boxShadow: isDark
-                        ? '0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 0 0 0.5px rgba(255, 255, 255, 0.06) inset'
-                        : '0 8px 32px 0 rgba(0, 0, 0, 0.08), 0 0 0 0.5px rgba(0, 0, 0, 0.04) inset'
-                }}
-            >
+        <nav aria-label="Mobile navigation" className="pointer-events-none fixed inset-x-0 bottom-0 z-[99] flex justify-center px-3 pb-[max(1rem,env(safe-area-inset-bottom))] md:hidden">
+            <div className="theme-surface pointer-events-auto grid w-full max-w-sm grid-cols-4 gap-1 rounded-3xl border border-zinc-950/10 bg-white/90 p-1.5 shadow-xl backdrop-blur-md dark:border-white/12 dark:bg-zinc-950/90">
                 {NAV_ITEMS.map(({ name, href }) => {
                     const Icon = iconMap[name as keyof typeof iconMap];
-                    const isActive = pathname === href;
+                    const isActive = pathname === href || pathname.startsWith(href + "/");
 
                     return (
                         <Link
                             key={name}
                             href={href}
-                            className="flex flex-col items-center justify-center gap-1 px-4 py-2 rounded-2xl transition-colors relative flex-1 min-w-0"
+                            prefetch={false}
+                            aria-current={isActive ? "page" : undefined}
+                            className="flex min-w-0 flex-col items-center justify-center gap-1 rounded-[1.125rem] px-1 py-2 transition-colors hover:bg-violet-500/5 focus-visible:outline-2 focus-visible:outline-violet-500 aria-[current=page]:bg-violet-500/10"
                         >
-                            {isActive && (
-                                <motion.div
-                                    layoutId="activeTab"
-                                    className="absolute inset-0 bg-black/10 dark:bg-white/10 rounded-2xl"
-                                    transition={{ type: "tween", duration: 0.2, ease: "easeOut" }}
-                                />
-                            )}
                             <Icon
-                                className={`w-6 h-6 transition-colors relative z-10 ${
+                                aria-hidden="true"
+                                className={`size-5 transition-colors ${
                                     isActive
-                                        ? 'text-black dark:text-white'
+                                        ? 'text-violet-700 dark:text-violet-300'
                                         : 'text-gray-500 dark:text-gray-400'
                                 }`}
                             />
                             <span
                                 className={`text-[10px] font-medium transition-colors relative z-10 ${
                                     isActive
-                                        ? 'text-black dark:text-white'
+                                        ? 'text-violet-700 dark:text-violet-300'
                                         : 'text-gray-500 dark:text-gray-400'
                                 }`}
                             >
@@ -106,4 +91,3 @@ const MobileBottomNav = () => {
 };
 
 export default MobileBottomNav;
-

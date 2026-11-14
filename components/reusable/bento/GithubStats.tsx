@@ -1,232 +1,218 @@
 "use client"
 
-import React from "react"
-import { motion } from "framer-motion"
-import {
-    ArrowUpRight,
-    Github,
-    Loader2,
-    Users,
-    Star,
-    GitPullRequest,
-    CircleDot,
-    UserPlus,
-    BookMarked,
-} from "lucide-react"
-import BentoCard from "./BentoCard"
-import { useGithubData } from "@/hooks/github"
-import Link from "next/link"
+import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type MouseEvent } from "react"
+import { ArrowUpRight, BookMarked, CircleDot, GitPullRequest, Github, Loader2, Star, UserPlus, Users } from "lucide-react"
 import Image from "next/image"
+import { GithubProvider } from "@/context/GithubContext"
+import { useGithubData } from "@/hooks/github"
+import BentoCard from "./BentoCard"
+import "./ActivityCards.css"
 
-interface GithubStatsProps {
-    username: string
-}
+const metrics = [
+    { key: "followers", label: "Followers", Icon: Users },
+    { key: "following", label: "Following", Icon: UserPlus },
+    { key: "stars", label: "Stars", Icon: Star },
+    { key: "prs", label: "PRs", Icon: GitPullRequest },
+    { key: "issues", label: "Issues", Icon: CircleDot },
+    { key: "publicRepos", label: "Repos", Icon: BookMarked },
+] as const
 
-const intensityClass = (n: number) =>
-    [
-        "bg-zinc-200/60 dark:bg-white/5",
-        "bg-violet-300/40 dark:bg-violet-500/20",
-        "bg-violet-400/60 dark:bg-violet-500/40",
-        "bg-violet-500/80 dark:bg-violet-400/70",
-        "bg-fuchsia-500 dark:bg-fuchsia-400",
-    ][n] || "bg-zinc-200"
+const number = new Intl.NumberFormat("en-US")
+const date = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+})
 
-const GithubStats = ({ username }: GithubStatsProps) => {
-    const stats = useGithubData(username)
+type Contribution = GithubStatsProps["contributions"][number]
 
-    const stat = [
-        { key: "followers", label: "Followers", Icon: Users },
-        { key: "following", label: "Following", Icon: UserPlus },
-        { key: "stars", label: "Stars", Icon: Star },
-        { key: "prs", label: "PRs", Icon: GitPullRequest },
-        { key: "issues", label: "Issues", Icon: CircleDot },
-        { key: "publicRepos", label: "Repos", Icon: BookMarked },
-    ] as const
+function ContributionHistory({ days, total }: { days: Contribution[]; total: number }) {
+    const [selected, setSelected] = useState<number | null>(null)
+    const [inspecting, setInspecting] = useState(false)
+    const latest = days.length - 1
+    const index = Math.min(selected ?? latest, latest)
+    const current = days[index]
+    const padding = (7 - days.length % 7) % 7
+    const weeks = (padding + days.length) / 7
+    const parsedDate = new Date(`${current.date}T00:00:00Z`)
+    const dayLabel = Number.isNaN(parsedDate.getTime()) ? current.date : date.format(parsedDate)
+    const valueText = `${dayLabel} · ${number.format(current.count)} ${current.count === 1 ? "contribution" : "contributions"}`
 
-    // Real contributions - take last 182 days, pad to multiple of 7
-    const contribs = stats.contributions || []
-    const slice = contribs.slice(-182)
-    while (slice.length % 7 !== 0) slice.unshift({ date: '', count: 0, level: 0 })
+    function selectDay(next: number) {
+        setSelected(Math.min(latest, Math.max(0, next)))
+    }
+
+    function handleKey(event: KeyboardEvent<HTMLDivElement>) {
+        const targets: Record<string, number> = {
+            ArrowLeft: index - 1,
+            ArrowDown: index - 1,
+            ArrowRight: index + 1,
+            ArrowUp: index + 1,
+            PageDown: index - 7,
+            PageUp: index + 7,
+            Home: 0,
+            End: latest,
+        }
+        const target = targets[event.key]
+        if (target === undefined) return
+        event.preventDefault()
+        selectDay(target)
+    }
+
+    function handleClick(event: MouseEvent<HTMLDivElement>) {
+        const grid = event.currentTarget
+        const { left, top, width, height } = grid.getBoundingClientRect()
+        const column = Math.min(weeks - 1, Math.floor((event.clientX - left) / width * weeks))
+        const row = Math.min(6, Math.floor((event.clientY - top) / height * 7))
+        selectDay(column * 7 + row - padding)
+        grid.focus({ preventScroll: true })
+    }
 
     return (
-        <BentoCard className="col-span-4 sm:col-span-1 md:col-span-3 row-span-1 group/github relative overflow-hidden">
-            {/* gradient halo */}
-            <div className="pointer-events-none absolute -top-16 -right-16 w-44 h-44 rounded-full bg-gradient-to-br from-violet-500/25 to-fuchsia-500/15 blur-3xl opacity-70" />
-            <div className="pointer-events-none absolute -bottom-20 -left-10 w-40 h-40 rounded-full bg-gradient-to-tr from-fuchsia-500/15 to-cyan-500/10 blur-3xl opacity-50" />
+        <div className="github-history">
+            <div className="mb-1 flex items-center justify-between gap-2">
+                <p className="github-history-caption truncate">
+                    {inspecting ? valueText : `${number.format(total)} contributions · past year`}
+                </p>
+                <div aria-hidden="true" className="github-history-key">
+                    {[0, 1, 2, 3, 4].map((level) => <span key={level} data-level={level} />)}
+                </div>
+            </div>
+            <div
+                role="slider"
+                aria-label="GitHub contributions by day"
+                aria-valuemin={1}
+                aria-valuemax={days.length}
+                aria-valuenow={index + 1}
+                aria-valuetext={valueText}
+                tabIndex={0}
+                onKeyDown={handleKey}
+                onClick={handleClick}
+                onFocus={() => setInspecting(true)}
+                onBlur={() => setInspecting(false)}
+                className="github-history-grid"
+                style={{ "--calendar-weeks": weeks } as CSSProperties}
+            >
+                {Array.from({ length: padding }, (_, i) => <span key={i} aria-hidden="true" />)}
+                {days.map((day, i) => (
+                    <span
+                        key={day.date}
+                        aria-hidden="true"
+                        data-level={day.level}
+                        data-selected={inspecting && index === i ? "true" : undefined}
+                        title={`${day.date}: ${day.count}`}
+                    />
+                ))}
+            </div>
+        </div>
+    )
+}
 
-            <div className="relative">
-                {/* Header */}
-                <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center space-x-2">
-                        <Github className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
-                        <h3 className="text-sm font-medium bg-gradient-to-r from-zinc-700 via-violet-500 to-fuchsia-500 dark:from-zinc-200 dark:via-violet-300 dark:to-fuchsia-300 bg-clip-text text-transparent">
-                            GitHub
-                        </h3>
-                    </div>
+function GithubStats({ username }: { username: string }) {
+    const card = useRef<HTMLDivElement>(null)
+    const [isNearViewport, setIsNearViewport] = useState(false)
+    const stats = useGithubData(isNearViewport ? username : "")
+
+    useEffect(() => {
+        const target = card.current
+        if (!target) return
+
+        const observer = new IntersectionObserver(([entry]) => {
+            if (!entry.isIntersecting) return
+            setIsNearViewport(true)
+            observer.disconnect()
+        }, { rootMargin: "160px" })
+        observer.observe(target)
+        return () => observer.disconnect()
+    }, [])
+
+    const handle = stats.username || username
+    const days = stats.contributions.slice(-182)
+
+    return (
+        <BentoCard className="bento-activity activity-rich col-span-12 sm:col-span-6">
+            <div ref={card} className="relative" aria-busy={stats.loading}>
+                <div className="activity-header mb-2">
+                    <h3><Github aria-hidden="true" size={16} /> <span className="activity-gradient-title">GitHub</span></h3>
+                    <a href={`https://github.com/${handle}`} target="_blank" rel="noreferrer" aria-label="View GitHub profile">
+                        <ArrowUpRight aria-hidden="true" size={15} />
+                    </a>
                 </div>
 
-                {stats.loading ? (
-                    <div className="flex items-center justify-center h-32">
-                        <Loader2 className="w-5 h-5 animate-spin text-zinc-500" />
+                {stats.error ? (
+                    <p className="activity-empty">GitHub activity is temporarily unavailable.</p>
+                ) : !stats.username ? (
+                    <div role="status" className="activity-empty" aria-label="Loading GitHub activity">
+                        <Loader2 aria-hidden="true" size={19} className="motion-safe:animate-spin" />
                     </div>
-                ) : stats.error ? (
-                    <div className="text-xs text-red-500 mt-4">Error: {stats.error}</div>
                 ) : (
                     <>
-                        {/* Profile row */}
-                        <div className="flex items-center gap-3 mb-3">
+                        <div className="mb-3 flex items-center gap-3">
                             {stats.avatar ? (
-                                <Image
-                                    src={stats.avatar}
-                                    alt={stats.username || username}
-                                    width={48}
-                                    height={48}
-                                    unoptimized
-                                    className="w-10 h-10 rounded-full ring-2 ring-violet-400/30 dark:ring-violet-300/30 shrink-0"
-                                />
+                                <Image src={stats.avatar} width={40} height={40} alt="" unoptimized
+                                    className="size-10 shrink-0 rounded-full ring-2 ring-violet-400/30" />
                             ) : (
-                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500/30 to-fuchsia-500/30 shrink-0" />
+                                <div className="grid size-10 shrink-0 place-items-center rounded-full bg-violet-500/15">
+                                    <Github aria-hidden="true" size={19} />
+                                </div>
                             )}
-                            <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-1">
-                                    <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">
-                                        @{stats.username || username}
-                                    </span>
-                                </div>
-                                {stats.bio && (
-                                    <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-snug line-clamp-2">
-                                        {stats.bio}
-                                    </p>
-                                )}
+                            <div className="min-w-0">
+                                <p className="truncate text-sm font-semibold">@{handle}</p>
+                                {stats.bio && <p className="line-clamp-2 text-[11px] leading-snug text-[var(--bento-muted)]">{stats.bio}</p>}
                             </div>
                         </div>
 
-                        {/* Stats grid */}
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 mb-3">
-                            {stat.map((item, index) => {
-                                const value = stats[item.key as keyof typeof stats] ?? 0
-                                const Icon = item.Icon
-                                return (
-                                    <motion.div
-                                        key={item.key}
-                                        initial={{ y: 6, opacity: 0 }}
-                                        animate={{ y: 0, opacity: 1 }}
-                                        transition={{ delay: index * 0.04 }}
-                                        className="flex flex-col items-center justify-center rounded-xl border border-black/5 dark:border-white/5 bg-black/[0.03] dark:bg-white/[0.04] backdrop-blur-sm py-1.5"
-                                    >
-                                        <Icon className="w-3 h-3 text-violet-600 dark:text-violet-300 mb-0.5" />
-                                        <span className="font-mono text-sm font-semibold text-zinc-900 dark:text-zinc-100 leading-none">
-                                            {String(value)}
-                                        </span>
-                                        <span className="text-[9px] uppercase tracking-wide text-zinc-500 dark:text-zinc-400 mt-0.5">
-                                            {item.label}
-                                        </span>
-                                    </motion.div>
-                                )
-                            })}
-                        </div>
+                        <dl className="mb-3 grid grid-cols-3 gap-1.5">
+                            {metrics.map(({ key, label, Icon }) => (
+                                <div key={key} className="activity-inset flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-1.5">
+                                    <dt className="order-last text-[9px] tracking-wide uppercase text-[var(--bento-muted)]">{label}</dt>
+                                    <Icon aria-hidden="true" size={12} className="text-[var(--bento-accent)]" />
+                                    <dd className="font-mono text-sm leading-none font-semibold">{number.format(stats[key])}</dd>
+                                </div>
+                            ))}
+                        </dl>
 
-                        {/* Top languages bar */}
-                        {stats.topLanguages && stats.topLanguages.length > 0 && (
+                        {stats.topLanguages.length > 0 && (
                             <div className="mb-3">
-                                <div className="flex items-center justify-between mb-1">
-                                    <span className="text-[10px] uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-                                        Top Languages
-                                    </span>
-                                </div>
-                                <div className="flex h-1.5 w-full rounded-full overflow-hidden bg-black/5 dark:bg-white/5">
-                                    {stats.topLanguages.map((l) => (
-                                        <div
-                                            key={l.name}
-                                            style={{ width: `${l.percentage}%`, background: l.color }}
-                                            title={`${l.name} ${l.percentage}%`}
-                                        />
+                                <p className="activity-section-label mb-1">Top languages</p>
+                                <div className="mb-1 flex h-1.5 overflow-hidden rounded-full bg-black/5 dark:bg-white/5" aria-hidden="true">
+                                    {stats.topLanguages.map(({ name, color, percentage }) => (
+                                        <span key={name} style={{ flexBasis: `${percentage}%`, backgroundColor: color }} />
                                     ))}
                                 </div>
-                                <div className="flex flex-wrap gap-x-2 gap-y-0.5 mt-1">
-                                    {stats.topLanguages.slice(0, 4).map((l) => (
-                                        <div
-                                            key={l.name}
-                                            className="flex items-center gap-1 text-[10px] text-zinc-600 dark:text-zinc-400"
-                                        >
-                                            <span
-                                                className="w-1.5 h-1.5 rounded-full"
-                                                style={{ background: l.color }}
-                                            />
-                                            <span>{l.name}</span>
-                                        </div>
+                                <ul className="activity-language-key" aria-label="GitHub repository languages">
+                                    {stats.topLanguages.map(({ name, color, percentage }) => (
+                                        <li key={name}>
+                                            <span aria-hidden="true" style={{ backgroundColor: color }} />
+                                            {name}<span className="sr-only"> {percentage}%</span>
+                                        </li>
                                     ))}
-                                </div>
+                                </ul>
                             </div>
                         )}
 
-                        {/* Top repo */}
                         {stats.topRepo && (
-                            <Link
-                                href={stats.topRepo.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="hidden sm:block mb-3 rounded-xl border border-black/5 dark:border-white/5 bg-black/[0.03] dark:bg-white/[0.04] hover:bg-black/[0.06] dark:hover:bg-white/[0.07] transition-colors px-2.5 py-2"
-                            >
+                            <a className="activity-inset activity-top-repo mb-3 block rounded-xl px-2.5 py-2"
+                                href={stats.topRepo.url} target="_blank" rel="noreferrer">
                                 <div className="flex items-center justify-between gap-2">
-                                    <span className="text-[11px] font-semibold text-zinc-900 dark:text-zinc-100 truncate">
-                                        {stats.topRepo.name}
-                                    </span>
-                                    <span className="flex items-center gap-1 text-[10px] text-zinc-500 dark:text-zinc-400">
-                                        <Star className="w-3 h-3" />
-                                        {stats.topRepo.stars}
+                                    <span className="truncate text-[11px] font-semibold">{stats.topRepo.name}</span>
+                                    <span className="flex shrink-0 items-center gap-1 text-[10px] text-[var(--bento-muted)]">
+                                        <Star aria-hidden="true" size={12} /> {number.format(stats.topRepo.stars)}
                                     </span>
                                 </div>
-                                {stats.topRepo.description && (
-                                    <p className="text-[10px] text-zinc-500 dark:text-zinc-400 line-clamp-1 mt-0.5">
-                                        {stats.topRepo.description}
-                                    </p>
-                                )}
-                            </Link>
+                                {stats.topRepo.description && <p className="line-clamp-1 text-[10px] text-[var(--bento-muted)]">{stats.topRepo.description}</p>}
+                            </a>
                         )}
 
-                        {/* Real contribution heatmap (last 6 months) */}
-                        <div className="hidden sm:block">
-                            <div className="flex items-center justify-between mb-1">
-                                <span className="text-[10px] uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-                                    {stats.totalContributions > 0
-                                        ? `${stats.totalContributions} contributions · last year`
-                                        : 'Activity'}
-                                </span>
-                                <div className="flex items-center gap-0.5">
-                                    {[0, 1, 2, 3, 4].map((n) => (
-                                        <div
-                                            key={n}
-                                            className={`w-1.5 h-1.5 rounded-[2px] ${intensityClass(n)}`}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-                            <div className="grid grid-flow-col grid-rows-7 gap-[2px]">
-                                {slice.map((c, i) => (
-                                    <div
-                                        key={i}
-                                        title={c.date ? `${c.date}: ${c.count}` : undefined}
-                                        className={`w-[6px] h-[6px] rounded-[1.5px] ${intensityClass(c.level)}`}
-                                    />
-                                ))}
-                            </div>
-                        </div>
+                        {days.length > 0 && <ContributionHistory days={days} total={stats.totalContributions} />}
                     </>
                 )}
-
-                <div className="absolute bottom-0 right-0 opacity-50 group-hover/github:opacity-100 transition-opacity duration-300">
-                    <Link
-                        href={`https://github.com/${stats.username || username}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <ArrowUpRight className="w-4 h-4 text-black dark:text-white" />
-                    </Link>
-                </div>
             </div>
         </BentoCard>
     )
 }
 
-export default GithubStats
+export default function GithubStatsCard({ username }: { username: string }) {
+    return <GithubProvider><GithubStats username={username} /></GithubProvider>
+}

@@ -1,5 +1,3 @@
-"use client"
-
 import React from "react";
 import HomeHeader from "./HomeHeader";
 import HomeBio from "./Bio";

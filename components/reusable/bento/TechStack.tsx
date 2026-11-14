@@ -1,56 +1,87 @@
-import React from "react"
-import BentoCard from "./BentoCard"
-import { ArrowUpRight } from "lucide-react"
-import { Layers } from "lucide-react"
-import { motion } from "framer-motion"
-import { techStacks } from "@/constant/TechStack"
+import { Braces, ChevronDown, Database, Layers, PanelsTopLeft, Server } from "lucide-react";
+import { techStacks } from "@/constant/TechStack";
+import BentoCard from "./BentoCard";
 
-const TechStackCard = () => {
+const stackOverview = [
+    {
+        title: "Languages",
+        icon: Braces,
+        techs: ["TypeScript", "JavaScript", "Rust"],
+        accent: "text-indigo-700 dark:text-indigo-300",
+    },
+    {
+        title: "Frontend",
+        icon: PanelsTopLeft,
+        techs: ["React", "Next.js", "Tailwind CSS"],
+        accent: "text-sky-700 dark:text-sky-300",
+    },
+    {
+        title: "Backend",
+        icon: Server,
+        techs: ["Node.js", "Bun", "WebSocket"],
+        accent: "text-blue-700 dark:text-blue-300",
+    },
+    {
+        title: "Data",
+        icon: Database,
+        techs: ["PostgreSQL", "Redis", "Prisma"],
+        accent: "text-violet-700 dark:text-violet-300",
+    },
+];
+
+const highlighted = new Set(stackOverview.flatMap(({ techs }) => techs));
+const remainingStack = Object.entries(techStacks).map(([category, { techs }]) => ({
+    category,
+    techs: techs.filter((tech) => !highlighted.has(tech)),
+}));
+const extraCount = remainingStack.reduce((count, { techs }) => count + techs.length, 0);
+
+export default function TechStackCard() {
     return (
-        <BentoCard className="col-span-9 sm:col-span-5 group/stack h-full">
-            <div className="flex items-center space-x-2 mb-3">
-                <Layers className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
-                <h3 className="text-sm font-medium bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
-                    Tech Stack
-                </h3>
-            </div>
+        <BentoCard className="col-span-8 flex flex-col px-3 py-3 sm:px-4 sm:py-4">
+            <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold tracking-tight">
+                <Layers aria-hidden="true" className="size-4 text-(--bento-accent)" />
+                Tech stack
+            </h3>
 
-            <div className="flex h-full flex-col space-y-4 px-2">
-                {Object.entries(techStacks).map(([category, { color, techs }], categoryIndex) => (
-                    <motion.div
-                        key={category}
-                        initial={{ x: -20, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        transition={{ delay: 0.2 * categoryIndex }}
-                        className="relative"
+            <dl className="grid flex-1 divide-y divide-(--bento-rule)">
+                {stackOverview.map(({ title, icon: Icon, techs, accent }) => (
+                    <div
+                        key={title}
+                        className="grid min-w-0 content-center gap-1.5 py-2.5 sm:grid-cols-[6.5rem_minmax(0,1fr)] sm:items-center sm:gap-2"
                     >
-                        <div
-                            className={`absolute -left-2 top-[8px] transform -translate-y-1/2 w-1 h-6 rounded-full`}
-                            style={{ background: color }}
-                        />
-                        <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-2 pl-1 font-medium">{category}</p>
-                        <div className="flex flex-wrap gap-2">
-                            {techs.map((tech, techIndex) => (
-                                <motion.span
-                                    key={tech}
-                                    initial={{ y: 10, opacity: 0 }}
-                                    animate={{ y: 0, opacity: 1 }}
-                                    transition={{ delay: 0.2 * categoryIndex + (techIndex * 0.1) }}
-                                    className="px-2 py-1 text-xs rounded-full bg-gradient-to-r from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700 shadow-sm"
-                                >
-                                    {tech}
-                                </motion.span>
-                            ))}
-                        </div>
-                    </motion.div>
+                        <dt className="flex min-w-0 items-center gap-1.5 text-xs font-semibold">
+                            <Icon aria-hidden="true" className={`size-3.5 shrink-0 ${accent}`} />
+                            {title}
+                        </dt>
+                        <dd className="min-w-0">
+                            <ul className="flex flex-wrap gap-1">
+                                {techs.map((tech) => (
+                                    <li key={tech} className="rounded-md border border-(--bento-rule) bg-(--bento-inset) px-1.5 py-0.5 text-[11px] leading-tight text-(--bento-ink) sm:px-2">
+                                        {tech}
+                                    </li>
+                                ))}
+                            </ul>
+                        </dd>
+                    </div>
                 ))}
-            </div>
+            </dl>
 
-            <div className="absolute bottom-2 right-2 opacity-50 group-hover/stack:opacity-100 transition-opacity duration-300">
-                <ArrowUpRight className="w-4 h-4" />
-            </div>
+            <details className="group/stack mt-2 rounded-lg border border-(--bento-rule) bg-(--bento-inset)">
+                <summary className="flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-(--bento-accent) transition-colors hover:bg-violet-500/8 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-violet-500 [&::-webkit-details-marker]:hidden">
+                    <span>More tools</span>
+                    <span className="ml-auto text-[10px] font-medium tabular-nums text-(--bento-muted)">+{extraCount}</span>
+                    <ChevronDown aria-hidden="true" className="size-3.5 shrink-0 motion-safe:transition-transform group-open/stack:rotate-180" />
+                </summary>
+                <dl className="grid gap-x-4 gap-y-3 border-t border-(--bento-rule) p-2.5 sm:grid-cols-2">
+                    {remainingStack.map(({ category, techs }) => (
+                        <div key={category}>
+                            <dt className="mb-0.5 text-xs font-semibold">{category}</dt>
+                            <dd className="text-xs leading-relaxed text-(--bento-muted)">{techs.join(" · ")}</dd>
+                        </div>
+                    ))}
+                </dl>
+            </details>
         </BentoCard>
-    )
+    );
 }
-
-export default TechStackCard
