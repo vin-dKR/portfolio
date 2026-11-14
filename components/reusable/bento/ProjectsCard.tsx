@@ -1,173 +1,193 @@
 "use client";
 
-import { useId, useState, type CSSProperties, type KeyboardEvent } from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, CircuitBoard, Code2, GraduationCap, Leaf, Orbit, Sprout, Zap } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Code2, LayoutTemplate, ListTree, Play } from "lucide-react";
+import { getBentoProject } from "@/constant/BentoProjects";
 import { projectsData } from "@/constant/ProjectsData";
 import BentoCard from "./BentoCard";
 
 const ProjectModal = dynamic(() => import("../projects/ProjectModal"));
 
-type ProjectArtwork = {
-    icon: typeof Zap;
-    hue: number;
-    image?: string;
-    article?: string;
-    detail?: string;
-    trace: readonly [string, string, string];
-};
-
-const projectArtwork: Record<string, ProjectArtwork> = {
-    "Trio EV": {
-        icon: Zap, hue: 200, article: "building-trio-ev-platform",
-        detail: "I built the content system and bulk sales tools for an EV fleet and charging business.",
-        trace: ["Fleet site", "Incoming leads", "Sales console"],
-    },
-    Atari: {
-        icon: Sprout, hue: 143, article: "building-atari-kvk-platform",
-        detail: "A configuration-driven UI runs 180+ form modules and feeds 40+ report templates for the KVK network.",
-        trace: ["Form modules", "Role checks", "Reports"],
-    },
-    Pagz: {
-        icon: Orbit, hue: 29, image: "/images/project-icons/pagz.webp", article: "building-pagz-print-on-demand",
-        detail: "I built the storefront, pricing API, and order admin for a print shop moving its orders online.",
-        trace: ["File upload", "Print pricing", "Orders"],
-    },
-    "Libly Space": {
-        icon: Orbit, hue: 261, image: "/images/project-icons/libly.webp",
-        trace: ["Library catalog", "Web app", "Library staff"],
-    },
-    Eduents: {
-        icon: GraduationCap, hue: 219, article: "building-eduents-edtech-platform",
-        detail: "I built the Next.js core and WebSocket service, and integrated the Python tools built by my teammate.",
-        trace: ["Exam editor", "Live edits", "PDF output"],
-    },
-    "Hellium AI": {
-        icon: CircuitBoard, hue: 301,
-        trace: ["Marketing", "AI tools", "Web app"],
-    },
-    "Vin UI": {
-        icon: Code2, hue: 249, detail: "A UI component library for Next.js projects.",
-        trace: ["Components", "Next.js", "Interfaces"],
-    },
-    theorangeleaf: {
-        icon: Leaf, hue: 153, detail: "A web app for The Orange Leaf restaurant.",
-        trace: ["Restaurant", "Web app", "Diners"],
-    },
-};
-
-const defaultArtwork: ProjectArtwork = { icon: Orbit, hue: 256, trace: ["Project", "Build", "Web app"] };
+type View = "preview" | "build";
 
 export default function ProjectsCard() {
     const id = useId();
+    const buttons = useRef<(HTMLButtonElement | null)[]>([]);
     const [index, setIndex] = useState(0);
-    const [previewOpen, setPreviewOpen] = useState(false);
+    const [vertical, setVertical] = useState(false);
+    const [view, setView] = useState<View>("preview");
+    const [failedScreen, setFailedScreen] = useState<string | null>(null);
+    const [openProject, setOpenProject] = useState<ProjectsData | null>(null);
     const project = projectsData[index];
-    const artwork = projectArtwork[project.name] ?? defaultArtwork;
+    const artwork = getBentoProject(project.name);
     const Icon = artwork.icon;
+    const screen = artwork.screen?.src === failedScreen ? undefined : artwork.screen;
+    const canPreview = Boolean(screen || project.video || !artwork.story);
+    const showBuild = Boolean(artwork.story && (view === "build" || !canPreview));
+    const liveUrl = artwork.siteUnavailable ? "" : project.liveOn;
+    const hostname = liveUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
 
-    const handleKeys = (event: KeyboardEvent<HTMLButtonElement>, from: number) => {
-        const columns = window.matchMedia("(min-width: 640px)").matches ? 1 : 2;
+    useEffect(() => {
+        const media = window.matchMedia("(min-width: 640px)");
+        const update = () => setVertical(media.matches);
+        update();
+        media.addEventListener("change", update);
+        return () => media.removeEventListener("change", update);
+    }, []);
+
+    function handleKeys(event: KeyboardEvent<HTMLButtonElement>, from: number) {
+        const count = projectsData.length;
+        const columns = vertical ? 1 : 2;
         const keys: Record<string, number> = {
-            ArrowUp: (from + projectsData.length - columns) % projectsData.length,
-            ArrowDown: (from + columns) % projectsData.length,
-            ArrowLeft: (from + projectsData.length - 1) % projectsData.length,
-            ArrowRight: (from + 1) % projectsData.length,
+            ArrowUp: (from + count - columns) % count,
+            ArrowDown: (from + columns) % count,
+            ArrowLeft: (from + count - 1) % count,
+            ArrowRight: (from + 1) % count,
             Home: 0,
-            End: projectsData.length - 1,
+            End: count - 1,
         };
         const next = keys[event.key];
         if (next === undefined) return;
         event.preventDefault();
         setIndex(next);
-        document.getElementById(`${id}-${next}`)?.focus();
-    };
+        buttons.current[next]?.focus();
+    }
 
     return (
-        <div className="col-span-9 grid min-w-0 gap-3 sm:col-span-7 sm:grid-cols-[3fr_4fr] sm:gap-4">
-            <BentoCard className="project-picker" hoverable={false}>
-                <div className="mb-2 flex items-center justify-between gap-2">
-                    <h3 id={`${id}-label`} className="flex items-center gap-2 text-sm font-medium">
-                        <Code2 aria-hidden="true" className="size-4 text-violet-600 dark:text-violet-400" />
-                        Recent projects
-                    </h3>
-                    <Link href="/projects" prefetch={false} aria-label="View all projects" className="rounded p-1 text-zinc-500 hover:text-violet-600 focus-visible:outline-2 focus-visible:outline-violet-500 dark:text-zinc-400 dark:hover:text-violet-300">
-                        <ArrowUpRight aria-hidden="true" className="size-4" />
-                    </Link>
-                </div>
+        <BentoCard className="project-showcase col-span-12" hoverable={false}>
+            <div className="showcase-heading">
+                <h3 id={`${id}-label`}>
+                    <Code2 aria-hidden="true" size={17} /> Selected projects
+                </h3>
+                <Link href="/projects" prefetch={false}>
+                    All projects <ArrowUpRight aria-hidden="true" size={14} />
+                </Link>
+            </div>
 
-                <div role="tablist" aria-labelledby={`${id}-label`} aria-orientation="vertical" className="grid grid-cols-2 gap-0.5 sm:grid-cols-1">
+            <div className="showcase-layout">
+                <div role="tablist" aria-orientation={vertical ? "vertical" : "horizontal"} aria-labelledby={`${id}-label`} className="showcase-index">
                     {projectsData.map((item, position) => {
-                        const { icon: ItemIcon, hue, image } = projectArtwork[item.name] ?? defaultArtwork;
-                        const active = index === position;
+                        const itemArt = getBentoProject(item.name);
+                        const ItemIcon = itemArt.icon;
+                        const selected = index === position;
 
                         return (
                             <button
                                 key={item.name}
+                                ref={(button) => { buttons.current[position] = button; }}
                                 type="button"
                                 role="tab"
                                 id={`${id}-${position}`}
-                                aria-selected={active}
+                                aria-selected={selected}
                                 aria-controls={`${id}-project`}
-                                tabIndex={active ? 0 : -1}
+                                tabIndex={selected ? 0 : -1}
                                 onClick={() => setIndex(position)}
                                 onKeyDown={(event) => handleKeys(event, position)}
-                                className="project-tab"
-                                style={{ "--signal-hue": hue } as CSSProperties}
+                                className="showcase-project"
+                                style={{ "--project-hue": itemArt.hue } as CSSProperties}
                             >
-                                <span aria-hidden="true" className="project-tab-icon">
-                                    {image ? <Image src={image} alt="" width={17} height={17} unoptimized /> : <ItemIcon className="size-4" />}
+                                <span className="showcase-mark" aria-hidden="true">
+                                    {itemArt.mark ? <Image src={itemArt.mark} alt="" width={16} height={16} unoptimized /> : <ItemIcon size={15} />}
                                 </span>
-                                <span className="min-w-0 flex-1 truncate">{item.name}</span>
-                                <ArrowRight aria-hidden="true" className="project-tab-arrow hidden size-3.5 shrink-0 sm:block" />
+                                {item.name}
                             </button>
                         );
                     })}
                 </div>
-            </BentoCard>
 
-            <BentoCard className="project-signal" hoverable={false}>
                 <section
                     role="tabpanel"
                     id={`${id}-project`}
                     aria-labelledby={`${id}-${index}`}
                     tabIndex={0}
-                    className="project-signal-panel"
-                    style={{ "--signal-hue": artwork.hue } as CSSProperties}
+                    className="showcase-panel"
+                    style={{ "--project-hue": artwork.hue } as CSSProperties}
                 >
-                    <div key={project.name} className="project-signal-content">
-                        <div className="project-signal-plot">
-                            <Icon aria-hidden="true" className="project-signal-watermark" />
-                            <div className="project-signal-trace">
-                                {artwork.trace.map((node) => (
-                                    <span key={node}><i aria-hidden="true" />{node}</span>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="project-signal-copy">
-                            <h3>{project.name}</h3>
-                            <p>{artwork.detail ?? project.desc}</p>
-                            <div className="project-signal-links">
-                                {artwork.article && (
-                                    <Link href={`/posts/${artwork.article}`} prefetch={false}>Case study <ArrowRight aria-hidden="true" size={14} /></Link>
-                                )}
-                                {(!artwork.article || project.video) && (
-                                    <button type="button" onClick={() => setPreviewOpen(true)}>
-                                        {artwork.article ? "Video preview" : "Project details"} <ArrowRight aria-hidden="true" size={14} />
+                    <div className="showcase-stage">
+                        <div className="showcase-toolbar">
+                            {artwork.story && canPreview ? (
+                                <div className="showcase-view-switch" role="group" aria-label="Project view">
+                                    <button type="button" aria-pressed={!showBuild} onClick={() => setView("preview")}>
+                                        <LayoutTemplate aria-hidden="true" size={13} /> Preview
                                     </button>
-                                )}
-                                {project.liveOn && (
-                                    <a href={project.liveOn} target="_blank" rel="noreferrer">Live site <ArrowUpRight aria-hidden="true" size={14} /></a>
-                                )}
-                            </div>
+                                    <button type="button" aria-pressed={showBuild} onClick={() => setView("build")}>
+                                        <ListTree aria-hidden="true" size={13} /> How it works
+                                    </button>
+                                </div>
+                            ) : (
+                                <span className="showcase-view-label">{showBuild ? "How it works" : "Preview"}</span>
+                            )}
+                            {hostname && <span className="showcase-host">{hostname}</span>}
+                        </div>
+
+                        <div key={`${project.name}-${showBuild}`} className="showcase-visual">
+                            {showBuild && artwork.story ? (
+                                <ol className="showcase-steps">
+                                    {artwork.story.steps.map((step) => (
+                                        <li key={step.title}>
+                                            <span className="showcase-pin" aria-hidden="true" />
+                                            <div><h4>{step.title}</h4><p>{step.detail}</p></div>
+                                        </li>
+                                    ))}
+                                </ol>
+                            ) : screen ? (
+                                <Image
+                                    src={screen.src}
+                                    alt={screen.alt}
+                                    fill
+                                    sizes="(max-width: 640px) 95vw, 460px"
+                                    unoptimized
+                                    fetchPriority="low"
+                                    onError={() => setFailedScreen(screen.src)}
+                                    className="showcase-screen"
+                                />
+                            ) : (
+                                <div className="showcase-fallback">
+                                    <Icon aria-hidden="true" size={44} strokeWidth={1.4} />
+                                    {project.video && (
+                                        <button type="button" onClick={() => setOpenProject(project)}>
+                                            <Play aria-hidden="true" size={14} /> Watch demo
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="showcase-copy">
+                        <div>
+                            <h3>{project.name}</h3>
+                            <p>{artwork.summary ?? project.desc}</p>
+                        </div>
+                        <div className="showcase-links">
+                            {artwork.story ? (
+                                <Link href={`/posts/${artwork.story.slug}`} prefetch={false}>
+                                    Case study <ArrowRight aria-hidden="true" size={14} />
+                                </Link>
+                            ) : (
+                                <button type="button" onClick={() => setOpenProject(project)}>
+                                    Details <ArrowRight aria-hidden="true" size={14} />
+                                </button>
+                            )}
+                            {project.video && (screen || showBuild) && (
+                                <button type="button" onClick={() => setOpenProject(project)}>
+                                    Video <Play aria-hidden="true" size={13} />
+                                </button>
+                            )}
+                            {liveUrl && (
+                                <a href={liveUrl} target="_blank" rel="noreferrer">
+                                    Live site <ArrowUpRight aria-hidden="true" size={14} />
+                                </a>
+                            )}
                         </div>
                     </div>
                 </section>
-            </BentoCard>
+            </div>
 
-            {previewOpen && <ProjectModal project={project} onClose={() => setPreviewOpen(false)} />}
-        </div>
+            {openProject && <ProjectModal project={openProject} onClose={() => setOpenProject(null)} />}
+        </BentoCard>
     );
 }

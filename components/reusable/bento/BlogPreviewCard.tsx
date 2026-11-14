@@ -1,145 +1,95 @@
-"use client"
+import { ArrowUpRight, BookOpen } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import BentoCard from "./BentoCard";
 
-import React, { useEffect, useRef, useState } from "react"
-import { createPortal } from "react-dom"
-import BentoCard from "./BentoCard"
-import { ArrowUpRight, BookOpen } from "lucide-react"
-import Link from "next/link"
+type BlogPreviewProps = {
+    posts: BlogPostFrontmatter[];
+    className?: string;
+};
 
-type Props = {
-    posts: BlogPostFrontmatter[]
-    className?: string
-}
+const shortDate = new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+});
 
-const BlogRow = ({ p }: { p: BlogPostFrontmatter }) => {
-    const ref = useRef<HTMLAnchorElement | null>(null)
-    const [hover, setHover] = useState(false)
-    const [pos, setPos] = useState<{ top: number; left: number } | null>(null)
-    const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-    useEffect(() => {
-        return () => {
-            if (timer.current) clearTimeout(timer.current)
-        }
-    }, [])
-
-    const showTooltip = () => {
-        const r = ref.current?.getBoundingClientRect()
-        if (!r) return
-        const tipW = 288 // w-72
-        const margin = 12
-        // Always left of the row, clamp to 8px from viewport edge
-        const left = Math.max(8, r.left - tipW - margin)
-        setPos({ top: r.top + window.scrollY, left })
-        setHover(true)
-    }
-
-    const onEnter = () => {
-        if (timer.current) clearTimeout(timer.current)
-        timer.current = setTimeout(showTooltip, 200)
-    }
-
-    const onLeave = () => {
-        if (timer.current) clearTimeout(timer.current)
-        // grace period - lets cursor travel onto tooltip
-        timer.current = setTimeout(() => setHover(false), 150)
-    }
-
-    const onTipEnter = () => {
-        if (timer.current) clearTimeout(timer.current)
-    }
-    const onTipLeave = () => {
-        if (timer.current) clearTimeout(timer.current)
-        setHover(false)
-    }
+export default function BlogPreviewCard({ posts, className = "" }: BlogPreviewProps) {
+    const [featured, ...rest] = posts;
+    const published = featured ? new Date(featured.date) : undefined;
+    const hasDate = published && Number.isFinite(published.getTime());
 
     return (
-        <div>
-            <Link
-                ref={ref}
-                href={`/posts/${p.slug}`}
-                prefetch={false}
-                onMouseEnter={onEnter}
-                onMouseLeave={onLeave}
-                onFocus={onEnter}
-                onBlur={onLeave}
-                className="block rounded-md px-1.5 py-1 transition-colors hover:bg-black/4 focus-visible:outline-2 focus-visible:outline-violet-500 dark:hover:bg-white/5"
-            >
-                <p className="text-[11px] font-medium text-zinc-800 dark:text-zinc-100 line-clamp-2 leading-snug">
-                    {p.title}
-                </p>
-                <span className="text-[9px] font-mono text-zinc-500 dark:text-zinc-400">
-                    {p.readingTime} min
-                </span>
-            </Link>
+        <BentoCard className={`col-span-12 sm:col-span-5 ${className}`}>
+            <header className="mb-3 flex items-center justify-between gap-2">
+                <h3 className="flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                    <BookOpen aria-hidden="true" className="size-4 text-violet-700 dark:text-violet-300" />
+                    Writing
+                </h3>
+                <Link
+                    href="/posts"
+                    prefetch={false}
+                    aria-label="View all writing"
+                    className="flex min-h-7 items-center gap-1 rounded-md px-1 text-xs font-medium text-zinc-600 transition-colors hover:text-indigo-700 focus-visible:outline-2 focus-visible:outline-violet-500 dark:text-zinc-400 dark:hover:text-indigo-300"
+                >
+                    All posts
+                    <ArrowUpRight aria-hidden="true" className="size-3.5 shrink-0" />
+                </Link>
+            </header>
 
-            {hover && pos &&
-                createPortal(
-                    <div
-                        className="absolute z-[100]"
-                        style={{ top: pos.top, left: pos.left }}
-                        onMouseEnter={onTipEnter}
-                        onMouseLeave={onTipLeave}
-                    >
-                        <Link
-                            href={`/posts/${p.slug}`}
-                            prefetch={false}
-                            className="block w-72 max-w-[20rem] rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-900 shadow-2xl px-3 py-2 animate-in fade-in zoom-in-95 duration-150 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
-                        >
-                            <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 leading-snug">
-                                {p.title}
-                            </p>
-                            {p.description && (
-                                <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1 line-clamp-3 leading-snug">
-                                    {p.description}
-                                </p>
-                            )}
-                            <div className="flex items-center gap-2 mt-1.5 text-[9px] font-mono text-zinc-500 dark:text-zinc-400">
-                                <span>{new Date(p.date).toLocaleDateString()}</span>
-                                <span>·</span>
-                                <span>{p.readingTime} min read</span>
-                            </div>
-                        </Link>
-                    </div>,
-                    document.body
-                )}
-        </div>
-    )
-}
-
-const BlogPreviewCard = ({ posts, className }: Props) => {
-    return (
-        <BentoCard className={`group/blog relative ${className || ""}`}>
-            <div className="pointer-events-none absolute -bottom-16 -left-16 w-40 h-40 rounded-full bg-gradient-to-tr from-violet-500/15 to-pink-500/10 blur-3xl opacity-60" />
-
-            <div className="relative h-full flex flex-col">
-                <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center space-x-2">
-                        <BookOpen className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
-                        <h3 className="text-sm font-medium bg-gradient-to-r from-violet-400 to-pink-500 bg-clip-text text-transparent">
-                            Recent Blogs
-                        </h3>
-                    </div>
+            {featured ? (
+                <>
                     <Link
-                        href="/posts"
+                        href={`/posts/${featured.slug}`}
                         prefetch={false}
-                        aria-label="View all posts"
-                        className="rounded p-1 text-zinc-500 hover:text-violet-600 focus-visible:outline-2 focus-visible:outline-violet-500 dark:text-zinc-400"
+                        className="group/post block overflow-hidden rounded-xl border border-indigo-950/10 bg-indigo-950/3 transition-colors hover:border-indigo-500/35 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 dark:border-indigo-300/15 dark:bg-indigo-200/5 dark:hover:border-indigo-300/40"
                     >
-                        <ArrowUpRight aria-hidden="true" className="size-3.5" />
+                        <div className="relative h-16 overflow-hidden bg-zinc-900">
+                            <Image
+                                src="/images/batman-card.webp"
+                                alt=""
+                                fill
+                                sizes="(max-width: 639px) 100vw, 256px"
+                                unoptimized
+                                className="object-cover object-[center_28%] opacity-85 motion-safe:transition-transform motion-safe:duration-500 motion-safe:group-hover/post:scale-105"
+                            />
+                            <div aria-hidden="true" className="absolute inset-0 bg-linear-to-r from-indigo-950/65 via-transparent to-violet-950/55" />
+                        </div>
+
+                        <div className="p-2.5">
+                            <div className="mb-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-zinc-600 dark:text-zinc-400">
+                                {hasDate && <time dateTime={published.toISOString().slice(0, 10)}>{shortDate.format(published)}</time>}
+                                {featured.readingTime != null && (
+                                    <span>{hasDate && <span aria-hidden="true">· </span>}{featured.readingTime} min read</span>
+                                )}
+                            </div>
+                            <h4 className="text-sm leading-snug font-semibold text-zinc-900 group-hover/post:text-indigo-700 dark:text-zinc-100 dark:group-hover/post:text-indigo-300">
+                                {featured.title}
+                            </h4>
+                        </div>
                     </Link>
-                </div>
 
-                <div className="space-y-1 flex-1">
-                    {posts.length === 0 ? (
-                        <p className="text-xs text-zinc-500">No posts yet</p>
-                    ) : (
-                        posts.map((p) => <BlogRow key={p.slug} p={p} />)
+                    {rest.length > 0 && (
+                        <ul className="mt-1.5 divide-y divide-zinc-950/8 dark:divide-white/10">
+                            {rest.slice(0, 2).map((post) => (
+                                <li key={post.slug}>
+                                    <Link
+                                        href={`/posts/${post.slug}`}
+                                        prefetch={false}
+                                        className="group/row flex min-h-9 items-center justify-between gap-2 rounded-sm py-1.5 text-xs leading-snug text-zinc-700 transition-colors hover:text-indigo-700 focus-visible:outline-2 focus-visible:outline-violet-500 dark:text-zinc-300 dark:hover:text-indigo-300"
+                                    >
+                                        <span>{post.title}</span>
+                                        <ArrowUpRight aria-hidden="true" className="size-3.5 shrink-0 text-zinc-500 group-hover/row:text-current dark:text-zinc-400" />
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
                     )}
-                </div>
-            </div>
+                </>
+            ) : (
+                <p className="text-xs text-zinc-600 dark:text-zinc-400">No posts yet.</p>
+            )}
         </BentoCard>
-    )
+    );
 }
-
-export default BlogPreviewCard
