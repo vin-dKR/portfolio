@@ -5,6 +5,7 @@ import { ArrowUpRight, Clock, RefreshCw } from "lucide-react"
 import { getWakatimeStats } from "@/actions/wakatime"
 import type { WakatimeStats as WakatimeStatsData } from "@/lib/wakatimeClient"
 import BentoCard from "./BentoCard"
+import "./ActivityCards.css"
 
 const profileUrl = "https://wakatime.com/@fb861e4c-0eee-42a3-8d54-a65ccab34573"
 const hoursFormatter = new Intl.NumberFormat("en", { maximumFractionDigits: 1 })
@@ -75,11 +76,17 @@ const WakatimeStats = () => {
         }
     }, [refreshStats])
 
+    const namedLanguages = stats?.languages.filter(({ name }) => name !== "Other") ?? []
+    const remainingShare = Math.max(0, 100 - namedLanguages.reduce((sum, language) => sum + language.percentage, 0))
+    const languages = stats && stats.languageCount > namedLanguages.length && remainingShare > 0
+        ? [...namedLanguages, { name: "Other languages", percentage: remainingShare }]
+        : namedLanguages
+
     return (
-        <BentoCard className="bento-activity col-span-12 sm:col-span-5">
-            <div ref={cardContent} aria-busy={isLoading}>
-                <div className="activity-header">
-                    <h3><Clock aria-hidden="true" size={16} /> Coding Time</h3>
+        <BentoCard className="bento-activity activity-rich col-span-12 sm:col-span-6">
+            <div ref={cardContent} className="wakatime-card-content" aria-busy={isLoading}>
+                <div className="activity-header mb-2">
+                    <h3><Clock aria-hidden="true" size={16} /> <span className="activity-gradient-title">Coding Time</span></h3>
                     <div className="flex shrink-0 items-center gap-0.5">
                         <button type="button" onClick={refreshStats} disabled={isLoading} aria-label="Refresh coding stats">
                             <RefreshCw aria-hidden="true" size={14} className={isLoading ? "motion-safe:animate-spin" : undefined} />
@@ -92,22 +99,23 @@ const WakatimeStats = () => {
 
                 {stats ? (
                     <>
-                        <dl className="activity-figures">
+                        <dl className="activity-figures activity-inset">
                             <div><dt>{stats.rangeLabel}</dt><dd>{hoursFormatter.format(stats.totalHours)} <small>hrs</small></dd></div>
                             {stats.dailyAverageHours !== null && (
                                 <div><dt>Daily avg.</dt><dd>{hoursFormatter.format(stats.dailyAverageHours)} <small>hrs</small></dd></div>
                             )}
                         </dl>
 
-                        {stats.languages.length > 0 ? (
+                        {languages.length > 0 ? (
                             <>
+                                <p className="activity-section-label mb-1.5">Coding time by language</p>
                                 <div className="wakatime-bar" aria-hidden="true">
-                                    {stats.languages.map(({ name, percentage }) => (
+                                    {languages.map(({ name, percentage }) => (
                                         <span key={name} style={{ flexBasis: `${Math.min(100, Math.max(0, percentage))}%`, backgroundColor: colorFor(name) }} />
                                     ))}
                                 </div>
-                                <ul className="wakatime-mix" aria-label="Top coding languages">
-                                    {stats.languages.map(({ name, percentage }) => (
+                                <ul className="wakatime-mix" aria-label="Coding languages and share of time">
+                                    {languages.map(({ name, percentage }) => (
                                         <li key={name}>
                                             <span className="wakatime-dot" aria-hidden="true" style={{ backgroundColor: colorFor(name) }} />
                                             <span>{name}</span><small>{percentage}%</small>

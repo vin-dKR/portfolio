@@ -1,4 +1,4 @@
-import { AtSign, Mail } from "lucide-react";
+import { ArrowUpRight, AtSign, Mail } from "lucide-react";
 import Image from "next/image";
 import { socialMedia } from "@/constant/SocialMedia";
 import BentoCard from "./BentoCard";
@@ -13,14 +13,14 @@ const socialIcons: Record<string, { image: string; invert?: boolean; label?: str
 
 export default function SocialLinksCard() {
     return (
-        <BentoCard className="col-span-12">
-            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-                <h3 className="flex shrink-0 items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                    <AtSign aria-hidden="true" className="size-4 text-violet-700 dark:text-violet-300" />
+        <BentoCard className="col-span-12 px-3.5 py-2.5 sm:px-4">
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 sm:flex sm:justify-between">
+                <h3 className="flex shrink-0 items-center gap-2 text-sm font-semibold tracking-tight">
+                    <AtSign aria-hidden="true" className="size-4 text-(--bento-accent)" />
                     Connect
                 </h3>
 
-                <ul className="order-last flex basis-full flex-wrap items-center gap-x-0.5 gap-y-1 sm:order-0 sm:basis-auto">
+                <ul className="order-last col-span-2 mt-1.5 flex flex-wrap items-center gap-x-0.5 border-t border-(--bento-rule) pt-1 sm:order-none sm:mt-0 sm:border-0 sm:pt-0">
                     {socialMedia.map(({ name, url }) => {
                         const icon = socialIcons[name];
 
@@ -30,15 +30,16 @@ export default function SocialLinksCard() {
                                     href={url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex min-h-9 items-center gap-1.5 rounded-md px-1.5 text-xs font-medium text-zinc-700 transition-colors hover:bg-indigo-500/10 hover:text-indigo-800 focus-visible:outline-2 focus-visible:outline-violet-500 dark:text-zinc-300 dark:hover:text-indigo-200"
+                                    aria-label={name === "Twitter" ? "X (Twitter)" : undefined}
+                                    className="inline-flex min-h-11 min-w-11 items-center justify-center gap-1 rounded-md px-1.5 text-xs font-medium text-(--bento-muted) transition-colors hover:bg-(--bento-inset) hover:text-(--bento-accent) focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-violet-500"
                                 >
                                     {icon && (
                                         <Image
                                             src={`/images/socials/${icon.image}.svg`}
-                                            width={15}
-                                            height={15}
+                                            width={14}
+                                            height={14}
                                             alt=""
-                                            className={`size-[15px] shrink-0 ${icon.invert ? "dark:invert" : ""}`}
+                                            className={`size-3.5 shrink-0 ${icon.invert ? "dark:invert" : ""}`}
                                         />
                                     )}
                                     {icon?.label ?? name}
@@ -50,10 +51,11 @@ export default function SocialLinksCard() {
 
                 <a
                     href="mailto:vinodkumarmurmu62@gmail.com"
-                    className="inline-flex min-h-8 shrink-0 items-center gap-1.5 rounded-md border border-indigo-500/20 bg-indigo-500/8 px-2 text-xs font-semibold text-indigo-800 transition-colors hover:bg-indigo-500/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 dark:text-indigo-200"
+                    className="inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-lg border border-(--bento-rule) bg-(--bento-inset) px-2.5 text-xs font-semibold text-(--bento-accent) transition-colors hover:border-violet-500/45 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500"
                 >
                     <Mail aria-hidden="true" className="size-3.5" />
                     Email
+                    <ArrowUpRight aria-hidden="true" className="size-3" />
                 </a>
             </div>
         </BentoCard>

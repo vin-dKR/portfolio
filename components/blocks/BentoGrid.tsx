@@ -4,6 +4,7 @@ import WakatimeStats from "../reusable/bento/WakatimeStats";
 import SocialLinksCard from "../reusable/bento/SocialLinks";
 import ProjectsCard from "../reusable/bento/ProjectsCard";
 import TechStackCard from "../reusable/bento/TechStack";
+import VisualCard from "../reusable/bento/VisualCard";
 import BlogPreviewCard from "../reusable/bento/BlogPreviewCard";
 
 export default function BentoGrid({ blogPreviews = [] }: { blogPreviews?: BlogPostFrontmatter[] }) {
@@ -19,10 +20,11 @@ export default function BentoGrid({ blogPreviews = [] }: { blogPreviews?: BlogPo
 
             <div className="grid grid-cols-12 gap-3.5">
                 <ProjectsCard />
+                <VisualCard />
                 <TechStackCard />
-                <BlogPreviewCard posts={blogPreviews} />
                 <GithubStats username="vin-dKR" />
                 <WakatimeStats />
+                <BlogPreviewCard posts={blogPreviews} />
                 <SocialLinksCard />
             </div>
         </section>

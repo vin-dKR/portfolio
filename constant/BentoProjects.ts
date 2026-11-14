@@ -1,6 +1,6 @@
 import { CircuitBoard, Code2, GraduationCap, Leaf, Orbit, Sprout, Zap, type LucideIcon } from "lucide-react";
 
-type ProjectScreen = { src: string; alt: string };
+export type ProjectScreen = { src: string; alt: string; label?: string };
 type ProjectStory = {
     slug: string;
     steps: readonly { title: string; detail: string }[];
@@ -12,6 +12,7 @@ type BentoProject = {
     mark?: string;
     summary?: string;
     screen?: ProjectScreen;
+    additionalScreens?: readonly ProjectScreen[];
     siteUnavailable?: boolean;
     story?: ProjectStory;
 };
@@ -20,7 +21,11 @@ const projects: Record<string, BentoProject> = {
     "Trio EV": {
         icon: Zap,
         hue: 147,
-        screen: { src: "/images/bento/trio-ev.webp", alt: "Trio EV homepage with the Cities Move Electric headline" },
+        screen: { src: "/images/bento/trio-ev.webp", alt: "Trio EV homepage with the Cities Move Electric headline", label: "Homepage" },
+        additionalScreens: [
+            { src: "/images/bento/trio-fleet-services.webp", alt: "Trio EV fleet services comparing rentals, corporate transport, and last-mile delivery", label: "Fleet services" },
+            { src: "/images/bento/trio-charging.webp", alt: "Trio EV charging infrastructure homepage", label: "Charging network" },
+        ],
         summary: "I built the content system and bulk sales tools for an EV fleet and charging business.",
         story: {
             slug: "building-trio-ev-platform",
@@ -70,7 +75,11 @@ const projects: Record<string, BentoProject> = {
     Eduents: {
         icon: GraduationCap,
         hue: 220,
-        screen: { src: "/images/bento/eduents-dashboard.webp", alt: "Eduents dashboard showing the question bank and exam editor" },
+        screen: { src: "/images/bento/eduents-dashboard.webp", alt: "Eduents dashboard showing the question bank and exam editor", label: "Product overview" },
+        additionalScreens: [
+            { src: "/images/bento/eduents-question-bank.webp", alt: "Eduents question bank with folders and filtering controls", label: "Question bank" },
+            { src: "/images/bento/eduents-exam-editor.webp", alt: "Eduents exam editor with test configuration and a live paper preview", label: "Exam editor" },
+        ],
         summary: "I built the Next.js exam editor and WebSocket service in a five-repo education platform.",
         story: {
             slug: "building-eduents-edtech-platform",

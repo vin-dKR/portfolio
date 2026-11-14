@@ -1,0 +1,160 @@
+.activity-rich {
+    background:
+        radial-gradient(ellipse at top right, rgb(139 92 246 / .09), transparent 65%),
+        var(--bento-card);
+}
+
+.dark .activity-rich {
+    background:
+        radial-gradient(ellipse at top right, rgb(139 92 246 / .14), transparent 63%),
+        radial-gradient(ellipse at bottom left, rgb(217 70 239 / .08), transparent 63%),
+        var(--bento-card);
+}
+
+.activity-gradient-title {
+    background: linear-gradient(110deg, var(--bento-ink), var(--bento-accent) 75%, #b333a1);
+    background-clip: text;
+    color: transparent;
+}
+
+.dark .activity-gradient-title {
+    background-image: linear-gradient(110deg, var(--bento-ink), #c4a3f5 75%, #eba3ec);
+}
+
+.activity-inset {
+    border: 1px solid color-mix(in srgb, var(--bento-rule), transparent 32%);
+    background: color-mix(in srgb, var(--bento-inset), transparent 23%);
+}
+
+.activity-top-repo:hover {
+    border-color: color-mix(in srgb, var(--bento-rule), var(--bento-accent) 36%);
+}
+
+.activity-section-label,
+.github-history-caption {
+    font-size: .625rem;
+    line-height: 1.25;
+    letter-spacing: .025em;
+    text-transform: uppercase;
+    color: var(--bento-muted);
+}
+
+.activity-language-key {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .18rem .5rem;
+    color: var(--bento-muted);
+    font-size: .65rem;
+    line-height: 1.35;
+}
+
+.activity-language-key li {
+    display: flex;
+    align-items: center;
+    gap: .24rem;
+}
+
+.activity-language-key li > span:first-child {
+    width: .35rem;
+    height: .35rem;
+    border-radius: 50%;
+}
+
+.github-history-key {
+    display: flex;
+    flex: none;
+    gap: 2px;
+}
+
+.github-history-key span {
+    width: 6px;
+    height: 6px;
+}
+
+.github-history-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--calendar-weeks), minmax(0, 1fr));
+    grid-template-rows: repeat(7, auto);
+    grid-auto-flow: column;
+    width: min(100%, calc(var(--calendar-weeks) * 8px - 2px));
+    gap: 2px;
+    border-radius: 2px;
+    touch-action: pan-y;
+    cursor: pointer;
+}
+
+.github-history-grid span {
+    aspect-ratio: 1;
+}
+
+.github-history :is(.github-history-grid, .github-history-key) > span {
+    border-radius: 1.5px;
+    background-color: var(--github-cell, color-mix(in srgb, var(--bento-inset), var(--bento-muted) 8%));
+}
+
+.github-history [data-level="1"] {
+    --github-cell: color-mix(in srgb, var(--bento-inset), var(--bento-accent) 30%);
+}
+
+.github-history [data-level="2"] {
+    --github-cell: color-mix(in srgb, var(--bento-inset), var(--bento-accent) 52%);
+}
+
+.github-history [data-level="3"] {
+    --github-cell: color-mix(in srgb, var(--bento-inset), var(--bento-accent) 77%);
+}
+
+.github-history [data-level="4"] {
+    --github-cell: #c651ce;
+}
+
+.github-history-grid [data-selected="true"] {
+    outline: 1px solid var(--bento-ink);
+    outline-offset: 1px;
+}
+
+.activity-figures.activity-inset {
+    margin-bottom: .85rem;
+    padding: .75rem;
+    border-radius: .75rem;
+}
+
+.activity-rich .wakatime-mix {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    margin: .38rem 0 .55rem;
+}
+
+.activity-rich .wakatime-mix li {
+    min-height: 1.65rem;
+    gap: .42rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--bento-rule), transparent 30%);
+    font-size: .74rem;
+}
+
+.activity-rich .wakatime-mix li:last-child {
+    border-bottom: 0;
+}
+
+.activity-rich .wakatime-mix li > span:nth-child(2) {
+    min-width: 0;
+    color: var(--bento-ink);
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
+.activity-rich .wakatime-mix small {
+    font-size: inherit;
+}
+
+@media (min-width: 640px) {
+    .wakatime-card-content {
+        display: flex;
+        min-height: 100%;
+        flex-direction: column;
+    }
+
+    .activity-rich .wakatime-mix {
+        flex: 1;
+    }
+}
