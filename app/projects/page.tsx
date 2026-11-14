@@ -1,112 +1,47 @@
-"use client"
-import React, { useState } from "react";
-import { projectsData } from "@/constant/ProjectsData";
-import Project from "@/components/reusable/projects/Project";
-import { Tabs } from "@/components/ui/tabs"
-import { TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
-import { Card, CardContent } from "@/components/ui/card";
-import { GitPullRequest } from "lucide-react";
-import GitHubContribution from "@/components/reusable/projects/GithubContribution";
+import type { Metadata } from "next"
+import { ArrowUpRight } from "lucide-react"
+import CaseWork from "@/components/portfolio/CaseWork"
+import Project from "@/components/reusable/projects/Project"
+import { featuredWork, polarContributions } from "@/constant/Portfolio"
+import { projectsData } from "@/constant/ProjectsData"
 
-const ProjectsPage = () => {
-    const [activeTab, setActiveTab] = useState("projects");
-    const githubContributions: GithubContributionTypes[] = [
-        {
-            repo: "polarsource/polar",
-            title: "Fix #8735: Make button text visible on main project page",
-            prNumber: "f5f1f59",
-            state: "merged",
-            date: "2026-01-09",
-            url: "https://github.com/polarsource/polar/pull/8739"
-        },
-        {
-            repo: "polarsource/polar",
-            title: "Fix for issue #6864: hide navigation on Customer Portal sign-in page",
-            prNumber: "9732dfb",
-            state: "merged",
-            date: "2025-09-25",
-            url: "https://github.com/polarsource/polar/pull/7005"
-        },
-        {
-            repo: "polarsource/polar",
-            title: "Fix for issue #6780 : benefits: file upload of 2 GB fails #6981",
-            prNumber: "4ad0941",
-            state: "open",
-            date: "2025-09-24",
-            url: "https://github.com/polarsource/polar/pull/6981"
-        },
-    ];
-
-    return (
-        <div className="flex min-h-screen flex-col items-center theme-surface dark:bg-purple-500/5 bg-white font-lenia">
-            {/* Main container with responsive padding */}
-            <div className="w-full max-w-2xl px-4 sm:px-6 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-24 md:pb-8 sm:pb-12 lg:pb-16 mx-auto">
-                {/* Tabs Section */}
-                <div className="w-full">
-                    <Tabs value={activeTab} onValueChange={setActiveTab} className="">
-                        {/* Responsive Tabs List */}
-                        <TabsList className="flex w-full md:w-fit rounded-lg mb-6 sm:mb-8 p-1 gap-2 dark:bg-white/2 bg-black/10 border border-black/4 dark:border-white/4">
-                            <TabsTrigger
-                                value="projects"
-                                className="flex-1 sm:flex-none text-gray-500 dark:text-gray-400 data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700/50 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base md:text-lg lg:text-xl font-medium transition-all cursor-pointer hover:bg-gray-200/50 dark:hover:bg-gray-700/30"
-                            >
-                                Projects
-                            </TabsTrigger>
-                            <TabsTrigger
-                                value="contributions"
-                                className="flex-1 sm:flex-none text-gray-500 dark:text-gray-400 data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700/50 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base md:text-lg lg:text-xl font-medium transition-all cursor-pointer hover:bg-gray-200/50 dark:hover:bg-gray-700/30"
-                            >
-                                Contributions 
-                            </TabsTrigger>
-                        </TabsList>
-
-                        {/* Tabs Content */}
-                        <TabsContent value="projects" className="space-y-6 sm:space-y-8">
-                            {projectsData.map((project, index) => (
-                                <Project
-                                    key={index}
-                                    {...project}
-                                />
-                            ))}
-                        </TabsContent>
-
-                        <TabsContent value="contributions">
-                            {/* Contributions Header */}
-                            <div className="mb-6 sm:mb-8">
-                                <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold mb-2 sm:mb-3 text-gray-800 dark:text-gray-100">
-                                    GitHub Contributions
-                                </h2>
-                                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
-                                    A list of my pull requests to open-source projects.
-                                </p>
-                            </div>
-
-                            {/* Contributions List */}
-                            {githubContributions.length > 0 ? (
-                                <div className="space-y-4 sm:space-y-6">
-                                    {githubContributions.map((contribution, index) => (
-                                        <GitHubContribution
-                                            key={index}
-                                            {...contribution}
-                                        />
-                                    ))}
-                                </div>
-                            ) : (
-                                <Card className="w-full">
-                                    <CardContent className="p-4 sm:p-6 text-center">
-                                        <GitPullRequest className="w-8 h-8 sm:w-12 sm:h-12 mx-auto text-gray-400 mb-3 sm:mb-4" />
-                                        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
-                                            No contributions to display yet.
-                                        </p>
-                                    </CardContent>
-                                </Card>
-                            )}
-                        </TabsContent>
-                    </Tabs>
-                </div>
-            </div>
-        </div>
-    )
+export const metadata: Metadata = {
+    title: "Selected Work | Vinod KR",
+    description: "Full-stack projects by Vinod KR, from product decisions and interface design to production systems.",
 }
 
-export default ProjectsPage
+const featuredUrls: ReadonlySet<string> = new Set(featuredWork.map(({ url }) => url))
+
+export default function ProjectsPage() {
+    return (
+        <main id="main-content" className="site-container page-shell">
+            <header className="page-intro">
+                <p className="eyebrow">Portfolio</p>
+                <h1 className="page-heading">Selected work</h1>
+                <p className="page-lede">What I built, the decisions behind it, and the systems that went live.</p>
+            </header>
+            <CaseWork previews />
+
+            <section className="home-section" aria-labelledby="more-projects">
+                <div className="section-heading"><h2 id="more-projects">More projects</h2></div>
+                <div className="project-archive">
+                    {projectsData.filter((project) => !featuredUrls.has(project.liveOn ?? "")).map((project) => <Project key={project.name} {...project} />)}
+                </div>
+            </section>
+
+            <section className="home-section" aria-labelledby="contributions">
+                <div className="section-heading"><h2 id="contributions">Open-source contributions</h2></div>
+                <ul className="site-panel project-contributions">
+                    {polarContributions.map((entry) => (
+                        <li key={entry.id}>
+                            <a href={entry.url} target="_blank" rel="noreferrer">
+                                <span>{entry.title}</span>
+                                <small>Polar #{entry.id} <ArrowUpRight aria-hidden="true" size={14} /></small>
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </section>
+        </main>
+    )
+}

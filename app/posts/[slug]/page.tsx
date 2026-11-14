@@ -1,16 +1,32 @@
+import type { Metadata } from "next"
+import { cache } from "react"
 import { notFound } from 'next/navigation'
 import { getBlogPostBySlug, getBlogPosts } from '@/lib/blogs'
 import BlogPostView from '@/components/blocks/BlogPostView'
 
+const getArticle = cache(getBlogPostBySlug)
+
+type ArticleParams = {
+    params: Promise<{ slug: string }>
+}
+
 export const dynamic = "force-static"
+
+export async function generateMetadata({ params }: ArticleParams): Promise<Metadata> {
+    const { slug } = await params
+    const post = await getArticle(slug)
+
+    return post ? {
+        title: `${post.frontmatter.title} | Vinod KR`,
+        description: post.frontmatter.description,
+    } : {}
+}
 
 export default async function BlogPostPage({
     params,
-}: {
-    params: Promise<{ slug: string }>
-}) {
+}: ArticleParams) {
     const { slug } = await params
-    const post = await getBlogPostBySlug(slug)
+    const post = await getArticle(slug)
 
     if (!post) {
         notFound()
