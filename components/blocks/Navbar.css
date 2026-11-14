@@ -78,19 +78,14 @@
 }
 
 .portfolio-theme-bat {
-    --bat-tip: #c4b2ef;
-    --bat-core: #241b36;
-    --bat-edge: #efd3fa;
-
     width: clamp(220px, 62vw, 820px);
     height: auto;
+    color: #000;
     opacity: 0;
 }
 
-.portfolio-theme-bat[data-destination="light"] {
-    --bat-tip: #fff6e1;
-    --bat-core: #e79b7c;
-    --bat-edge: #fff7e5;
+.dark .portfolio-theme-bat {
+    color: #fff;
 }
 
 @media (prefers-reduced-motion: no-preference) {

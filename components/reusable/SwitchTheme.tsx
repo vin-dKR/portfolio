@@ -2,7 +2,7 @@
 
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 const batShape = "M0 46C21 20 56 9 96 12c-4 10-2 22 13 28l4-16 5 10h4l5-10 4 16c15-6 17-18 13-28 40-3 75 8 96 34-34-8-54 1-56 23-16-11-33-3-35 13-12-6-21 2-29 16-8-14-17-22-29-16-2-16-19-24-35-13C54 47 34 38 0 46Z";
@@ -16,7 +16,6 @@ const batFlight: Keyframe[] = [
 export default function SwitchTheme() {
     const { setTheme, resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
-    const gradientId = useId();
     const silhouette = useRef<SVGSVGElement>(null);
     const flight = useRef<Animation | null>(null);
 
@@ -40,7 +39,6 @@ export default function SwitchTheme() {
             if (active && active.playState === "running") {
                 active.reverse();
             } else {
-                bat.dataset.destination = nextTheme;
                 const animation = bat.animate(batFlight, { duration: 590 });
                 flight.current = animation;
                 animation.onfinish = () => {
@@ -76,13 +74,7 @@ export default function SwitchTheme() {
             {mounted && createPortal(
                 <div className="portfolio-theme-flight" aria-hidden="true">
                     <svg ref={silhouette} className="portfolio-theme-bat" viewBox="0 0 240 104" focusable="false">
-                        <defs>
-                            <linearGradient id={gradientId} x1="15%" y1="0%" x2="85%" y2="100%">
-                                <stop stopColor="var(--bat-tip)" />
-                                <stop offset="100%" stopColor="var(--bat-core)" />
-                            </linearGradient>
-                        </defs>
-                        <path d={batShape} fill={`url(#${gradientId})`} stroke="var(--bat-edge)" strokeWidth="0.55" />
+                        <path d={batShape} fill="currentColor" />
                     </svg>
                 </div>,
                 document.body,
