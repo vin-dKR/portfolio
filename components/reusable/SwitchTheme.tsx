@@ -2,83 +2,155 @@
 
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-const batShape = "M0 46C21 20 56 9 96 12c-4 10-2 22 13 28l4-16 5 10h4l5-10 4 16c15-6 17-18 13-28 40-3 75 8 96 34-34-8-54 1-56 23-16-11-33-3-35 13-12-6-21 2-29 16-8-14-17-22-29-16-2-16-19-24-35-13C54 47 34 38 0 46Z";
-const batFlight: Keyframe[] = [
-    { transform: "scale(0.28)", opacity: 0, offset: 0, easing: "cubic-bezier(0.2, 0.75, 0.3, 1)" },
-    { transform: "scale(0.8)", opacity: 0.94, offset: 0.22, easing: "ease-in" },
-    { transform: "scale(1.25)", opacity: 0.82, offset: 0.56, easing: "cubic-bezier(0.65, 0, 0.84, 0.48)" },
-    { transform: "scale(8)", opacity: 0, offset: 1 },
+type Theme = "light" | "dark";
+
+type ThemeReveal = {
+    destination: Theme;
+    target: Theme;
+    buttonBounds?: DOMRectReadOnly;
+    transition?: ViewTransition;
+    animation?: Animation;
+};
+
+const revealLayer = "::view-transition-new(root)";
+const revealFrames: Keyframe[] = [
+    { maskSize: "0px auto", easing: "cubic-bezier(.22,.8,.38,1)" },
+    { maskSize: "75vmax auto", offset: 0.3, easing: "ease-in" },
+    { maskSize: "225vmax auto", offset: 0.62, easing: "ease-in" },
+    { maskSize: "1250vmax auto" },
 ];
+
+function paintTheme(theme: Theme) {
+    const root = document.documentElement;
+    root.classList.toggle("dark", theme === "dark");
+    root.classList.toggle("light", theme === "light");
+    root.style.colorScheme = theme;
+}
+
+function containsClick(bounds: DOMRectReadOnly | undefined, { clientX, clientY }: MouseEvent) {
+    return bounds && clientX >= bounds.left && clientX <= bounds.right && clientY >= bounds.top && clientY <= bounds.bottom;
+}
 
 export default function SwitchTheme() {
     const { setTheme, resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
-    const silhouette = useRef<SVGSVGElement>(null);
-    const flight = useRef<Animation | null>(null);
+    const [requestedTheme, setRequestedTheme] = useState<Theme | null>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const activeReveal = useRef<ThemeReveal | null>(null);
+
+    const toggleTheme = useCallback(() => {
+        const root = document.documentElement;
+        const current = activeReveal.current;
+        const theme = current?.target ?? (root.classList.contains("dark") ? "dark" : "light");
+        const next = theme === "dark" ? "light" : "dark";
+
+        if (current) {
+            current.target = next;
+            setRequestedTheme(next);
+            current.animation?.updatePlaybackRate(next === current.destination ? 1 : -1);
+            return;
+        }
+
+        if (!document.startViewTransition || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            paintTheme(next);
+            setTheme(next);
+            return;
+        }
+
+        const reveal: ThemeReveal = {
+            destination: next,
+            target: next,
+            buttonBounds: buttonRef.current?.getBoundingClientRect(),
+        };
+        activeReveal.current = reveal;
+        setRequestedTheme(next);
+        root.classList.add("theme-revealing");
+
+        const transition = document.startViewTransition(() => {
+            if (activeReveal.current === reveal) paintTheme(reveal.destination);
+        });
+        reveal.transition = transition;
+
+        const finish = () => {
+            if (activeReveal.current !== reveal) return;
+            activeReveal.current = null;
+            paintTheme(reveal.target);
+            setTheme(reveal.target);
+            setRequestedTheme(null);
+            transition.skipTransition();
+            reveal.animation?.cancel();
+            root.classList.remove("theme-revealing");
+        };
+
+        void transition.ready.then(() => {
+            if (activeReveal.current !== reveal) return;
+            if (reveal.target !== reveal.destination) {
+                finish();
+                return;
+            }
+
+            try {
+                // The incoming theme stays behind the mask even when the animation reverses.
+                reveal.animation = root.animate(revealFrames, {
+                    duration: 710,
+                    fill: "both",
+                    pseudoElement: revealLayer,
+                });
+                if (!(reveal.animation.effect instanceof KeyframeEffect) || reveal.animation.effect.pseudoElement !== revealLayer) {
+                    finish();
+                    return;
+                }
+                reveal.animation.onfinish = finish;
+            } catch {
+                finish();
+            }
+        }, finish);
+
+        void transition.finished.then(finish, finish);
+    }, [setTheme]);
 
     useEffect(() => {
         setMounted(true);
         return () => {
-            flight.current?.cancel();
-            document.documentElement.classList.remove("theme-in-motion");
+            const reveal = activeReveal.current;
+            activeReveal.current = null;
+            reveal?.transition?.skipTransition();
+            reveal?.animation?.cancel();
+            document.documentElement.classList.remove("theme-revealing");
         };
     }, []);
 
-    function toggleTheme() {
-        const root = document.documentElement;
-        const nextTheme = root.classList.contains("dark") ? "light" : "dark";
-        const bat = silhouette.current;
-        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    useEffect(() => {
+        function handleCapturedClick(event: MouseEvent) {
+            const button = buttonRef.current;
+            const root = document.documentElement;
+            const reveal = activeReveal.current;
+            if (!reveal || !button || event.detail === 0 ||
+                (event.target !== root && event.target !== document.body)) return;
 
-        if (!reducedMotion && bat?.animate) {
-            const active = flight.current;
-            root.classList.add("theme-in-motion");
-            if (active && active.playState === "running") {
-                active.reverse();
-            } else {
-                const animation = bat.animate(batFlight, { duration: 590 });
-                flight.current = animation;
-                animation.onfinish = () => {
-                    if (flight.current === animation) {
-                        flight.current = null;
-                        root.classList.remove("theme-in-motion");
-                    }
-                };
+            // The photographed navbar may still show its old size after scrolling.
+            if (containsClick(reveal.buttonBounds, event) || containsClick(button.getBoundingClientRect(), event)) {
+                toggleTheme();
             }
-        } else {
-            flight.current?.cancel();
-            flight.current = null;
-            root.classList.remove("theme-in-motion");
         }
 
-        root.classList.toggle("dark", nextTheme === "dark");
-        root.classList.toggle("light", nextTheme === "light");
-        setTheme(nextTheme);
-    }
+        document.addEventListener("click", handleCapturedClick, true);
+        return () => document.removeEventListener("click", handleCapturedClick, true);
+    }, [toggleTheme]);
 
     return (
-        <>
-            <button
-                type="button"
-                aria-label="Dark theme"
-                aria-pressed={mounted ? resolvedTheme === "dark" : undefined}
-                onClick={toggleTheme}
-                className="portfolio-theme-toggle"
-            >
-                <Moon aria-hidden="true" className="portfolio-theme-moon" />
-                <Sun aria-hidden="true" className="portfolio-theme-sun" />
-            </button>
-            {mounted && createPortal(
-                <div className="portfolio-theme-flight" aria-hidden="true">
-                    <svg ref={silhouette} className="portfolio-theme-bat" viewBox="0 0 240 104" focusable="false">
-                        <path d={batShape} fill="currentColor" />
-                    </svg>
-                </div>,
-                document.body,
-            )}
-        </>
+        <button
+            ref={buttonRef}
+            type="button"
+            aria-label="Dark theme"
+            aria-pressed={mounted ? (requestedTheme ?? resolvedTheme) === "dark" : undefined}
+            onClick={toggleTheme}
+            className="portfolio-theme-toggle"
+        >
+            <Moon aria-hidden="true" className="portfolio-theme-moon" />
+            <Sun aria-hidden="true" className="portfolio-theme-sun" />
+        </button>
     );
 }

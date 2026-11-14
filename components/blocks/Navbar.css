@@ -67,25 +67,20 @@
     opacity: 1;
 }
 
-.portfolio-theme-flight {
-    position: fixed;
-    z-index: 1000;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    overflow: hidden;
+/* Both themes remain visible until the edge of the mask crosses them. */
+:root.theme-revealing::view-transition {
     pointer-events: none;
 }
 
-.portfolio-theme-bat {
-    width: clamp(220px, 62vw, 820px);
-    height: auto;
-    color: #000;
-    opacity: 0;
+:root.theme-revealing::view-transition-group(root),
+:root.theme-revealing::view-transition-old(root),
+:root.theme-revealing::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
 }
 
-.dark .portfolio-theme-bat {
-    color: #fff;
+:root.theme-revealing::view-transition-new(root) {
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 104'%3E%3Cpath d='M0 46C21 20 56 9 96 12c-4 10-2 22 13 28l4-16 5 10h4l5-10 4 16c15-6 17-18 13-28 40-3 75 8 96 34-34-8-54 1-56 23-16-11-33-3-35 13-12-6-21 2-29 16-8-14-17-22-29-16-2-16-19-24-35-13C54 47 34 38 0 46Z'/%3E%3C/svg%3E") center / 0px auto no-repeat;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -95,12 +90,6 @@
 
     .portfolio-theme-toggle svg {
         transition: transform 230ms ease, opacity 180ms ease;
-    }
-
-    .theme-in-motion,
-    .theme-in-motion body,
-    .theme-in-motion .theme-surface {
-        transition: background-color 250ms ease, border-color 250ms ease, color 250ms ease;
     }
 }
 
