@@ -1,7 +1,8 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react"
+import { useCallback, useEffect, useId, useRef, useState } from "react"
 import { ArrowUpRight, Clock, RefreshCw } from "lucide-react"
+import { motion, useReducedMotion } from "motion/react"
 import { getWakatimeStats } from "@/actions/wakatime"
 import type { WakatimeStats as WakatimeStatsData } from "@/lib/wakatimeClient"
 import BentoCard from "./BentoCard"
@@ -34,25 +35,41 @@ const langColors: Record<string, string> = {
 const colorFor = (name: string) => langColors[name] || "#a1a1aa"
 
 const WakatimeStats = () => {
+    const highlightId = useId()
+    const reduceMotion = useReducedMotion()
     const cardContent = useRef<HTMLDivElement>(null)
     const refreshInProgress = useRef(false)
     const [stats, setStats] = useState<WakatimeStatsData | null>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [hasError, setHasError] = useState(false)
     const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null)
+    const [hoveredLanguage, setHoveredLanguage] = useState<string | null>(null)
+    const [focusedLanguage, setFocusedLanguage] = useState<string | null>(null)
+    const [refreshMessage, setRefreshMessage] = useState("")
+    const [refreshTurns, setRefreshTurns] = useState(0)
 
-    const refreshStats = useCallback(async () => {
+    const refreshStats = useCallback(async (announce = false) => {
         if (refreshInProgress.current) return
         refreshInProgress.current = true
         setIsLoading(true)
         setHasError(false)
+        if (announce) {
+            setRefreshMessage("Refreshing coding stats.")
+            setRefreshTurns((turns) => turns + 1)
+        }
 
         try {
             const data = await getWakatimeStats()
-            if (data) setStats(data)
-            else setHasError(true)
+            if (data) {
+                setStats(data)
+                if (announce) setRefreshMessage("Coding stats refreshed.")
+            } else {
+                setHasError(true)
+                if (announce) setRefreshMessage("Coding stats could not refresh. Try again.")
+            }
         } catch {
             setHasError(true)
+            if (announce) setRefreshMessage("Coding stats could not refresh. Try again.")
         } finally {
             refreshInProgress.current = false
             setIsLoading(false)
@@ -83,14 +100,21 @@ const WakatimeStats = () => {
     const languages = stats && stats.languageCount > namedLanguages.length && remainingShare > 0
         ? [...namedLanguages, { name: "Other languages", percentage: remainingShare }]
         : namedLanguages
-    const currentLanguage = languages.find(({ name }) => name === selectedLanguage) ?? languages[0]
+    const committedLanguage = languages.find(({ name }) => name === selectedLanguage) ?? languages[0]
+    const inspectedLanguage = hoveredLanguage ?? focusedLanguage
+    const currentLanguage = languages.find(({ name }) => name === inspectedLanguage) ?? committedLanguage
     let cursor = 0
     const segments = languages.map(({ name, percentage }) => {
         const start = cursor
-        cursor = Math.min(100, cursor + Math.max(0, percentage))
-        return `${colorFor(name)} ${start}% ${cursor}%`
+        const share = Math.min(100 - cursor, Math.max(0, percentage))
+        cursor += share
+        return { name, start, share }
     })
-    const chartStyle = { "--language-chart": `conic-gradient(from -90deg, ${segments.join(", ")}${cursor < 100 ? `, var(--bento-inset) ${cursor}% 100%` : ""})` } as CSSProperties
+
+    function selectLanguage(name: string) {
+        setSelectedLanguage(name)
+        setFocusedLanguage(null)
+    }
 
     return (
         <BentoCard className="bento-activity activity-rich col-span-12 sm:col-span-6">
@@ -98,14 +122,24 @@ const WakatimeStats = () => {
                 <div className="activity-header mb-2">
                     <h3><Clock aria-hidden="true" size={16} /> <span className="activity-gradient-title">Coding time</span></h3>
                     <div className="flex shrink-0 items-center gap-0.5">
-                        <button type="button" onClick={refreshStats} disabled={isLoading} aria-label="Refresh coding stats">
-                            <RefreshCw aria-hidden="true" size={14} className={isLoading ? "motion-safe:animate-spin" : undefined} />
+                        <button type="button" className="wakatime-refresh" data-refreshing={isLoading} onClick={() => { void refreshStats(true) }} disabled={isLoading} aria-label="Refresh coding stats" title={isLoading ? "Refreshing stats…" : "Refresh coding stats"}>
+                            <motion.span
+                                aria-hidden="true"
+                                className="wakatime-refresh-glyph"
+                                initial={false}
+                                animate={{ rotate: refreshTurns * 360 }}
+                                transition={reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 140, damping: 24 }}
+                            >
+                                <RefreshCw aria-hidden="true" size={14} />
+                            </motion.span>
                         </button>
-                        <a href={profileUrl} target="_blank" rel="noreferrer" aria-label="View WakaTime profile">
+                        <a className="wakatime-profile" href={profileUrl} target="_blank" rel="noreferrer" aria-label="View WakaTime profile">
                             <ArrowUpRight aria-hidden="true" size={15} />
                         </a>
                     </div>
                 </div>
+
+                <span role="status" className="sr-only">{refreshMessage}</span>
 
                 {stats ? (
                     <>
@@ -120,22 +154,63 @@ const WakatimeStats = () => {
                             <>
                                 <div className="wakatime-chart-heading">
                                     <p className="activity-section-label">Coding time by language</p>
-                                    <span>Select a language</span>
+                                    <span className="wakatime-chart-hint">{isLoading ? "Refreshing…" : hasError ? "Showing saved stats" : "Select a language"}</span>
                                 </div>
-                                <div className="wakatime-chart" style={chartStyle} aria-hidden="true">
-                                    <div className="wakatime-ring">
-                                        <div className="wakatime-ring-center">
+                                <div className="wakatime-chart">
+                                    <div className="wakatime-ring" data-inspecting={Boolean(inspectedLanguage)}>
+                                        <svg className="wakatime-ring-svg" viewBox="0 0 132 132" aria-hidden="true">
+                                            <circle className="wakatime-ring-track" cx="66" cy="66" r="60" />
+                                            {segments.map(({ name, start, share }) => share > 0 && (
+                                                <circle
+                                                    key={name}
+                                                    aria-hidden="true"
+                                                    className="wakatime-arc"
+                                                    cx="66" cy="66" r="60"
+                                                    pathLength="100"
+                                                    stroke={colorFor(name)}
+                                                    strokeDasharray={`${share} ${100 - share}`}
+                                                    strokeDashoffset={-start}
+                                                    transform="rotate(-180 66 66)"
+                                                    data-active={currentLanguage.name === name}
+                                                    data-language={name}
+                                                    onPointerEnter={(event) => { if (event.pointerType !== "touch") setHoveredLanguage(name) }}
+                                                    onPointerMove={(event) => { if (event.pointerType !== "touch" && hoveredLanguage !== name) setHoveredLanguage(name) }}
+                                                    onPointerLeave={() => setHoveredLanguage(null)}
+                                                    onClick={() => selectLanguage(name)}
+                                                />
+                                            ))}
+                                        </svg>
+                                        <div className="wakatime-ring-center" aria-hidden="true">
                                             <strong><Flow value={currentLanguage.percentage} /> <small>%</small></strong>
-                                            <span>{currentLanguage.name}</span>
+                                            <span key={currentLanguage.name} className="wakatime-language-label">{currentLanguage.name}</span>
                                         </div>
                                     </div>
                                 </div>
                                 <ul className="wakatime-mix" aria-label="Coding languages and share of time">
                                     {languages.map(({ name, percentage }) => (
                                         <li key={name}>
-                                            <button type="button" aria-pressed={currentLanguage.name === name} onClick={() => setSelectedLanguage(name)}>
+                                            <button
+                                                type="button"
+                                                aria-pressed={committedLanguage.name === name}
+                                                data-active={currentLanguage.name === name}
+                                                onPointerEnter={(event) => { if (event.pointerType !== "touch") setHoveredLanguage(name) }}
+                                                onPointerMove={(event) => { if (event.pointerType !== "touch" && hoveredLanguage !== name) setHoveredLanguage(name) }}
+                                                onPointerLeave={() => setHoveredLanguage(null)}
+                                                onFocus={() => { setHoveredLanguage(null); setFocusedLanguage(name) }}
+                                                onBlur={() => setFocusedLanguage(null)}
+                                                onClick={() => selectLanguage(name)}
+                                            >
                                                 <span className="wakatime-dot" aria-hidden="true" style={{ backgroundColor: colorFor(name) }} />
                                                 <span>{name}</span><small><Flow value={percentage} />%</small>
+                                                {currentLanguage.name === name && (
+                                                    <motion.span
+                                                        aria-hidden="true"
+                                                        className="wakatime-row-highlight"
+                                                        layoutId={`${highlightId}-language`}
+                                                        initial={false}
+                                                        transition={reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 42 }}
+                                                    />
+                                                )}
                                             </button>
                                         </li>
                                     ))}
@@ -143,8 +218,6 @@ const WakatimeStats = () => {
                                 <p className="wakatime-total wakatime-card-foot"><span><Flow value={stats.languageCount} /> languages tracked</span><span>{stats.rangeLabel}</span></p>
                             </>
                         ) : <p className="activity-empty">No language data for this period.</p>}
-
-                        {hasError && <p role="status" className="wakatime-total">Refresh unavailable. Showing the last loaded stats.</p>}
                     </>
                 ) : (
                     <p role="status" className="activity-empty">

@@ -179,29 +179,57 @@
 }
 
 .wakatime-ring {
+    position: relative;
     display: grid;
     width: 8.3rem;
     aspect-ratio: 1;
     place-items: center;
-    padding: .62rem;
-    border-radius: 50%;
-    background: var(--language-chart);
-    box-shadow: inset 0 0 0 1px rgb(255 255 255 / .06);
+}
+
+.wakatime-ring-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.wakatime-ring-track,
+.wakatime-arc {
+    fill: none;
+    stroke-width: 8;
+}
+
+.wakatime-ring-track {
+    stroke: var(--bento-inset);
+    pointer-events: none;
+}
+
+.wakatime-arc {
+    cursor: pointer;
+}
+
+.wakatime-arc[data-active="true"] {
+    stroke-width: 10;
+}
+
+.wakatime-ring[data-inspecting="true"] .wakatime-arc[data-active="false"] {
+    opacity: .42;
 }
 
 .wakatime-ring-center {
+    position: relative;
     display: flex;
-    width: 100%;
-    height: 100%;
+    width: calc(100% - 1.24rem);
+    height: calc(100% - 1.24rem);
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: .1rem;
     border-radius: 50%;
-    background: var(--bento-card);
     color: var(--bento-ink);
     text-align: center;
-    box-shadow: 0 0 0 3px var(--bento-card);
+    pointer-events: none;
 }
 
 .wakatime-ring-center strong {
@@ -240,6 +268,8 @@
 }
 
 .wakatime-mix button {
+    position: relative;
+    isolation: isolate;
     display: flex;
     width: 100%;
     min-height: 1.85rem;
@@ -260,11 +290,21 @@
     overflow-wrap: anywhere;
 }
 
-.wakatime-mix button[aria-pressed="true"] {
-    border-color: color-mix(in srgb, var(--bento-rule), transparent 30%);
-    background: var(--bento-inset);
+.wakatime-mix button[data-active="true"] {
     color: var(--bento-ink);
 }
+
+.wakatime-row-highlight {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    border: 1px solid color-mix(in srgb, var(--bento-rule), transparent 30%);
+    border-radius: inherit;
+    background: var(--bento-inset);
+    pointer-events: none;
+}
+
+.wakatime-mix button:focus-visible { outline-offset: -2px; }
 
 .wakatime-mix button:hover { color: var(--bento-ink); }
 .wakatime-mix button small { font-size: inherit; }
@@ -284,8 +324,38 @@
     color: var(--site-muted);
 }
 
+.wakatime-chart-hint { white-space: nowrap; }
+
+.wakatime-language-label { min-height: .85rem; }
+.wakatime-refresh-glyph { display: grid; place-items: center; }
+
+.wakatime-card-content .wakatime-refresh,
+.wakatime-card-content .wakatime-profile {
+    width: 2rem;
+    justify-content: center;
+}
+
+.wakatime-card-content :is(.wakatime-refresh, .wakatime-profile):hover:not(:disabled) {
+    background: var(--bento-inset);
+    color: var(--bento-ink);
+}
+
 @media (prefers-reduced-motion: no-preference) {
+    .wakatime-arc {
+        transition: stroke-width 380ms var(--site-spring), opacity 160ms ease, stroke-dasharray 460ms var(--site-spring), stroke-dashoffset 460ms var(--site-spring);
+    }
     .wakatime-mix button {
-        transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
+        transition: color 160ms ease, translate 120ms ease;
+    }
+    .wakatime-mix button:active { translate: 0 1px; }
+    .wakatime-language-label { animation: wakatime-label-in 180ms ease-out; }
+    .wakatime-card-content :is(.wakatime-refresh, .wakatime-profile) {
+        transition: background-color 160ms ease, color 160ms ease;
+    }
+    .wakatime-profile svg { transition: translate 250ms var(--site-spring); }
+    .wakatime-profile:hover svg { translate: 1px -1px; }
+    @keyframes wakatime-label-in {
+        from { opacity: .35; transform: translateY(2px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 }

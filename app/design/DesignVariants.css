@@ -1,0 +1,242 @@
+.design-board {
+    --bento-card: var(--site-card);
+    --bento-inset: var(--site-well);
+    --bento-rule: var(--site-rule);
+    --bento-ink: var(--site-ink);
+    --bento-muted: var(--site-secondary);
+    --bento-accent: var(--site-accent);
+    width: calc(100% - 2.5rem);
+    max-width: 85rem;
+    margin: 8rem auto 3rem;
+    color: var(--site-ink);
+}
+
+.design-board-single {
+    max-width: 40.5rem;
+}
+
+.design-board-single-tech {
+    max-width: 27rem;
+}
+
+.design-board > .site-footer {
+    max-width: 40.5rem;
+    margin-inline: auto;
+}
+
+.design-board-intro {
+    max-width: 38rem;
+    margin-bottom: 3.5rem;
+}
+
+.design-back-link {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: .4rem;
+    margin-bottom: .8rem;
+    color: var(--site-muted);
+    font-size: .75rem;
+}
+
+.design-back-link:hover {
+    color: var(--site-ink);
+}
+
+.design-board-intro h1 {
+    font-size: clamp(1.7rem, 4vw, 2.3rem);
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -.04em;
+}
+
+.design-board-intro > p {
+    margin-top: .8rem;
+    color: var(--site-secondary);
+    font-size: .875rem;
+    line-height: 1.6;
+}
+
+.design-section-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .2rem 1.5rem;
+    margin-top: 1rem;
+}
+
+.design-section-links a {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: .4rem;
+    font-size: .8rem;
+}
+
+.design-section-links span {
+    color: var(--site-muted);
+    font-size: .7rem;
+}
+
+.design-comparison-section {
+    scroll-margin-top: 1rem;
+}
+
+.design-comparison-section + .design-comparison-section {
+    margin-top: 4.5rem;
+}
+
+.design-comparison-section > h2,
+.design-micro-section h2 {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: .6rem 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+    letter-spacing: -.02em;
+}
+
+.design-comparison-section h2 > span {
+    color: var(--site-muted);
+    font-size: .75rem;
+    font-weight: 400;
+    letter-spacing: 0;
+}
+
+.design-project-grid,
+.design-tech-grid {
+    display: grid;
+    align-items: start;
+    gap: 2.5rem;
+}
+
+.design-project-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 29rem), 40.5rem));
+    justify-content: center;
+}
+
+.design-tech-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+}
+
+.design-option {
+    min-width: 0;
+}
+
+.design-option-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: .75rem;
+    min-height: 5rem;
+    padding-top: .9rem;
+    border-top: 1px solid var(--site-rule);
+}
+
+.design-tech-grid .design-option-heading {
+    min-height: 6rem;
+}
+
+.design-option-heading h3 {
+    display: flex;
+    align-items: baseline;
+    gap: .65rem;
+    font-size: .9375rem;
+    font-weight: 500;
+}
+
+.design-option-heading h3 > span {
+    color: var(--site-muted);
+    font-size: .7rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.design-option-heading p {
+    max-width: 40ch;
+    margin-top: .35rem;
+    padding-bottom: .9rem;
+    color: var(--site-muted);
+    font-size: .75rem;
+    line-height: 1.5;
+}
+
+.design-option-heading > a {
+    display: inline-flex;
+    min-height: 2.75rem;
+    flex: none;
+    align-items: center;
+    gap: .25rem;
+    color: var(--site-muted);
+    font-size: .7rem;
+}
+
+.design-option-heading > a:hover {
+    color: var(--site-ink);
+}
+
+.design-option-canvas {
+    min-width: 0;
+}
+
+.design-micro-section {
+    display: grid;
+    align-items: start;
+    gap: 1.5rem 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--site-rule);
+}
+
+.design-micro-section h2 {
+    margin-bottom: .75rem;
+}
+
+.design-micro-section > div > p {
+    max-width: 36ch;
+    color: var(--site-secondary);
+    font-size: .8125rem;
+    line-height: 1.6;
+}
+
+.design-micro-card {
+    width: 100%;
+    max-width: 23rem;
+}
+
+.design-board :is(.design-back-link, .design-section-links a, .design-option-heading > a):focus-visible {
+    outline: 2px solid var(--site-accent);
+    outline-offset: 3px;
+}
+
+@media (min-width: 768px) {
+    .design-micro-section {
+        grid-template-columns: minmax(0, 1fr) minmax(18rem, 23rem);
+    }
+}
+
+.design-board-single .design-project-grid,
+.design-board-single .design-tech-grid {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.design-board-single .design-option-heading {
+    min-height: 0;
+}
+
+.design-board-single .design-board-intro {
+    margin-bottom: 2.5rem;
+}
+
+@media (max-width: 767px) {
+    .design-board {
+        margin-top: 6rem;
+        margin-bottom: 7rem;
+    }
+    .design-project-grid,
+    .design-tech-grid {
+        gap: 2rem;
+    }
+    .design-board-intro {
+        margin-bottom: 2.5rem;
+    }
+}
