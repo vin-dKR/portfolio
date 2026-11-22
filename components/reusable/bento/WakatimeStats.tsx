@@ -11,6 +11,7 @@ import "./ActivityCards.css"
 
 const profileUrl = "https://wakatime.com/@fb861e4c-0eee-42a3-8d54-a65ccab34573"
 const hoursFormatter = new Intl.NumberFormat("en", { maximumFractionDigits: 1 })
+const formatUsageHours = (hours: number) => hours > 0 && hours < .1 ? "<0.1" : hoursFormatter.format(hours)
 
 const langColors: Record<string, string> = {
     TypeScript: "#3178c6",
@@ -95,11 +96,7 @@ const WakatimeStats = () => {
         }
     }, [refreshStats])
 
-    const namedLanguages = stats?.languages.filter(({ name }) => name !== "Other") ?? []
-    const remainingShare = Math.max(0, 100 - namedLanguages.reduce((sum, language) => sum + language.percentage, 0))
-    const languages = stats && stats.languageCount > namedLanguages.length && remainingShare > 0
-        ? [...namedLanguages, { name: "Other languages", percentage: remainingShare }]
-        : namedLanguages
+    const languages = stats?.languages ?? []
     const committedLanguage = languages.find(({ name }) => name === selectedLanguage) ?? languages[0]
     const inspectedLanguage = hoveredLanguage ?? focusedLanguage
     const currentLanguage = languages.find(({ name }) => name === inspectedLanguage) ?? committedLanguage
@@ -117,7 +114,7 @@ const WakatimeStats = () => {
     }
 
     return (
-        <BentoCard className="bento-activity activity-rich col-span-12 sm:col-span-6">
+        <BentoCard className="bento-activity activity-rich wakatime-card col-span-12 sm:col-span-6">
             <div ref={cardContent} className="wakatime-card-content" aria-busy={isLoading}>
                 <div className="activity-header mb-2">
                     <h3><Clock aria-hidden="true" size={16} /> <span className="activity-gradient-title">Coding time</span></h3>
@@ -186,11 +183,12 @@ const WakatimeStats = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <ul className="wakatime-mix" aria-label="Coding languages and share of time">
+                                <ul className="wakatime-mix" aria-label="Inspect a coding language">
                                     {languages.map(({ name, percentage }) => (
                                         <li key={name}>
                                             <button
                                                 type="button"
+                                                aria-label={`${name}, ${percentage}% of coding time`}
                                                 aria-pressed={committedLanguage.name === name}
                                                 data-active={currentLanguage.name === name}
                                                 onPointerEnter={(event) => { if (event.pointerType !== "touch") setHoveredLanguage(name) }}
@@ -201,7 +199,7 @@ const WakatimeStats = () => {
                                                 onClick={() => selectLanguage(name)}
                                             >
                                                 <span className="wakatime-dot" aria-hidden="true" style={{ backgroundColor: colorFor(name) }} />
-                                                <span>{name}</span><small><Flow value={percentage} />%</small>
+                                                <span>{name === "Other languages" ? "Other" : name}</span>
                                                 {currentLanguage.name === name && (
                                                     <motion.span
                                                         aria-hidden="true"
@@ -215,9 +213,24 @@ const WakatimeStats = () => {
                                         </li>
                                     ))}
                                 </ul>
-                                <p className="wakatime-total wakatime-card-foot"><span><Flow value={stats.languageCount} /> languages tracked</span><span>{stats.rangeLabel}</span></p>
+
                             </>
-                        ) : <p className="activity-empty">No language data for this period.</p>}
+                        ) : <p className="activity-empty">No language breakdown available for this period.</p>}
+
+                        {(stats.topEditor || stats.topOperatingSystem) && (
+                            <dl className="wakatime-environment" aria-label={`${stats.rangeLabel} editor and system activity`}>
+                                {[{ label: "Top editor", usage: stats.topEditor }, { label: "Main system", usage: stats.topOperatingSystem }].map(({ label, usage }) => usage && (
+                                    <div key={label}>
+                                        <dt>{label}</dt>
+                                        <dd><span title={usage.name}>{usage.name}</span><span className="wakatime-usage-hours"><Flow value={usage.hours} format={formatUsageHours} /> <small>hrs</small></span></dd>
+                                    </div>
+                                ))}
+                            </dl>
+                        )}
+                        <p className="wakatime-total wakatime-card-foot">
+                            <span>{stats.languageCount > 0 ? <><Flow value={stats.languageCount} /> languages tracked</> : "WakaTime activity"}</span>
+                            {stats.activeDays != null && <span><Flow value={stats.activeDays} /> active days</span>}
+                        </p>
                     </>
                 ) : (
                     <p role="status" className="activity-empty">

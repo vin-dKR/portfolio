@@ -29,7 +29,7 @@ export default function WorkPage() {
                 <p className="page-intro">From co-founding Clothing GO to supporting systems at HCLTech and shipping freelance web applications.</p>
             </header>
             <div className="work-story">
-                <Timeline data={timelineData} gradientColors={["#10b981", "#8b6cbe"]} />
+                <Timeline data={timelineData} gradientColors={["#429b87", "#8370ae"]} />
             </div>
             <HomeFooter />
         </main>

@@ -257,9 +257,11 @@
 }
 
 .activity-rich .wakatime-mix {
-    grid-template-columns: minmax(0, 1fr);
-    gap: .1rem;
-    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .25rem;
+    margin: .15rem 0 .65rem;
 }
 
 .activity-rich .wakatime-mix li {
@@ -271,23 +273,22 @@
     position: relative;
     isolation: isolate;
     display: flex;
-    width: 100%;
+    width: auto;
     min-height: 1.85rem;
     align-items: center;
-    gap: .45rem;
+    gap: .35rem;
     padding: .3rem .45rem;
     border: 1px solid transparent;
     border-radius: .45rem;
     color: var(--bento-muted);
-    font-size: .72rem;
+    font-size: .67rem;
     text-align: left;
     cursor: pointer;
 }
 
 .wakatime-mix button > span:nth-child(2) {
     min-width: 0;
-    flex: 1;
-    overflow-wrap: anywhere;
+    white-space: nowrap;
 }
 
 .wakatime-mix button[data-active="true"] {
@@ -359,3 +360,56 @@
         to { opacity: 1; transform: translateY(0); }
     }
 }
+
+.wakatime-environment {
+    display: grid;
+    margin-top: .15rem;
+    border-top: 1px solid var(--bento-rule);
+}
+
+.wakatime-environment > div {
+    display: grid;
+    grid-template-columns: 4.6rem minmax(0, 1fr);
+    align-items: baseline;
+    gap: .6rem;
+    min-height: 2rem;
+    padding-block: .5rem;
+}
+
+.wakatime-environment > div + div {
+    border-top: 1px solid color-mix(in srgb, var(--bento-rule), transparent 45%);
+}
+
+.wakatime-environment dt {
+    color: var(--bento-muted);
+    font-size: .625rem;
+}
+
+.wakatime-environment dd {
+    display: flex;
+    min-width: 0;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: .5rem;
+    color: var(--bento-ink);
+    font-size: .7rem;
+}
+
+.wakatime-environment dd > span:first-child {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.wakatime-usage-hours {
+    display: inline-flex;
+    flex: none;
+    align-items: baseline;
+    gap: .25rem;
+    color: var(--bento-muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.wakatime-usage-hours small { font-size: .625rem; }
