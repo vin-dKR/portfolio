@@ -21,6 +21,27 @@ type ThemeRevealContextValue = {
 
 const ThemeRevealContext = createContext<ThemeRevealContextValue | null>(null);
 const revealLayer = "::view-transition-new(root)";
+let maskReady: Promise<void> | null = null;
+
+function prepareOriginalMask() {
+    if (!maskReady) {
+        const image = new Image();
+        image.decoding = "async";
+        image.fetchPriority = "low";
+        image.src = "/images/batman.svg";
+        maskReady = image.decode().catch((error) => {
+            maskReady = null;
+            throw error;
+        });
+    }
+    return maskReady;
+}
+
+function warmOriginalMask() {
+    if (!document.startViewTransition || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    void prepareOriginalMask().catch(() => {});
+}
+
 const revealFrames: Keyframe[] = [
     { maskSize: "0px auto", easing: "cubic-bezier(.22,.8,.38,1)" },
     { maskSize: "75vmax auto", offset: 0.3, easing: "ease-in" },
@@ -48,7 +69,13 @@ export function ThemeRevealProvider({ children }: { children: ReactNode }) {
 
     const registerTrigger = useCallback((trigger: HTMLButtonElement) => {
         triggers.current.add(trigger);
-        return () => { triggers.current.delete(trigger); };
+        trigger.addEventListener("pointerenter", warmOriginalMask, { once: true });
+        trigger.addEventListener("focus", warmOriginalMask, { once: true });
+        return () => {
+            triggers.current.delete(trigger);
+            trigger.removeEventListener("pointerenter", warmOriginalMask);
+            trigger.removeEventListener("focus", warmOriginalMask);
+        };
     }, []);
 
     const toggleTheme = useCallback(() => {
@@ -91,7 +118,8 @@ export function ThemeRevealProvider({ children }: { children: ReactNode }) {
         };
 
         try {
-            reveal.transition = document.startViewTransition(() => {
+            reveal.transition = document.startViewTransition(async () => {
+                await prepareOriginalMask();
                 if (activeReveal.current === reveal) paintTheme(reveal.destination);
             });
         } catch {
@@ -99,6 +127,7 @@ export function ThemeRevealProvider({ children }: { children: ReactNode }) {
             return;
         }
 
+        void reveal.transition.updateCallbackDone.catch(finish);
         void reveal.transition.ready.then(() => {
             if (activeReveal.current !== reveal) return;
             if (reveal.target !== reveal.destination) {
@@ -128,7 +157,13 @@ export function ThemeRevealProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         setMounted(true);
+        const canReveal = Boolean(document.startViewTransition) && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const idle = canReveal && typeof window.requestIdleCallback === "function"
+            ? window.requestIdleCallback(warmOriginalMask, { timeout: 1200 }) : null;
+        const timer = canReveal && idle === null ? window.setTimeout(warmOriginalMask, 250) : null;
         return () => {
+            if (idle !== null) window.cancelIdleCallback(idle);
+            if (timer !== null) window.clearTimeout(timer);
             const reveal = activeReveal.current;
             activeReveal.current = null;
             reveal?.transition?.skipTransition();

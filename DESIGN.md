@@ -9,6 +9,7 @@ Use Vinod’s existing compact personal portfolio as the design reference. The s
 - Use colour for an active choice, a meaningful icon, or a data series. The aurora is an intentional light effect. The Batman art and GitHub visual retain their individual character.
 - Build controls with the existing Radix primitives or native HTML. Keep keyboard focus, touch targets, dark mode, reduced motion, and loading states usable.
 - Motion follows an action. The Batman card also offers the existing theme transition. Keep the original centered 1.5× Batman image zoom with 700 ms timing inside a fixed frame. Keep the footer’s original changing emoji on its 500 ms interval. Avoid scroll reveals that delay content and hover effects that move surrounding content.
+- The theme reveal uses the original `/images/batman.svg` asset unchanged, including the flying bats. Prepare it after first paint or on interaction intent and decode it before starting the reveal. Preserve rapid reversal and the monochrome inverse themes.
 
 The `kshv-taste` skill informs these decisions through the existing visual language.
 
