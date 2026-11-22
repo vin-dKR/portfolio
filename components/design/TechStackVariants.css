@@ -100,11 +100,11 @@
     fill: currentColor;
 }
 
-.ctv-brand-fallback {
+.ctv-brand[data-brand-kind="symbol"] {
     fill: none;
 }
 
-.ctv-tool:is(:hover, :focus-visible, [aria-pressed="true"]) .ctv-brand-fallback {
+.ctv-tool:is(:hover, :focus-visible, [aria-pressed="true"]) .ctv-brand[data-brand-kind="symbol"] {
     color: var(--ctv-ink);
 }
 
@@ -163,11 +163,11 @@
 }
 
 .ctv-wall .ctv-brand[data-colored="true"] {
-    color: color-mix(in srgb, var(--ctv-brand-color) 60%, var(--ctv-ink));
+    color: color-mix(in srgb, var(--tech-brand-color) 60%, var(--ctv-ink));
 }
 
 .dark .ctv-wall .ctv-brand[data-colored="true"] {
-    color: var(--ctv-brand-dark-color);
+    color: var(--tech-brand-dark-color);
 }
 
 .ctv-category-grid {

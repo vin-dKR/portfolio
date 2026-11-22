@@ -1,12 +1,12 @@
 "use client";
 
-import { useRef, useState, type KeyboardEvent } from "react";
+import { useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { Root as Tabs, List as TabList, Trigger as Tab, Content as TabPanel } from "@radix-ui/react-tabs";
-import { ArrowRight, ArrowUpRight, ChevronDown, ChevronLeft, ChevronRight, Maximize2, Play } from "lucide-react";
-import { Flow } from "@/components/ui/Flow";
+import { ArrowRight, ArrowUpRight, ChevronDown, Maximize2, Play } from "lucide-react";
+import ProjectStack from "@/components/reusable/projects/ProjectStack";
 import { projectsData } from "@/constant/ProjectsData";
 import { getBentoProject } from "@/constant/BentoProjects";
 import "./ProjectVariants.css";
@@ -17,7 +17,6 @@ const ProjectModal = dynamic(() => import("@/components/reusable/projects/Projec
 const featuredNames = ["Trio EV", "Pagz", "Eduents", "Vin UI"];
 const featuredProjects = projectsData.filter((project) => featuredNames.includes(project.name));
 const otherProjects = projectsData.filter((project) => !featuredNames.includes(project.name));
-const wrap = (index: number) => (index + projectsData.length) % projectsData.length;
 
 type Variant = "cover" | "split" | "gallery" | "stack";
 type OpenProject = (project: ProjectsData) => void;
@@ -122,7 +121,6 @@ export default function ProjectVariant({ variant }: { variant: Variant }) {
     const rail = useRef<HTMLDivElement>(null);
     const tabs = useRef<(HTMLButtonElement | null)[]>([]);
     const project = projectsData[index];
-    const artwork = getBentoProject(project.name);
     const galleryArtwork = gallery ? getBentoProject(gallery.name) : null;
 
     function select(next: number) {
@@ -138,13 +136,6 @@ export default function ProjectVariant({ variant }: { variant: Variant }) {
         if (left < 0 || right > 0) {
             list.scrollBy({ left: left < 0 ? left : right, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
         }
-    }
-
-    const move = (direction: number) => setIndex((current) => wrap(current + direction));
-    function browseWithKeys(event: KeyboardEvent<HTMLDivElement>) {
-        if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
-        event.preventDefault();
-        move(event.key === "ArrowLeft" ? -1 : 1);
     }
 
     function open(project: ProjectsData) {
@@ -202,28 +193,7 @@ export default function ProjectVariant({ variant }: { variant: Variant }) {
                 </div>
             )}
 
-            {variant === "stack" && (
-                <div className="pv-stack">
-                    <div className="pv-stack-deck">
-                        {[-1, 0, 1].map((offset) => {
-                            const item = projectsData[wrap(index + offset)];
-                            return (
-                                <div key={item.name} className="pv-stack-sheet" data-position={offset === 0 ? "current" : offset === -1 ? "previous" : "next"} aria-hidden={offset !== 0 ? true : undefined}>
-                                    <Visual project={item} onOpen={open} passive={offset !== 0} />
-                                </div>
-                            );
-                        })}
-                    </div>
-                    <div className="pv-stack-controls" onKeyDown={browseWithKeys}>
-                        <button className="pv-arrow" type="button" onClick={() => move(-1)} aria-label="Previous project"><ChevronLeft aria-hidden="true" size={19} /></button>
-                        <div className="pv-stack-title"><h3>{project.name}</h3><span className="pv-stack-position" aria-hidden="true"><Flow value={index + 1} /> / {projectsData.length}</span></div>
-                        <button className="pv-arrow" type="button" onClick={() => move(1)} aria-label="Next project"><ChevronRight aria-hidden="true" size={19} /></button>
-                    </div>
-                    <p className="pv-stack-summary" key={project.name}>{artwork.summary ?? project.desc}</p>
-                    <Actions project={project} onDetails={setDetails} />
-                    <span className="pv-sr-only" role="status">{project.name}, project {index + 1} of {projectsData.length}</span>
-                </div>
-            )}
+            {variant === "stack" && <ProjectStack />}
 
             {gallery && galleryArtwork?.screen && (
                 <ProjectGallery title={gallery.name} screens={[galleryArtwork.screen, ...(galleryArtwork.additionalScreens ?? [])]} onClose={() => setGallery(null)} />

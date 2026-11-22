@@ -23,7 +23,7 @@ export default function VisualCard() {
                 src="/images/batman-card.webp"
                 alt="Batman overlooking Gotham beneath the Bat-Signal"
                 fill
-                sizes="(max-width: 639px) 33vw, 200px"
+                sizes="(max-width: 639px) 92vw, 210px"
                 unoptimized
                 className="bat-art-image object-cover object-center"
             />

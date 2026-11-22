@@ -87,29 +87,33 @@ const symbols: Record<string, LucideIcon> = {
     AWS: Cloud,
 };
 
-export default function TechBrandLogo({ name, colored = false }: { name: string; colored?: boolean }) {
+function brandStyle(hex: string): CSSProperties {
+    const channels = hex.match(/../g)!.map((channel) => parseInt(channel, 16) / 255);
+    const luminance = channels.reduce((sum, value, index) => {
+        const linear = value <= .04045 ? value / 12.92 : ((value + .055) / 1.055) ** 2.4;
+        return sum + linear * [.2126, .7152, .0722][index];
+    }, 0);
+    return {
+        "--tech-brand-color": `#${hex}`,
+        "--tech-brand-dark-color": luminance < .12 ? `color-mix(in srgb, #${hex} 55%, var(--site-ink))` : `#${hex}`,
+    } as CSSProperties;
+}
+
+export default function TechBrandLogo({ name, colored = false, className = "" }: { name: string; colored?: boolean; className?: string }) {
     const logo = logos[name];
     if (!logo) {
         const Symbol = symbols[name] ?? Wrench;
-        return <Symbol className="ctv-brand ctv-brand-fallback" aria-hidden="true" strokeWidth={1.5} data-brand-kind="symbol" />;
+        return <Symbol className={`tech-brand-logo ${className}`} aria-hidden="true" strokeWidth={1.5} data-brand-kind="symbol" />;
     }
 
     // Black/white identity marks follow the current theme; chromatic marks retain
     // their published brand hue with a small contrast adjustment on light surfaces.
     const isNeutral = /^(000000|FFFFFF|181717|171717|111111|010101)$/i.test(logo.hex);
-    const channels = logo.hex.match(/../g)!.map((channel) => parseInt(channel, 16) / 255);
-    const luminance = channels.reduce((sum, value, index) => {
-        const linear = value <= .04045 ? value / 12.92 : ((value + .055) / 1.055) ** 2.4;
-        return sum + linear * [.2126, .7152, .0722][index];
-    }, 0);
-    const style = {
-        "--ctv-brand-color": `#${logo.hex}`,
-        "--ctv-brand-dark-color": luminance < .12 ? `color-mix(in srgb, #${logo.hex} 55%, var(--ctv-ink))` : `#${logo.hex}`,
-    } as CSSProperties;
+    const style = colored && !isNeutral ? brandStyle(logo.hex) : undefined;
 
     return (
         <svg
-            className="ctv-brand"
+            className={`tech-brand-logo ${className}`}
             viewBox="0 0 24 24"
             aria-hidden="true"
             focusable="false"

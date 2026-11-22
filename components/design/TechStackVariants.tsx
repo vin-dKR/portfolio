@@ -3,7 +3,7 @@
 import { useId, useState } from "react";
 import { ChevronDown, Layers } from "lucide-react";
 import { techStacks } from "@/constant/TechStack";
-import TechBrandLogo from "./TechBrandLogo";
+import TechBrandLogo from "@/components/reusable/TechBrandLogo";
 import "./TechStackVariants.css";
 
 type Variant = "rows" | "wall" | "groups";
@@ -48,7 +48,7 @@ export default function TechStackVariant({ variant }: { variant: Variant }) {
                 onBlur={() => setFocused(null)}
                 onClick={() => setSelected(tool)}
             >
-                <TechBrandLogo name={tool.name} colored={variant === "wall"} />
+                <TechBrandLogo name={tool.name} colored={variant === "wall"} className="ctv-brand" />
             </button>
         );
     }

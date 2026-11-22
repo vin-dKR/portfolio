@@ -1,37 +1,20 @@
 "use client";
 
 import { useId, useState } from "react";
-import { Braces, ChevronDown, Database, Layers, PanelsTopLeft, Server } from "lucide-react";
+import { ChevronDown, Layers } from "lucide-react";
 import { techStacks } from "@/constant/TechStack";
+import TechBrandLogo from "@/components/reusable/TechBrandLogo";
 import BentoCard from "./BentoCard";
+import "./TechStack.css";
+
+type Tool = { name: string; category: string };
 
 const stackOverview = [
-    {
-        title: "Languages",
-        icon: Braces,
-        techs: ["TypeScript", "JavaScript", "Rust"],
-        accent: "text-indigo-700 dark:text-indigo-300",
-    },
-    {
-        title: "Frontend",
-        icon: PanelsTopLeft,
-        techs: ["React", "Next.js", "Tailwind CSS"],
-        accent: "text-sky-700 dark:text-sky-300",
-    },
-    {
-        title: "Backend",
-        icon: Server,
-        techs: ["Node.js", "Bun", "WebSocket"],
-        accent: "text-blue-700 dark:text-blue-300",
-    },
-    {
-        title: "Data",
-        icon: Database,
-        techs: ["PostgreSQL", "Redis", "Prisma"],
-        accent: "text-violet-700 dark:text-violet-300",
-    },
+    { title: "Languages", category: "Languages", techs: ["TypeScript", "JavaScript", "Rust"] },
+    { title: "Frontend", category: "Frontend", techs: ["React", "Next.js", "Tailwind CSS"] },
+    { title: "Backend", category: "Backend & Realtime", techs: ["Node.js", "Bun", "WebSocket"] },
+    { title: "Data", category: "Data & State", techs: ["PostgreSQL", "Redis", "Prisma"] },
 ];
-
 const highlighted = new Set(stackOverview.flatMap(({ techs }) => techs));
 const remainingStack = Object.entries(techStacks).map(([category, { techs }]) => ({
     category,
@@ -41,74 +24,77 @@ const extraCount = remainingStack.reduce((count, { techs }) => count + techs.len
 
 export default function TechStackCard() {
     const panelId = useId();
+    const readoutId = useId();
     const [expanded, setExpanded] = useState(false);
+    const [selected, setSelected] = useState<Tool>({ name: "TypeScript", category: "Languages" });
+    const [hovered, setHovered] = useState<Tool | null>(null);
+    const [focused, setFocused] = useState<Tool | null>(null);
+    const displayed = hovered ?? focused ?? selected;
+
+    function logoButton(tool: Tool, labelled = false) {
+        return (
+            <button
+                key={tool.name}
+                type="button"
+                className={`home-tech-tool${labelled ? " home-tech-tool-labelled" : ""}`}
+                aria-label={`${tool.name}, ${tool.category}`}
+                aria-pressed={selected.name === tool.name}
+                aria-controls={readoutId}
+                title={tool.name}
+                onPointerEnter={(event) => { if (event.pointerType !== "touch") setHovered(tool); }}
+                onPointerLeave={() => setHovered(null)}
+                onFocus={() => { setFocused(tool); setHovered(null); }}
+                onBlur={() => setFocused(null)}
+                onClick={() => setSelected(tool)}
+            >
+                <TechBrandLogo name={tool.name} className="home-tech-brand" />
+                {labelled && <span aria-hidden="true" className="home-tech-tool-name">{tool.name}</span>}
+            </button>
+        );
+    }
 
     return (
         <>
-            <BentoCard className="bento-tech col-span-8 flex flex-col px-3 py-3 sm:px-4 sm:py-4">
-                <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold tracking-tight">
-                    <Layers aria-hidden="true" className="size-4 text-(--bento-accent)" />
-                    Tech stack
-                </h3>
-
-                <dl className="grid flex-1 divide-y divide-(--bento-rule)">
-                    {stackOverview.map(({ title, icon: Icon, techs, accent }) => (
-                        <div
-                            key={title}
-                            className="grid min-w-0 content-center gap-1.5 py-2.5 sm:grid-cols-[6.5rem_minmax(0,1fr)] sm:items-center sm:gap-2"
-                        >
-                            <dt className="flex min-w-0 items-center gap-1.5 text-xs font-semibold">
-                                <Icon aria-hidden="true" className={`size-3.5 shrink-0 ${accent}`} />
-                                {title}
-                            </dt>
-                            <dd className="min-w-0">
-                                <ul className="flex flex-wrap gap-1">
-                                    {techs.map((tech) => (
-                                        <li key={tech} className="site-chip">
-                                            {tech}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </dd>
-                        </div>
+            <BentoCard className="bento-tech home-tech-stack col-span-8">
+                <h3 className="home-tech-heading"><Layers aria-hidden="true" size={16} strokeWidth={1.5} />Tech stack</h3>
+                <div className="home-tech-quadrants">
+                    {stackOverview.map(({ title, category, techs }) => (
+                        <section className="home-tech-group" key={category} aria-label={category}>
+                            <h4>{title}</h4>
+                            <div className="home-tech-logos">{techs.map((name) => logoButton({ name, category }))}</div>
+                        </section>
                     ))}
-                </dl>
-
+                </div>
+                <div id={readoutId} className="home-tech-readout">
+                    <span className="home-tech-readout-name">{displayed.name}</span>
+                    <span className="home-tech-readout-category">{displayed.category}</span>
+                </div>
                 <button
                     type="button"
-                    className="bento-tool-toggle"
+                    className="bento-tool-toggle home-tech-toggle"
                     aria-expanded={expanded}
                     aria-controls={panelId}
-                    onClick={() => setExpanded((value) => !value)}
+                    onClick={() => { setExpanded((value) => !value); setHovered(null); setFocused(null); }}
                 >
                     <span>{expanded ? "Close toolkit" : "More tools"}</span>
                     <span className="bento-tool-count">+{extraCount}</span>
                     <ChevronDown aria-hidden="true" size={14} />
                 </button>
             </BentoCard>
-
             <div
                 id={panelId}
-                className="bento-tool-drawer col-span-12"
+                className="bento-tool-drawer home-tech-drawer col-span-12"
                 data-open={expanded}
                 aria-hidden={!expanded}
                 inert={!expanded}
             >
                 <div className="bento-tool-clip">
                     <div className="bento-tool-content">
-                        <div className="bento-tool-heading">
-                            <h3>More of my toolkit</h3>
-                            <span>{extraCount} tools across {remainingStack.length} areas</span>
-                        </div>
-                        <dl className="bento-tool-groups">
+                        <dl className="home-tech-extra-groups">
                             {remainingStack.map(({ category, techs }) => (
-                                <div key={category}>
+                                <div className="home-tech-extra-group" key={category}>
                                     <dt>{category}</dt>
-                                    <dd>
-                                        <ul>
-                                            {techs.map((tech) => <li key={tech} className="site-chip">{tech}</li>)}
-                                        </ul>
-                                    </dd>
+                                    <dd><div className="home-tech-extra-logos">{techs.map((name) => logoButton({ name, category }, true))}</div></dd>
                                 </div>
                             ))}
                         </dl>
