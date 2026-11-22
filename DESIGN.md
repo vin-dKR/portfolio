@@ -13,3 +13,5 @@ Use Vinod’s existing compact personal portfolio as the design reference. The s
 The `kshv-taste` skill informs these decisions through the existing visual language.
 
 Freelance follows the original page’s serif accents, deliberate light treatments, interactive service selection, and personal founder portrait. Projects and writing use actual product screens as visual storytelling. Header grain remains subtle and limited to the navigation surface.
+
+Selected projects is an image-led, unboxed viewer: one horizontal text index, the real product preview, and a short caption with useful links. Avoid simulated window controls, address bars, view-mode toolbars, counters, repeated actions, and nested card frames. Case studies carry the engineering detail; projects without screenshots show their documented build steps. Static tech names use plain inline lists. The reference research is Paco Coursey’s and Rauno Freiberg’s personal sites; apply their restraint through this portfolio’s existing visual language.
