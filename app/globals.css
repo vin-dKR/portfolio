@@ -3,38 +3,32 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --animate-rainbow: rainbow 2s linear infinite;
-  @keyframes rainbow {
-    from {
-      background-position: -100%;
+    --animate-rainbow: rainbow 2s linear infinite;
+    @keyframes rainbow {
+        from {
+            background-position: -100%;
+        }
+        to {
+            background-position: 100%;
+        }
     }
-    to {
-      background-position: 100%;
+    --animate-spin-star: spin-star 2s linear infinite;
+    @keyframes spin-star {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
     }
-  }
-
-
-  --animate-spin-star: spin-star 2s linear infinite;
-  @keyframes spin-star {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-
-
-  --font-lenia: "Lenia", "sans-serif";
-  --font-ltserif: "LTSerif", "sans-serif";
-  --font-instrui: "InstruItalic", "sans-serif";
-
-  --color-color-1: 0 100% 63%;
-  --color-color-2: 270 100% 63%;
-  --color-color-3: 210 100% 63%;
-  --color-color-4: 195 100% 63%;
-  --color-color-5: 90 100% 63%;
+    --font-lenia: "Lenia", "sans-serif";
+    --font-ltserif: "LTSerif", "sans-serif";
+    --font-instrui: "InstruItalic", "sans-serif";
+    --color-color-1: 0 100% 63%;
+    --color-color-2: 270 100% 63%;
+    --color-color-3: 210 100% 63%;
+    --color-color-4: 195 100% 63%;
+    --color-color-5: 90 100% 63%;
 }
 
 @layer base {
@@ -70,7 +64,6 @@
         --color-4: 195 100% 63%;
         --color-5: 90 100% 63%;
     }
-
     .dark {
         --background: 222.2 84% 4.9%;
         --foreground: 210 40% 98%;
@@ -100,92 +93,429 @@
 }
 
 @font-face {
-  font-family: Inter; 
-  font-style: normal;
-  font-weight: 200 700;
-  font-display: swap;
-  src: url("/fonts/Inter.ttf");
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 200 700;
+    font-display: swap;
+    src: url("/fonts/Inter.ttf");
 }
 
 @font-face {
-  font-family: Lenia;
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-  src: url("/fonts/Lenia.otf");
+    font-family: Lenia;
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url("/fonts/Lenia.otf");
 }
 
 @font-face {
-  font-family: LTSerif;
-  font-style: normal;
-  font-weight: 200 700;
-  font-display: swap;
-  src: url("/fonts/LTSerif.otf");
+    font-family: LTSerif;
+    font-style: normal;
+    font-weight: 200 700;
+    font-display: swap;
+    src: url("/fonts/LTSerif.otf");
 }
 
 @font-face {
-  font-family: InstruItalic;
-  font-style: normal;
-  font-weight: 200 700;
-  font-display: swap;
-  src: url("/fonts/InstruItalic.ttf");
+    font-family: InstruItalic;
+    font-style: normal;
+    font-weight: 200 700;
+    font-display: swap;
+    src: url("/fonts/InstruItalic.ttf");
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+    --site-bg: #ffffff;
+    --site-card: #ffffff;
+    --site-well: #f6f4f8;
+    --site-rule: #e6e1ea;
+    --site-ink: #28232e;
+    --site-secondary: #645c6e;
+    --site-muted: #7a7183;
+    --site-accent: #7552a7;
+    --site-shadow: 0 2px 4px rgb(24 16 33 / .025), 0 10px 24px -20px rgb(24 16 33 / .14);
+    --site-radius: 1rem;
+    --site-spring: linear(0.0000, 0.0139, 0.0497, 0.0998, 0.1587, 0.2222, 0.2872, 0.3516, 0.4139, 0.4730, 0.5284, 0.5797, 0.6268, 0.6696, 0.7084, 0.7433, 0.7745, 0.8024, 0.8272, 0.8491, 0.8685, 0.8855, 0.9005, 0.9136, 0.9251, 0.9352, 0.9439, 0.9515, 0.9581, 0.9639, 0.9689, 0.9732, 0.9769, 0.9802, 0.9830, 0.9854, 0.9874, 0.9892, 0.9908, 0.9921, 0.9932, 0.9942, 0.9950, 0.9958, 0.9964, 0.9969, 0.9973, 0.9977, 1);
+    color-scheme: light;
 }
 
 :root.dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+    --site-bg: #121014;
+    --site-card: #1a161f;
+    --site-well: #221d28;
+    --site-rule: #352e3e;
+    --site-ink: #eee9f2;
+    --site-secondary: #bdb3c7;
+    --site-muted: #a396af;
+    --site-accent: #c5a9ec;
+    --site-shadow: 0 0 0 0 transparent;
+    --background: 270 11% 7%;
+    --foreground: 273 26% 93%;
+    color-scheme: dark;
 }
 
 html {
-  background-color: var(--background);
-  scroll-behavior: smooth;
-  scroll-padding-top: 6rem;
+    background-color: var(--site-bg);
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: "Lenia", Arial, sans-serif;
+    color: var(--site-ink);
+    background: var(--site-bg);
+    font-family: "Lenia", Arial, sans-serif;
+    font-size: .9375rem;
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+}
+
+::selection {
+    background: color-mix(in srgb, var(--site-accent) 24%, transparent);
+}
+
+:focus-visible {
+    outline: 2px solid var(--site-accent);
+    outline-offset: 3px;
+}
+
+p {
+    text-wrap: pretty;
+}
+
+h1, h2, h3 {
+    text-wrap: balance;
+}
+
+button:not(:disabled), summary {
+    cursor: pointer;
+}
+
+button, a, summary {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.page-frame {
+    width: 100%;
+    max-width: 44rem;
+    margin-inline: auto;
+    padding: 8.5rem 1.25rem 7.5rem;
+}
+
+.page-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.1rem;
+}
+
+.page-title {
+    color: var(--site-ink);
+    font-size: clamp(1.9rem, 5vw, 2.35rem);
+    font-weight: 600;
+    letter-spacing: -.04em;
+    line-height: 1.1;
+}
+
+.page-intro {
+    max-width: 58ch;
+    color: var(--site-secondary);
+    font-size: .9375rem;
+    line-height: 1.5;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    color: var(--site-ink);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -.02em;
+}
+
+.site-card {
+    border-radius: var(--site-radius);
+    background: var(--site-card);
+    box-shadow: 0 0 0 1px var(--site-rule), var(--site-shadow);
+}
+
+.site-button {
+    display: inline-flex;
+    min-height: 2.6rem;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    padding: .55rem .85rem;
+    border-radius: .65rem;
+    background: var(--site-ink);
+    color: var(--site-bg);
+    font-size: .8125rem;
+    font-weight: 600;
+    line-height: 1.2;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / .1), 0 1px 2px rgb(15 10 20 / .09);
+    transition: background-color 160ms ease;
+}
+
+.site-button:hover {
+    background: color-mix(in srgb, var(--site-ink), var(--site-accent) 15%);
+}
+
+.site-button:active {
+    translate: 0 1px;
+}
+
+.site-button:disabled {
+    color: var(--site-muted);
+    background: var(--site-well);
+    box-shadow: none;
+    cursor: wait;
+}
+
+.site-link {
+    display: inline-flex;
+    min-height: 2.5rem;
+    align-items: center;
+    gap: .4rem;
+    color: var(--site-secondary);
+    font-size: .8125rem;
+    transition: color 160ms ease;
+}
+
+.site-link:hover {
+    color: var(--site-accent);
+}
+
+.site-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    border: 1px solid var(--site-rule);
+    border-radius: .35rem;
+    padding: .16rem .4rem;
+    color: var(--site-secondary);
+    background: var(--site-well);
+    font-size: .6875rem;
+    line-height: 1.3;
+}
+
+.site-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .5rem 1.25rem;
+    margin-top: 3.5rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--site-rule);
+    color: var(--site-muted);
+    font-size: .75rem;
+}
+
+.site-footer a {
+    display: inline-flex;
+    min-height: 2rem;
+    align-items: center;
+    gap: .4rem;
+}
+
+.site-footer a:hover {
+    color: var(--site-accent);
+}
+
+.home-frame {
+    padding-top: 8rem;
+}
+
+.home-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+}
+
+.home-name {
+    font-size: clamp(2.6rem, 8vw, 3.25rem);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -.05em;
+}
+
+.home-role {
+    margin-top: .55rem;
+    color: var(--site-secondary);
+    font-size: 1rem;
+}
+
+.home-portrait {
+    position: relative;
+    flex: none;
+    border-radius: 50%;
+}
+
+.home-portrait img {
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 0 1px var(--site-rule);
+}
+
+.home-portrait span {
+    position: absolute;
+    right: -.2rem;
+    bottom: -.2rem;
+    display: grid;
+    width: 1.4rem;
+    height: 1.4rem;
+    place-items: center;
+    border: 1px solid var(--site-rule);
+    border-radius: 50%;
+    background: var(--site-card);
+    color: var(--site-accent);
+}
+
+.home-bio {
+    color: var(--site-secondary);
+}
+
+.home-bio > p + p {
+    margin-top: .85rem;
+}
+
+.home-bio p a {
+    color: var(--site-ink);
+    text-decoration: underline;
+    text-decoration-color: var(--site-rule);
+    text-underline-offset: .2rem;
+}
+
+.home-bio p a:hover {
+    text-decoration-color: var(--site-accent);
+}
+
+.home-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem 1.15rem;
+    margin-top: 1.25rem;
+}
+
+.home-about {
+    margin-top: 1.1rem;
+}
+
+.home-about summary {
+    display: inline-flex;
+    min-height: 2rem;
+    align-items: center;
+    gap: .4rem;
+    list-style: none;
+    color: var(--site-muted);
+    font-size: .8125rem;
+}
+
+.home-about summary::-webkit-details-marker {
+    display: none;
+}
+
+.home-about summary svg {
+    transition: rotate 380ms var(--site-spring);
+}
+
+.home-about[open] summary svg {
+    rotate: 90deg;
+}
+
+.home-about summary:hover {
+    color: var(--site-ink);
+}
+
+.home-about-copy {
+    display: grid;
+    gap: .8rem;
+    max-width: 61ch;
+    padding: .75rem 0 .25rem;
+    font-size: .875rem;
+}
+
+.skip-link {
+    position: fixed;
+    z-index: 1000;
+    top: .75rem;
+    left: .75rem;
+    translate: 0 -200%;
+    padding: .65rem 1rem;
+    border-radius: .5rem;
+    color: var(--site-bg);
+    background: var(--site-ink);
+}
+
+.skip-link:focus {
+    translate: 0;
+}
+
+@media (min-width: 640px) {
+    .page-frame {
+        padding-inline: 1.75rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .page-frame {
+        padding-bottom: 4rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+    .home-about summary svg {
+        transition: none;
+    }
+    .site-button:active {
+        translate: none;
+    }
 }
 
 /* Blog inline emphasis */
+
 .prose .squiggly {
-  text-decoration-line: underline;
-  text-decoration-style: wavy;
-  text-decoration-color: rgb(239 68 68);
-  text-underline-offset: 4px;
-  text-decoration-thickness: 1.5px;
+    text-decoration-line: underline;
+    text-decoration-style: wavy;
+    text-decoration-color: rgb(239 68 68);
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1.5px;
 }
+
 .prose .underline-em {
-  text-decoration-line: underline;
-  text-decoration-color: rgb(59 130 246);
-  text-underline-offset: 3px;
-  text-decoration-thickness: 2px;
-  font-weight: 600;
+    text-decoration-line: underline;
+    text-decoration-color: rgb(59 130 246);
+    text-underline-offset: 3px;
+    text-decoration-thickness: 2px;
+    font-weight: 600;
 }
+
 .prose .toc {
-  background: rgb(0 0 0 / 0.04);
-  border: 1px solid rgb(0 0 0 / 0.08);
-  border-radius: 1rem;
-  padding: 1rem 1.25rem;
-  margin: 1.5rem 0;
-  font-size: 0.9rem;
+    background: rgb(0 0 0 / 0.04);
+    border: 1px solid rgb(0 0 0 / 0.08);
+    border-radius: 1rem;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    font-size: 0.9rem;
 }
+
 .dark .prose .toc {
-  background: rgb(255 255 255 / 0.04);
-  border-color: rgb(255 255 255 / 0.08);
+    background: rgb(255 255 255 / 0.04);
+    border-color: rgb(255 255 255 / 0.08);
 }
-.prose .toc a { text-decoration: none; }
-.prose .toc a:hover { text-decoration: underline; }
+
+.prose .toc a {
+    text-decoration: none;
+}
+
+.prose .toc a:hover {
+    text-decoration: underline;
+}

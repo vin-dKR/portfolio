@@ -7,10 +7,10 @@ import Navbar from "@/components/blocks/Navbar";
 export const metadata: Metadata = {
     metadataBase: new URL("https://vinodkr.in"),
     title: "Vinod KR",
-    description: "Full Stack Portfolio",
+    description: "Full-stack developer building web products, from interfaces to backend systems. Explore my projects, experience, and engineering notes.",
     openGraph: {
         title: "Vinod KR",
-        description: "Full Stack Portfolio",
+        description: "Web products, engineering notes, and independent work by Vinod KR.",
         images: [
             {
                 url: "/images/vinod-kr.png",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     twitter: {
         card: "summary_large_image",
         title: "Vinod KR",
-        description: "Full Stack Portfolio",
+        description: "Web products, engineering notes, and independent work by Vinod KR.",
         images: ["/images/vinod-kr.png"],
     },
 };

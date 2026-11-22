@@ -9,7 +9,7 @@ type Props = {
 
 const HomePage = ({ blogPreviews = [] }: Props) => {
     return (
-        <div className="flex flex-col items-center w-full">
+        <div>
             <HomeHeader />
             <HomeBio />
             <BentoGrid blogPreviews={blogPreviews} />

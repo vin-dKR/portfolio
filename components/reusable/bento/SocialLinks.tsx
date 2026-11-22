@@ -51,7 +51,7 @@ export default function SocialLinksCard() {
 
                 <a
                     href="mailto:vinodkumarmurmu62@gmail.com"
-                    className="inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-lg border border-(--bento-rule) bg-(--bento-inset) px-2.5 text-xs font-semibold text-(--bento-accent) transition-colors hover:border-violet-500/45 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500"
+                    className="site-link"
                 >
                     <Mail aria-hidden="true" className="size-3.5" />
                     Email

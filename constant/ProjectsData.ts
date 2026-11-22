@@ -22,7 +22,7 @@ export const projectsData: ProjectsData[] = [
         desc: "Online custom printing platform with ordering, tracking, and delivery for businesses.",
         video: "",
         timeline: "Present",
-        techStacks: ["next js", "typescript", "node js", "postgresql", "tanstack", "zod", "tailwind css"],
+        techStacks: ["next js", "typescript", "node js", "mariadb", "tanstack", "zod", "tailwind css"],
         sourceCode: "",
         liveOn: "https://pagz.in"
     },

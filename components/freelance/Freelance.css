@@ -1,0 +1,306 @@
+.freelance-page .page-heading {
+    display: block;
+}
+
+.freelance-page .page-intro {
+    margin-top: .75rem;
+}
+
+.freelance-contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .75rem 1.2rem;
+    margin-top: 1.4rem;
+}
+
+.freelance-section {
+    margin-top: 2.75rem;
+}
+
+.freelance-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.freelance-section > .section-heading {
+    margin-bottom: 1rem;
+}
+
+.freelance-section-header .site-link {
+    font-size: .75rem;
+}
+
+.freelance-projects {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .75rem;
+    align-items: start;
+}
+
+.freelance-project {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-decoration: none;
+}
+
+.freelance-project-image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1.7;
+    overflow: hidden;
+    background: var(--site-well);
+}
+
+.freelance-project-image img {
+    object-fit: cover;
+    object-position: center top;
+}
+
+.freelance-project-copy {
+    padding: .85rem;
+}
+
+.freelance-project-copy h3 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .4rem;
+    color: var(--site-ink);
+    font-size: .9rem;
+    font-weight: 600;
+}
+
+.freelance-project-copy h3 svg {
+    flex: none;
+    color: var(--site-muted);
+}
+
+.freelance-project-copy p {
+    margin-top: .4rem;
+    color: var(--site-secondary);
+    font-size: .75rem;
+    line-height: 1.5;
+}
+
+.freelance-project:hover h3,
+.freelance-project:hover h3 svg {
+    color: var(--site-accent);
+}
+
+.freelance-services {
+    border-top: 1px solid var(--site-rule);
+}
+
+.freelance-service {
+    border-bottom: 1px solid var(--site-rule);
+}
+
+.freelance-service summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto 15px;
+    align-items: center;
+    gap: 1rem;
+    min-height: 3.6rem;
+    padding-block: .8rem;
+    border-radius: .35rem;
+    list-style: none;
+    cursor: pointer;
+}
+
+.freelance-service summary::-webkit-details-marker {
+    display: none;
+}
+
+.freelance-service summary:hover .freelance-service-title {
+    color: var(--site-accent);
+}
+
+.freelance-service summary > svg {
+    color: var(--site-muted);
+}
+
+.freelance-service[open] summary > svg {
+    transform: rotate(180deg);
+}
+
+.freelance-service-title {
+    color: var(--site-ink);
+    font-size: .9rem;
+    font-weight: 600;
+}
+
+.freelance-service-price {
+    color: var(--site-secondary);
+    font-size: .8rem;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.freelance-service-content {
+    display: grid;
+    gap: .85rem;
+    padding-block: .15rem 1.25rem;
+    color: var(--site-secondary);
+    font-size: .82rem;
+    line-height: 1.5;
+}
+
+.freelance-service-content > p {
+    max-width: 62ch;
+}
+
+.freelance-service-content .freelance-delivery,
+.freelance-service-content .freelance-includes {
+    color: var(--site-muted);
+    font-size: .75rem;
+}
+
+.freelance-service-lists {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+    border: 1px solid var(--site-rule);
+    border-radius: .65rem;
+    background: var(--site-well);
+    padding: .9rem 1rem;
+}
+
+.freelance-service-lists h3 {
+    margin-bottom: .4rem;
+    color: var(--site-ink);
+    font-size: .78rem;
+    font-weight: 600;
+}
+
+.freelance-service-lists ul {
+    display: grid;
+    gap: .3rem;
+    padding-left: .85rem;
+    list-style: disc;
+    font-size: .75rem;
+}
+
+.freelance-service-content > .site-link {
+    justify-self: start;
+    min-height: 2rem;
+    font-size: .78rem;
+}
+
+.freelance-process {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+}
+
+.freelance-process li {
+    min-width: 0;
+}
+
+.freelance-process h3 {
+    margin-bottom: .4rem;
+    font-size: .86rem;
+    font-weight: 600;
+    color: var(--site-ink);
+}
+
+.freelance-process p {
+    color: var(--site-secondary);
+    font-size: .8rem;
+    line-height: 1.5;
+}
+
+.freelance-founder {
+    display: flex;
+    align-items: center;
+    gap: .95rem;
+    margin-top: 2.75rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--site-rule);
+}
+
+.freelance-founder-photo {
+    width: 3.5rem;
+    height: 3.5rem;
+    flex: none;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.freelance-founder h2 {
+    font-size: .95rem;
+    font-weight: 600;
+}
+
+.freelance-founder p,
+.freelance-founder .site-link {
+    font-size: .75rem;
+}
+
+.freelance-founder p {
+    margin-block: .2rem .35rem;
+    color: var(--site-secondary);
+}
+
+@media (max-width: 639px) {
+    .freelance-projects {
+        grid-template-columns: 1fr;
+    }
+
+    .freelance-project {
+        display: grid;
+        grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+        align-items: stretch;
+    }
+
+    .freelance-project-image {
+        height: 100%;
+        min-height: 7rem;
+        aspect-ratio: auto;
+    }
+
+    .freelance-project-copy {
+        align-self: center;
+    }
+
+    .freelance-process {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .freelance-process li {
+        display: grid;
+        grid-template-columns: 7.5rem minmax(0, 1fr);
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .freelance-service summary {
+        gap: .5rem;
+    }
+
+    .freelance-service-price {
+        max-width: 8.5rem;
+    }
+
+    .freelance-service-lists {
+        grid-template-columns: 1fr;
+        gap: .9rem;
+    }
+
+    .freelance-process li {
+        grid-template-columns: 1fr;
+        gap: .2rem;
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .freelance-service summary > svg {
+        transition: transform 180ms var(--site-ease, ease);
+    }
+}

@@ -1,44 +1,38 @@
-import React from 'react'
-import Link from 'next/link'
-import { getBlogPosts } from '@/lib/blogs'
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import HomeFooter from "@/components/blocks/HomeFooter";
+import { getBlogPosts } from "@/lib/blogs";
+import "./Writing.css";
+
+const published = new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
 
 export default async function BlogListPage() {
-    const posts = await getBlogPosts()
-
-    if (!posts) return <div className='size-14 mt-40'>No Blogs yet..</div>
+    const posts = await getBlogPosts();
 
     return (
-        <div className="w-full max-w-2xl px-4 sm:px-6 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-24 md:pb-8 sm:pb-12 lg:pb-16 mx-auto">
-            <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-gray-800 dark:text-white">blogs</h1>
-
-            <div className="grid gap-4 sm:gap-6">
-                {posts.map((post) => (
-                    <Link
-                        key={post.frontmatter.slug}
-                        href={`/posts/${post.frontmatter.slug}`}
-                        className="block"
-                    >
-                        <div className="dark:bg-white/2 bg-black/10 border border-black/4 dark:border-white/4 rounded-2xl p-4 sm:p-6 hover:shadow-xl transition-all cursor-pointer">
-                            <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 text-gray-800 dark:text-white">
-                                {post.frontmatter.title}
-                            </h2>
-                            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-4">
-                                {post.frontmatter.description}
-                            </p>
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-                                <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                                    {new Date(post.frontmatter.date).toLocaleDateString()}
-                                </span>
-                                <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                                    {post.frontmatter.readingTime} min read
-                                </span>
+        <main id="main-content" className="page-frame">
+            <header>
+                <div className="page-heading"><h1 className="page-title">Writing</h1></div>
+                <p className="page-intro">The decisions, problems, and implementation details behind my projects.</p>
+            </header>
+            <div className="writing-list">
+                {posts.map(({ frontmatter: post }) => (
+                    <article key={post.slug}>
+                        <Link href={`/posts/${post.slug}`} prefetch={false} className="writing-entry">
+                            <div className="writing-entry-meta">
+                                <time dateTime={new Date(post.date).toISOString().slice(0, 10)}>{published.format(new Date(post.date))}</time>
+                                <span>{post.readingTime} min read</span>
                             </div>
-                        </div>
-                    </Link>
+                            <h2>{post.title}<ArrowUpRight aria-hidden="true" size={17} /></h2>
+                            <p>{post.description}</p>
+                        </Link>
+                    </article>
                 ))}
+                {posts.length === 0 && <p className="writing-empty">I&apos;m working on my next write-up. In the meantime, explore my <Link href="/projects">projects</Link>.</p>}
             </div>
-        </div>
-    )
+            <HomeFooter />
+        </main>
+    );
 }
 
-export const dynamic = 'force-static'
+export const dynamic = "force-static";

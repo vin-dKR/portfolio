@@ -1,0 +1,10 @@
+.writing-list { margin-top: 2.2rem; border-top: 1px solid var(--site-rule); }
+.writing-entry { display: grid; gap: .65rem; padding: 1.5rem 0; border-bottom: 1px solid var(--site-rule); }
+.writing-entry-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; color: var(--site-muted); font-size: .73rem; font-variant-numeric: tabular-nums; }
+.writing-entry-meta span { margin-left: auto; }
+.writing-entry h2 { display: flex; justify-content: space-between; align-items: start; gap: 1.5rem; color: var(--site-ink); font-size: 1.13rem; font-weight: 600; line-height: 1.35; letter-spacing: -.02em; }
+.writing-entry h2 svg { flex: none; margin-top: .15rem; color: var(--site-muted); }
+.writing-entry p { max-width: 65ch; color: var(--site-secondary); font-size: .86rem; line-height: 1.5; text-wrap: pretty; }
+.writing-entry:hover h2 { color: var(--site-accent); }
+.writing-empty { padding-block: 2rem; color: var(--site-secondary); font-size: .9rem; }
+.writing-empty a { color: var(--site-accent); text-decoration: underline; text-underline-offset: .2rem; }

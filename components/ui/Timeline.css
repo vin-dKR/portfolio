@@ -36,7 +36,7 @@
     left: 1rem;
     width: 0.75rem;
     height: 0.75rem;
-    border: 2px solid var(--background);
+    border: 2px solid var(--site-bg);
     border-radius: 50%;
     background: #3b82f6;
     box-shadow: 0 0 0 1px color-mix(in srgb, #3b82f6 65%, transparent);

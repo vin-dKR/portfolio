@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Flow } from "@/components/ui/Flow";
 import type { ProjectScreen } from "@/constant/BentoProjects";
 
 type Props = {
@@ -72,7 +73,7 @@ export default function ProjectGallery({ title, screens, onClose }: Props) {
                     {screens.length > 1 && (
                         <div className="showcase-gallery-nav">
                             <button type="button" onClick={() => move(-1)} aria-label="Previous screenshot"><ChevronLeft aria-hidden="true" size={19} /></button>
-                            <span aria-label={`Screenshot ${index + 1} of ${screens.length}`}>{index + 1} / {screens.length}</span>
+                            <span aria-label={`Screenshot ${index + 1} of ${screens.length}`}><Flow value={index + 1} /> / {screens.length}</span>
                             <button type="button" onClick={() => move(1)} aria-label="Next screenshot"><ChevronRight aria-hidden="true" size={19} /></button>
                         </div>
                     )}

@@ -38,7 +38,7 @@ const extraCount = remainingStack.reduce((count, { techs }) => count + techs.len
 
 export default function TechStackCard() {
     return (
-        <BentoCard className="col-span-8 flex flex-col px-3 py-3 sm:px-4 sm:py-4">
+        <BentoCard className="bento-tech col-span-8 flex flex-col px-3 py-3 sm:px-4 sm:py-4">
             <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold tracking-tight">
                 <Layers aria-hidden="true" className="size-4 text-(--bento-accent)" />
                 Tech stack

@@ -5,6 +5,7 @@ import { ArrowUpRight, Clock, RefreshCw } from "lucide-react"
 import { getWakatimeStats } from "@/actions/wakatime"
 import type { WakatimeStats as WakatimeStatsData } from "@/lib/wakatimeClient"
 import BentoCard from "./BentoCard"
+import { Flow } from "@/components/ui/Flow"
 import "./ActivityCards.css"
 
 const profileUrl = "https://wakatime.com/@fb861e4c-0eee-42a3-8d54-a65ccab34573"
@@ -86,7 +87,7 @@ const WakatimeStats = () => {
         <BentoCard className="bento-activity activity-rich col-span-12 sm:col-span-6">
             <div ref={cardContent} className="wakatime-card-content" aria-busy={isLoading}>
                 <div className="activity-header mb-2">
-                    <h3><Clock aria-hidden="true" size={16} /> <span className="activity-gradient-title">Coding Time</span></h3>
+                    <h3><Clock aria-hidden="true" size={16} /> <span className="activity-gradient-title">Coding time</span></h3>
                     <div className="flex shrink-0 items-center gap-0.5">
                         <button type="button" onClick={refreshStats} disabled={isLoading} aria-label="Refresh coding stats">
                             <RefreshCw aria-hidden="true" size={14} className={isLoading ? "motion-safe:animate-spin" : undefined} />
@@ -100,9 +101,9 @@ const WakatimeStats = () => {
                 {stats ? (
                     <>
                         <dl className="activity-figures activity-inset">
-                            <div><dt>{stats.rangeLabel}</dt><dd>{hoursFormatter.format(stats.totalHours)} <small>hrs</small></dd></div>
+                            <div><dt>{stats.rangeLabel}</dt><dd><Flow value={stats.totalHours} format={hoursFormatter.format} /> <small>hrs</small></dd></div>
                             {stats.dailyAverageHours !== null && (
-                                <div><dt>Daily avg.</dt><dd>{hoursFormatter.format(stats.dailyAverageHours)} <small>hrs</small></dd></div>
+                                <div><dt>Daily avg.</dt><dd><Flow value={stats.dailyAverageHours} format={hoursFormatter.format} /> <small>hrs</small></dd></div>
                             )}
                         </dl>
 
@@ -118,11 +119,11 @@ const WakatimeStats = () => {
                                     {languages.map(({ name, percentage }) => (
                                         <li key={name}>
                                             <span className="wakatime-dot" aria-hidden="true" style={{ backgroundColor: colorFor(name) }} />
-                                            <span>{name}</span><small>{percentage}%</small>
+                                            <span>{name}</span><small><Flow value={percentage} />%</small>
                                         </li>
                                     ))}
                                 </ul>
-                                <p className="wakatime-total">{stats.languageCount} languages tracked</p>
+                                <p className="wakatime-total"><Flow value={stats.languageCount} /> languages tracked</p>
                             </>
                         ) : <p className="activity-empty">No language data for this period.</p>}
 

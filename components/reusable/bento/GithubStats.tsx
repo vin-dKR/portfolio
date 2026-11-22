@@ -1,11 +1,12 @@
 "use client"
 
-import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type MouseEvent } from "react"
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from "react"
 import { ArrowUpRight, BookMarked, CircleDot, GitPullRequest, Github, Loader2, Star, UserPlus, Users } from "lucide-react"
 import Image from "next/image"
 import { GithubProvider } from "@/context/GithubContext"
 import { useGithubData } from "@/hooks/github"
 import BentoCard from "./BentoCard"
+import { Flow } from "@/components/ui/Flow"
 import "./ActivityCards.css"
 
 const metrics = [
@@ -28,6 +29,7 @@ const date = new Intl.DateTimeFormat("en-US", {
 type Contribution = GithubStatsProps["contributions"][number]
 
 function ContributionHistory({ days, total }: { days: Contribution[]; total: number }) {
+    const input = useRef<HTMLInputElement>(null)
     const [selected, setSelected] = useState<number | null>(null)
     const [inspecting, setInspecting] = useState(false)
     const latest = days.length - 1
@@ -43,57 +45,47 @@ function ContributionHistory({ days, total }: { days: Contribution[]; total: num
         setSelected(Math.min(latest, Math.max(0, next)))
     }
 
-    function handleKey(event: KeyboardEvent<HTMLDivElement>) {
-        const targets: Record<string, number> = {
-            ArrowLeft: index - 1,
-            ArrowDown: index - 1,
-            ArrowRight: index + 1,
-            ArrowUp: index + 1,
-            PageDown: index - 7,
-            PageUp: index + 7,
-            Home: 0,
-            End: latest,
-        }
-        const target = targets[event.key]
-        if (target === undefined) return
-        event.preventDefault()
-        selectDay(target)
-    }
-
     function handleClick(event: MouseEvent<HTMLDivElement>) {
         const grid = event.currentTarget
         const { left, top, width, height } = grid.getBoundingClientRect()
         const column = Math.min(weeks - 1, Math.floor((event.clientX - left) / width * weeks))
         const row = Math.min(6, Math.floor((event.clientY - top) / height * 7))
         selectDay(column * 7 + row - padding)
-        grid.focus({ preventScroll: true })
+        input.current?.focus({ preventScroll: true })
     }
 
     return (
         <div className="github-history">
             <div className="mb-1 flex items-center justify-between gap-2">
                 <p className="github-history-caption truncate">
-                    {inspecting ? valueText : `${number.format(total)} contributions · past year`}
+                    {inspecting ? (
+                        <>{dayLabel} · <Flow value={current.count} format={number.format} /> {current.count === 1 ? "contribution" : "contributions"}</>
+                    ) : (
+                        <><Flow value={total} format={number.format} /> contributions · past year</>
+                    )}
                 </p>
                 <div aria-hidden="true" className="github-history-key">
                     {[0, 1, 2, 3, 4].map((level) => <span key={level} data-level={level} />)}
                 </div>
             </div>
             <div
-                role="slider"
-                aria-label="GitHub contributions by day"
-                aria-valuemin={1}
-                aria-valuemax={days.length}
-                aria-valuenow={index + 1}
-                aria-valuetext={valueText}
-                tabIndex={0}
-                onKeyDown={handleKey}
                 onClick={handleClick}
-                onFocus={() => setInspecting(true)}
-                onBlur={() => setInspecting(false)}
                 className="github-history-grid"
                 style={{ "--calendar-weeks": weeks } as CSSProperties}
             >
+                <input
+                    ref={input}
+                    type="range"
+                    min={1}
+                    max={days.length}
+                    value={index + 1}
+                    aria-label="GitHub contributions by day"
+                    aria-valuetext={valueText}
+                    onChange={(event) => selectDay(Number(event.target.value) - 1)}
+                    onFocus={() => setInspecting(true)}
+                    onBlur={() => setInspecting(false)}
+                    className="github-history-input"
+                />
                 {Array.from({ length: padding }, (_, i) => <span key={i} aria-hidden="true" />)}
                 {days.map((day, i) => (
                     <span
@@ -168,7 +160,7 @@ function GithubStats({ username }: { username: string }) {
                                 <div key={key} className="activity-inset flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl px-1 py-1.5">
                                     <dt className="order-last text-[9px] tracking-wide uppercase text-[var(--bento-muted)]">{label}</dt>
                                     <Icon aria-hidden="true" size={12} className="text-[var(--bento-accent)]" />
-                                    <dd className="font-mono text-sm leading-none font-semibold">{number.format(stats[key])}</dd>
+                                    <dd className="font-mono text-sm leading-none font-semibold"><Flow value={stats[key]} format={number.format} /></dd>
                                 </div>
                             ))}
                         </dl>
@@ -198,7 +190,7 @@ function GithubStats({ username }: { username: string }) {
                                 <div className="flex items-center justify-between gap-2">
                                     <span className="truncate text-[11px] font-semibold">{stats.topRepo.name}</span>
                                     <span className="flex shrink-0 items-center gap-1 text-[10px] text-[var(--bento-muted)]">
-                                        <Star aria-hidden="true" size={12} /> {number.format(stats.topRepo.stars)}
+                                        <Star aria-hidden="true" size={12} /> <Flow value={stats.topRepo.stars} format={number.format} />
                                     </span>
                                 </div>
                                 {stats.topRepo.description && <p className="line-clamp-1 text-[10px] text-[var(--bento-muted)]">{stats.topRepo.description}</p>}

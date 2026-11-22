@@ -26,22 +26,22 @@
     height: 2.5rem;
     place-items: center;
     border-radius: 0.75rem;
-    color: #3f3f46;
-    background: rgb(0 0 0 / 0.05);
+    color: var(--site-secondary);
+    background: var(--site-well);
     cursor: pointer;
 }
 
 .portfolio-theme-toggle:hover {
-    background: rgb(0 0 0 / 0.1);
+    background: color-mix(in srgb, var(--site-well), var(--site-ink) 6%);
 }
 
 .dark .portfolio-theme-toggle {
-    color: #f4f4f5;
-    background: rgb(255 255 255 / 0.08);
+    color: var(--site-secondary);
+    background: var(--site-well);
 }
 
 .dark .portfolio-theme-toggle:hover {
-    background: rgb(255 255 255 / 0.14);
+    background: color-mix(in srgb, var(--site-well), var(--site-ink) 8%);
 }
 
 .portfolio-theme-toggle:focus-visible {
@@ -68,6 +68,7 @@
 }
 
 /* Both themes remain visible until the edge of the mask crosses them. */
+
 :root.theme-revealing::view-transition {
     pointer-events: none;
 }
@@ -87,13 +88,161 @@
     .portfolio-aurora span {
         animation: portfolio-aurora-drift 11s ease-in-out infinite alternate both;
     }
-
     .portfolio-theme-toggle svg {
         transition: transform 230ms ease, opacity 180ms ease;
     }
 }
 
 @keyframes portfolio-aurora-drift {
-    from { transform: translate3d(-12%, 4%, 0) scaleX(1); }
-    to { transform: translate3d(12%, -6%, 0) scaleX(1.12); }
+    from {
+        transform: translate3d(-12%, 4%, 0) scaleX(1);
+    }
+    to {
+        transform: translate3d(12%, -6%, 0) scaleX(1.12);
+    }
+}
+
+.portfolio-nav-frame {
+    position: fixed;
+    z-index: 99;
+    inset: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    padding-inline: .8rem;
+    pointer-events: none;
+}
+
+.portfolio-nav {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    width: 100%;
+    max-width: 44rem;
+    height: 4.6rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-inline: 1.25rem;
+    border-radius: 0 0 1rem 1rem;
+    background: var(--site-card);
+    box-shadow: 0 0 0 1px var(--site-rule), 0 1px 2px rgb(12 8 20 / .04);
+    pointer-events: auto;
+}
+
+.portfolio-nav.is-scrolled {
+    max-width: 42rem;
+    height: 3.6rem;
+}
+
+.portfolio-signature {
+    flex: none;
+    border-radius: .25rem;
+}
+
+.portfolio-signature img {
+    width: 4.25rem;
+    height: auto;
+}
+
+.portfolio-nav.is-scrolled .portfolio-signature img {
+    width: 3.6rem;
+}
+
+.portfolio-nav-links {
+    display: none;
+    align-items: center;
+    gap: .15rem;
+}
+
+.portfolio-nav-links a {
+    position: relative;
+    display: flex;
+    min-height: 2.5rem;
+    align-items: center;
+    padding-inline: .7rem;
+    border-radius: .5rem;
+    color: var(--site-secondary);
+    font-size: .8125rem;
+}
+
+.portfolio-nav-links a:hover {
+    color: var(--site-ink);
+}
+
+.portfolio-nav-links a[aria-current="page"] {
+    color: var(--site-ink);
+}
+
+.portfolio-nav-links a[aria-current="page"]::after {
+    position: absolute;
+    inset: auto .7rem .2rem;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--site-accent);
+    content: "";
+}
+
+.portfolio-mobile-nav {
+    position: fixed;
+    z-index: 99;
+    inset: auto 0 0;
+    display: flex;
+    justify-content: center;
+    padding: .6rem .8rem max(.8rem, env(safe-area-inset-bottom));
+    pointer-events: none;
+}
+
+.portfolio-mobile-nav > div {
+    display: grid;
+    width: 100%;
+    max-width: 25rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding: .35rem;
+    border-radius: 1.1rem;
+    background: var(--site-card);
+    box-shadow: 0 0 0 1px var(--site-rule), 0 4px 20px -10px rgb(12 8 20 / .28);
+    pointer-events: auto;
+}
+
+.portfolio-mobile-nav a {
+    display: flex;
+    min-height: 3.3rem;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: .2rem;
+    border-radius: .75rem;
+    color: var(--site-muted);
+    font-size: .625rem;
+}
+
+.portfolio-mobile-nav a[aria-current="page"] {
+    color: var(--site-ink);
+    background: var(--site-well);
+}
+
+.portfolio-mobile-nav a[aria-current="page"] svg {
+    color: var(--site-accent);
+}
+
+.portfolio-mobile-nav a:hover {
+    color: var(--site-ink);
+}
+
+@media (min-width: 768px) {
+    .portfolio-nav-links {
+        display: flex;
+    }
+    .portfolio-mobile-nav {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .portfolio-nav {
+        transition: max-width 480ms var(--site-spring), height 480ms var(--site-spring);
+    }
+    .portfolio-signature img {
+        transition: width 480ms var(--site-spring);
+    }
 }
