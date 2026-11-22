@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react"
 import { ArrowUpRight, Clock, RefreshCw } from "lucide-react"
 import { getWakatimeStats } from "@/actions/wakatime"
 import type { WakatimeStats as WakatimeStatsData } from "@/lib/wakatimeClient"
@@ -39,6 +39,7 @@ const WakatimeStats = () => {
     const [stats, setStats] = useState<WakatimeStatsData | null>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [hasError, setHasError] = useState(false)
+    const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null)
 
     const refreshStats = useCallback(async () => {
         if (refreshInProgress.current) return
@@ -82,6 +83,14 @@ const WakatimeStats = () => {
     const languages = stats && stats.languageCount > namedLanguages.length && remainingShare > 0
         ? [...namedLanguages, { name: "Other languages", percentage: remainingShare }]
         : namedLanguages
+    const currentLanguage = languages.find(({ name }) => name === selectedLanguage) ?? languages[0]
+    let cursor = 0
+    const segments = languages.map(({ name, percentage }) => {
+        const start = cursor
+        cursor = Math.min(100, cursor + Math.max(0, percentage))
+        return `${colorFor(name)} ${start}% ${cursor}%`
+    })
+    const chartStyle = { "--language-chart": `conic-gradient(from -90deg, ${segments.join(", ")}${cursor < 100 ? `, var(--bento-inset) ${cursor}% 100%` : ""})` } as CSSProperties
 
     return (
         <BentoCard className="bento-activity activity-rich col-span-12 sm:col-span-6">
@@ -109,21 +118,29 @@ const WakatimeStats = () => {
 
                         {languages.length > 0 ? (
                             <>
-                                <p className="activity-section-label mb-1.5">Coding time by language</p>
-                                <div className="wakatime-bar" aria-hidden="true">
-                                    {languages.map(({ name, percentage }) => (
-                                        <span key={name} style={{ flexBasis: `${Math.min(100, Math.max(0, percentage))}%`, backgroundColor: colorFor(name) }} />
-                                    ))}
+                                <div className="wakatime-chart-heading">
+                                    <p className="activity-section-label">Coding time by language</p>
+                                    <span>Select a language</span>
+                                </div>
+                                <div className="wakatime-chart" style={chartStyle} aria-hidden="true">
+                                    <div className="wakatime-ring">
+                                        <div className="wakatime-ring-center">
+                                            <strong><Flow value={currentLanguage.percentage} /> <small>%</small></strong>
+                                            <span>{currentLanguage.name}</span>
+                                        </div>
+                                    </div>
                                 </div>
                                 <ul className="wakatime-mix" aria-label="Coding languages and share of time">
                                     {languages.map(({ name, percentage }) => (
                                         <li key={name}>
-                                            <span className="wakatime-dot" aria-hidden="true" style={{ backgroundColor: colorFor(name) }} />
-                                            <span>{name}</span><small><Flow value={percentage} />%</small>
+                                            <button type="button" aria-pressed={currentLanguage.name === name} onClick={() => setSelectedLanguage(name)}>
+                                                <span className="wakatime-dot" aria-hidden="true" style={{ backgroundColor: colorFor(name) }} />
+                                                <span>{name}</span><small><Flow value={percentage} />%</small>
+                                            </button>
                                         </li>
                                     ))}
                                 </ul>
-                                <p className="wakatime-total"><Flow value={stats.languageCount} /> languages tracked</p>
+                                <p className="wakatime-total wakatime-card-foot"><span><Flow value={stats.languageCount} /> languages tracked</span><span>{stats.rangeLabel}</span></p>
                             </>
                         ) : <p className="activity-empty">No language data for this period.</p>}
 

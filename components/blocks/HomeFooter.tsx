@@ -1,4 +1,6 @@
-import { ArrowUpRight, Github } from "lucide-react";
+import FontSelector from "@/components/reusable/FontSelector";
+import CommitLink from "@/components/reusable/CommitLink";
+import { RandomEmoji } from "@/components/ui/RandomEmoji";
 
 interface HomeFooterProps {
     borderColor?: string;
@@ -8,10 +10,9 @@ interface HomeFooterProps {
 export default function HomeFooter({ className = "" }: HomeFooterProps) {
     return (
         <footer className={`site-footer ${className}`}>
-            <span>“Let’s go to Mars.”</span>
-            <a href="https://github.com/vin-dKR/portfolio" target="_blank" rel="noreferrer">
-                <Github aria-hidden="true" size={13} /> Source <ArrowUpRight aria-hidden="true" size={12} />
-            </a>
+            <span className="footer-motto"><span>“Let’s go to mars”</span><RandomEmoji aria-hidden="true" /></span>
+            <FontSelector />
+            <CommitLink />
         </footer>
     );
 }

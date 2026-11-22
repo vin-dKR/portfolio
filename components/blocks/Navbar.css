@@ -12,11 +12,17 @@
     inset: -20% -15% 14%;
     background: linear-gradient(108deg, #fa6b83 11%, #ffba75 25%, #a5e364 41%, #62c9ef 55%, #777ff5 72%, #ba69ed 90%);
     filter: blur(22px);
-    opacity: 0.42;
+    opacity: 0.26;
+    transition: opacity 400ms ease;
 }
 
 .dark .portfolio-aurora span {
-    opacity: 0.59;
+    opacity: 0.38;
+}
+
+.portfolio-nav:hover .portfolio-aurora span,
+.portfolio-nav:focus-within .portfolio-aurora span {
+    opacity: 0.48;
 }
 
 .portfolio-theme-toggle {
@@ -132,6 +138,27 @@
 .portfolio-nav.is-scrolled {
     max-width: 42rem;
     height: 3.6rem;
+}
+
+.portfolio-nav::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    border-radius: inherit;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23808080' filter='url(%23n)' opacity='.55' d='M0 0h160v160H0z'/%3E%3C/svg%3E");
+    opacity: 0.075;
+    pointer-events: none;
+    content: "";
+}
+
+.portfolio-nav::after {
+    position: absolute;
+    inset: auto 8% 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #cf94b8, #cbbf91, #a6c7bb, #9aa6db, transparent);
+    opacity: .4;
+    pointer-events: none;
+    content: "";
 }
 
 .portfolio-signature {

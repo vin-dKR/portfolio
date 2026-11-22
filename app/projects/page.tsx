@@ -35,18 +35,19 @@ const contributions: GithubContributionTypes[] = [
 
 export default function ProjectsPage() {
     return (
-        <main id="main-content" className="page-frame">
+        <main id="main-content" className="page-frame projects-page">
             <header>
                 <div className="page-heading"><h1 className="page-title">Projects</h1></div>
-                <p className="page-intro">Client platforms, things I&apos;ve built, and contributions to open source.</p>
+                <p className="projects-page-lead">Client platforms. <em>Independent builds.</em></p>
+                <p className="page-intro">Selected work in commerce, education, electric mobility, and agriculture.</p>
             </header>
             <Tabs defaultValue="projects" className="projects-tabs">
                 <TabsList aria-label="Projects and contributions" className="projects-tab-list">
                     <TabsTrigger value="projects">Projects</TabsTrigger>
                     <TabsTrigger value="contributions">Open source</TabsTrigger>
                 </TabsList>
-                <TabsContent value="projects" className="projects-tab-panel">
-                    {projectsData.map((project) => <Project key={project.name} {...project} />)}
+                <TabsContent value="projects" className="projects-tab-panel projects-product-grid">
+                    {projectsData.map((project, index) => <Project key={project.name} {...project} featured={index === 0} />)}
                 </TabsContent>
                 <TabsContent value="contributions" className="projects-tab-panel">
                     {contributions.map((contribution) => <GitHubContribution key={contribution.url} {...contribution} />)}

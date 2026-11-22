@@ -1,0 +1,18 @@
+.work-page-lead {
+    margin-block: .25rem .75rem;
+    color: var(--site-ink);
+    font-size: clamp(1.45rem, 4vw, 2rem);
+    line-height: 1.25;
+    letter-spacing: -.025em;
+}
+
+.work-page-lead em {
+    color: var(--site-accent);
+    font-family: var(--font-editorial, "InstruItalic", serif);
+    font-weight: 400;
+}
+
+.work-story {
+    margin-top: 1.75rem;
+    border-top: 1px solid var(--site-rule);
+}

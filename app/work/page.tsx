@@ -3,6 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 import Timeline from "@/components/ui/Timeline";
 import HomeFooter from "@/components/blocks/HomeFooter";
 import { timelineData } from "@/constant/Work";
+import "./Work.css";
 
 export const metadata: Metadata = {
     title: "Experiences | Vinod KR",
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function WorkPage() {
     return (
-        <main id="main-content" className="page-frame">
+        <main id="main-content" className="page-frame work-page">
             <header>
                 <div className="page-heading">
                     <h1 className="page-title">Experience</h1>
@@ -24,9 +25,10 @@ export default function WorkPage() {
                         Read my résumé <ArrowUpRight aria-hidden="true" size={15} />
                     </a>
                 </div>
+                <p className="work-page-lead">Co-founder, intern, <em>independent developer.</em></p>
                 <p className="page-intro">From co-founding Clothing GO to supporting systems at HCLTech and shipping freelance web applications.</p>
             </header>
-            <div className="mt-8 border-t border-(--site-rule)">
+            <div className="work-story">
                 <Timeline data={timelineData} gradientColors={["#10b981", "#8b6cbe"]} />
             </div>
             <HomeFooter />

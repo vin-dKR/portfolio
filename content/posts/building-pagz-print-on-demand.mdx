@@ -52,8 +52,6 @@ Pagz is a print-on-demand store. A customer:
 
 I built the whole thing. <span className="underline-em">Three Node.js apps, ~300 commits, four months, all deployed on Hostinger</span>. No Vercel, no AWS - the entire stack lives on one Hostinger plan because that is what the client already had.
 
-> 📸 IMAGE: Hero shot - a screenshot of the Pagz storefront showing a category page with the configurator (paper size, sides, copies sliders, live price). Sets the scene fast.
-
 ## What I built (all of it)
 
 | App | Stack | Role |
@@ -63,8 +61,6 @@ I built the whole thing. <span className="underline-em">Three Node.js apps, ~300
 | **admin** | Next.js 16, React 19, Tailwind 4, dnd-kit, Zod | Operations panel |
 
 Three Node.js processes, all running on the same Hostinger plan. Each app has its own `package.json`, its own deploy zip. Trade-off: types duplicated between web and admin. Win: <span className="squiggly">one-zip-per-app deploys to Hostinger</span>, no surprise build-graph coupling.
-
-> 🖼️ IMAGE: A simple architecture diagram. Three boxes (api, web, admin) all inside one Hostinger box, talking to MariaDB, FTP, and Razorpay. Use Excalidraw or draw.io.
 
 ## Why three apps, not a Turborepo monorepo
 
@@ -123,8 +119,6 @@ The schema still says `provider = "mysql"` because Prisma needs *some* provider.
 
 `connectionLimit: 5` is not a guess. Hostinger shared hosting has a tight per-account connection cap. Cross it and queries hang. Five connections for the API process, room left for the admin app's occasional reads.
 
-> 📸 IMAGE: Screenshot of Hostinger's database control panel beside the env file with separate fields. Helps explain "why split env vars".
-
 ## A pricing engine where rules are also products
 
 The catalog has two kinds of things:
@@ -137,8 +131,6 @@ I wanted both to flow through the same Cart, Order, and Wishlist tables. So I ma
 A `CategoryPricingRule` carries a `BASE_PRICE` config. When an admin "publishes" a rule, the system creates a real `Product` row from it - same image, same spec structure - and tags it `generatedFromPricingRule = true`. Cart, order, wishlist all key on `productId`. <span className="underline-em">Service jobs and physical SKUs use exactly the same code path</span>.
 
 When the rule changes, a resync rewrites the Product. Old orders stay correct because every `OrderItem.metadata` carries a snapshot of the price breakdown taken at order time. Rules can change; <span className="squiggly">old invoices cannot</span>.
-
-> 🖼️ IMAGE: A simple flowchart - "PricingRule (admin edit) → publish → Product (cart-ready) → resync on rule change". Shows the unify-two-flows idea visually.
 
 ## Half-page math (and why I do not trust the client)
 
@@ -157,8 +149,6 @@ I encoded this in two pieces:
 Then the second hard part - **which page count does the addon range gate on?** After a few iterations, the answer landed: ranges gate on raw `pageCount × copies`, not the half-page-reduced count. Why? Because a binding addon for "books up to 200 pages" is about the book the customer holds. Not about how the press lays out paper.
 
 A `copyMultiplier` flag covers per-copy-pages addons - binding is one binding per copy, regardless of page count. Three flags (`quantityMultiplier`, `fileMultiplier`, `copyMultiplier`), eight permutations, one helper, persisted price breakdown. <span className="underline-em">Get it wrong by ₹0.20 on a ₹500 invoice and a customer will email you</span>. Get it right and they never notice.
-
-> 📸 IMAGE: A side-by-side diagram - "200-page PDF, Single Sided" → 200 sheets vs "200-page PDF, Both Sides" → 100 sheets. Visual proof of the half-page idea.
 
 ## The guest cart that survives login
 
@@ -188,8 +178,6 @@ The post-login recovery in `pending-cart-intent.ts`:
 6. Re-issue add-to-cart.
 
 Every choice survives. Cost: ~850 LOC across two utilities, and a test plan I walk through every time I touch them.
-
-> 🎥 VIDEO: 15-second screen recording. Browse anonymously, configure a print job, click "Add to Cart", get redirected to login, log in, see the same configuration restored in the cart. Strong proof.
 
 ## The Hostinger trailing-slash redirect loop
 
@@ -231,8 +219,6 @@ My fix - **two-phase order creation**:
 Payment instrument unpacked into a typed JSON: UPI vpa, CARD network + last4 + issuer, NETBANKING bank, WALLET type. So the receipt shows "Paid via UPI: 99xxxxx@ybl" instead of just "ONLINE".
 
 Doing the swap on a live system meant <span className="underline-em">keeping both gateways behind the same `Payment` model and a `RefundGateway` enum</span> - no renaming columns, no backfill scripts, old PhonePe orders stay readable forever.
-
-> 🖼️ IMAGE: A timing diagram - two arrows (success-handler and webhook) racing to the order-creation step, with a "PendingPayment.status = USED" lock in the middle. Makes the race visual.
 
 ## Production chunk loading does not white-screen any more
 
@@ -282,8 +268,6 @@ The global error handler preserves the `details` field on 400 responses. The sto
 
 Addon contributions count toward the gate. Addons are part of order value, so they should count.
 
-> 📸 IMAGE: Screenshot of the storefront cart showing per-category shortfall hints with "Add ₹100 more in Prints" deep links. Tells the whole story.
-
 ## Phone-OTP-only signup
 
 Most starter auth code assumes email + password. I switched to phone-OTP-first because <span className="underline-em">that is what Indian customers actually use</span>.
@@ -305,8 +289,6 @@ A subtle bug class - your invoice shows ₹500.20 but the order total says ₹50
 Fix: **persist the breakdown at order time**, never recompute on render. `OrderItem.metadata.priceBreakdown` is a JSON array of every line, stored at add-to-cart, locked forever. The PDF renders the persisted rows. The sum is the persisted total. <span className="underline-em">No drift, ever</span>.
 
 The PDFKit invoice strips annotation-only rows (like "Both Sides: 100 → 50") via an `isInfoRow` flag so they do not show as ₹0.00 lines. The logo is loaded from a multi-candidate path search with caching, falls back to a wordmark if missing - so invoice generation never dies because of a path mismatch between dev and prod.
-
-> 📸 IMAGE: An actual generated invoice PDF (with the customer name redacted). Shows logo, line items, half-page annotation row, total. Real artifact.
 
 ## Bugs that ate days, and how I closed them
 

@@ -1,5 +1,32 @@
 .activity-rich {
+    display: flex;
+    min-height: 27rem;
+    height: 100%;
+    flex-direction: column;
     background: var(--bento-card);
+}
+
+.activity-rich .activity-empty {
+    flex: 1;
+    align-content: center;
+}
+
+.github-card-content,
+.wakatime-card-content {
+    position: relative;
+    display: flex;
+    min-height: 100%;
+    flex: 1;
+    flex-direction: column;
+}
+
+.activity-rich .activity-header {
+    min-height: 2rem;
+    margin-bottom: .75rem;
+}
+
+.activity-rich .github-history {
+    margin-top: auto;
 }
 
 .activity-gradient-title {
@@ -103,34 +130,6 @@
     border-radius: .75rem;
 }
 
-.activity-rich .wakatime-mix {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-    margin: .38rem 0 .55rem;
-}
-
-.activity-rich .wakatime-mix li {
-    min-height: 1.65rem;
-    gap: .42rem;
-    border-bottom: 1px solid color-mix(in srgb, var(--bento-rule), transparent 30%);
-    font-size: .74rem;
-}
-
-.activity-rich .wakatime-mix li:last-child {
-    border-bottom: 0;
-}
-
-.activity-rich .wakatime-mix li > span:nth-child(2) {
-    min-width: 0;
-    color: var(--bento-ink);
-    overflow-wrap: anywhere;
-    white-space: normal;
-}
-
-.activity-rich .wakatime-mix small {
-    font-size: inherit;
-}
-
 .github-history-input {
     position: absolute;
     inset: 0;
@@ -157,4 +156,136 @@
     gap: .3rem;
     font-size: clamp(1.45rem, 4vw, 1.75rem);
     white-space: nowrap;
+}
+
+.wakatime-chart-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: .6rem;
+}
+
+.wakatime-chart-heading > span {
+    color: var(--bento-muted);
+    font-size: .6rem;
+}
+
+.wakatime-chart {
+    display: grid;
+    min-height: 9.5rem;
+    flex: 1;
+    place-items: center;
+    padding-block: .6rem;
+}
+
+.wakatime-ring {
+    display: grid;
+    width: 8.3rem;
+    aspect-ratio: 1;
+    place-items: center;
+    padding: .62rem;
+    border-radius: 50%;
+    background: var(--language-chart);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / .06);
+}
+
+.wakatime-ring-center {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .1rem;
+    border-radius: 50%;
+    background: var(--bento-card);
+    color: var(--bento-ink);
+    text-align: center;
+    box-shadow: 0 0 0 3px var(--bento-card);
+}
+
+.wakatime-ring-center strong {
+    display: inline-flex;
+    align-items: baseline;
+    gap: .08rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: -.045em;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+
+.wakatime-ring-center small {
+    color: var(--bento-muted);
+    font-size: .8rem;
+    font-weight: 400;
+}
+
+.wakatime-ring-center > span {
+    max-width: 90%;
+    color: var(--bento-muted);
+    font-size: .625rem;
+    line-height: 1.35;
+}
+
+.activity-rich .wakatime-mix {
+    grid-template-columns: minmax(0, 1fr);
+    gap: .1rem;
+    margin: 0;
+}
+
+.activity-rich .wakatime-mix li {
+    display: block;
+    min-width: 0;
+}
+
+.wakatime-mix button {
+    display: flex;
+    width: 100%;
+    min-height: 1.85rem;
+    align-items: center;
+    gap: .45rem;
+    padding: .3rem .45rem;
+    border: 1px solid transparent;
+    border-radius: .45rem;
+    color: var(--bento-muted);
+    font-size: .72rem;
+    text-align: left;
+    cursor: pointer;
+}
+
+.wakatime-mix button > span:nth-child(2) {
+    min-width: 0;
+    flex: 1;
+    overflow-wrap: anywhere;
+}
+
+.wakatime-mix button[aria-pressed="true"] {
+    border-color: color-mix(in srgb, var(--bento-rule), transparent 30%);
+    background: var(--bento-inset);
+    color: var(--bento-ink);
+}
+
+.wakatime-mix button:hover { color: var(--bento-ink); }
+.wakatime-mix button small { font-size: inherit; }
+
+.wakatime-card-foot {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: .5rem;
+    margin-bottom: 0;
+    padding-top: .65rem;
+    border-top: 1px solid var(--bento-rule);
+    font-size: .625rem;
+}
+
+.wakatime-card-foot > span:last-child {
+    color: var(--site-muted);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .wakatime-mix button {
+        transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
+    }
 }

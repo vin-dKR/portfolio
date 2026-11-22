@@ -124,7 +124,7 @@ function GithubStats({ username }: { username: string }) {
 
     return (
         <BentoCard className="bento-activity activity-rich col-span-12 sm:col-span-6">
-            <div ref={card} className="relative" aria-busy={stats.loading}>
+            <div ref={card} className="github-card-content" aria-busy={stats.loading}>
                 <div className="activity-header mb-2">
                     <h3><Github aria-hidden="true" size={16} /> <span className="activity-gradient-title">GitHub</span></h3>
                     <a href={`https://github.com/${handle}`} target="_blank" rel="noreferrer" aria-label="View GitHub profile">

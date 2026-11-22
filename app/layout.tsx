@@ -3,6 +3,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeProvider";
 import { ReactNode } from "react";
 import Navbar from "@/components/blocks/Navbar";
+import { TypographyProvider } from "@/context/TypographyProvider";
+import { fontPreferenceScript } from "@/constant/Typography";
 
 export const metadata: Metadata = {
     metadataBase: new URL("https://vinodkr.in"),
@@ -35,14 +37,17 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" suppressHydrationWarning>
-            <body className="antialiased font-lenia w-full">
-                <ThemeProvider
-                    attribute="class"
-                    enableSystem
-                >
-                    <Navbar />
-                    {children}
-                </ThemeProvider>
+            <head><script dangerouslySetInnerHTML={{ __html: fontPreferenceScript }} /></head>
+            <body className="antialiased w-full">
+                <TypographyProvider>
+                    <ThemeProvider
+                        attribute="class"
+                        enableSystem
+                    >
+                        <Navbar />
+                        {children}
+                    </ThemeProvider>
+                </TypographyProvider>
             </body>
         </html>
     );

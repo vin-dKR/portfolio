@@ -1,3 +1,6 @@
+"use client";
+
+import { useId, useState } from "react";
 import { Braces, ChevronDown, Database, Layers, PanelsTopLeft, Server } from "lucide-react";
 import { techStacks } from "@/constant/TechStack";
 import BentoCard from "./BentoCard";
@@ -37,51 +40,81 @@ const remainingStack = Object.entries(techStacks).map(([category, { techs }]) =>
 const extraCount = remainingStack.reduce((count, { techs }) => count + techs.length, 0);
 
 export default function TechStackCard() {
+    const panelId = useId();
+    const [expanded, setExpanded] = useState(false);
+
     return (
-        <BentoCard className="bento-tech col-span-8 flex flex-col px-3 py-3 sm:px-4 sm:py-4">
-            <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold tracking-tight">
-                <Layers aria-hidden="true" className="size-4 text-(--bento-accent)" />
-                Tech stack
-            </h3>
+        <>
+            <BentoCard className="bento-tech col-span-8 flex flex-col px-3 py-3 sm:px-4 sm:py-4">
+                <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold tracking-tight">
+                    <Layers aria-hidden="true" className="size-4 text-(--bento-accent)" />
+                    Tech stack
+                </h3>
 
-            <dl className="grid flex-1 divide-y divide-(--bento-rule)">
-                {stackOverview.map(({ title, icon: Icon, techs, accent }) => (
-                    <div
-                        key={title}
-                        className="grid min-w-0 content-center gap-1.5 py-2.5 sm:grid-cols-[6.5rem_minmax(0,1fr)] sm:items-center sm:gap-2"
-                    >
-                        <dt className="flex min-w-0 items-center gap-1.5 text-xs font-semibold">
-                            <Icon aria-hidden="true" className={`size-3.5 shrink-0 ${accent}`} />
-                            {title}
-                        </dt>
-                        <dd className="min-w-0">
-                            <ul className="flex flex-wrap gap-1">
-                                {techs.map((tech) => (
-                                    <li key={tech} className="rounded-md border border-(--bento-rule) bg-(--bento-inset) px-1.5 py-0.5 text-[11px] leading-tight text-(--bento-ink) sm:px-2">
-                                        {tech}
-                                    </li>
-                                ))}
-                            </ul>
-                        </dd>
-                    </div>
-                ))}
-            </dl>
-
-            <details className="group/stack mt-2 rounded-lg border border-(--bento-rule) bg-(--bento-inset)">
-                <summary className="flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-(--bento-accent) transition-colors hover:bg-violet-500/8 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-violet-500 [&::-webkit-details-marker]:hidden">
-                    <span>More tools</span>
-                    <span className="ml-auto text-[10px] font-medium tabular-nums text-(--bento-muted)">+{extraCount}</span>
-                    <ChevronDown aria-hidden="true" className="size-3.5 shrink-0 motion-safe:transition-transform group-open/stack:rotate-180" />
-                </summary>
-                <dl className="grid gap-x-4 gap-y-3 border-t border-(--bento-rule) p-2.5 sm:grid-cols-2">
-                    {remainingStack.map(({ category, techs }) => (
-                        <div key={category}>
-                            <dt className="mb-0.5 text-xs font-semibold">{category}</dt>
-                            <dd className="text-xs leading-relaxed text-(--bento-muted)">{techs.join(" · ")}</dd>
+                <dl className="grid flex-1 divide-y divide-(--bento-rule)">
+                    {stackOverview.map(({ title, icon: Icon, techs, accent }) => (
+                        <div
+                            key={title}
+                            className="grid min-w-0 content-center gap-1.5 py-2.5 sm:grid-cols-[6.5rem_minmax(0,1fr)] sm:items-center sm:gap-2"
+                        >
+                            <dt className="flex min-w-0 items-center gap-1.5 text-xs font-semibold">
+                                <Icon aria-hidden="true" className={`size-3.5 shrink-0 ${accent}`} />
+                                {title}
+                            </dt>
+                            <dd className="min-w-0">
+                                <ul className="flex flex-wrap gap-1">
+                                    {techs.map((tech) => (
+                                        <li key={tech} className="site-chip">
+                                            {tech}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </dd>
                         </div>
                     ))}
                 </dl>
-            </details>
-        </BentoCard>
+
+                <button
+                    type="button"
+                    className="bento-tool-toggle"
+                    aria-expanded={expanded}
+                    aria-controls={panelId}
+                    onClick={() => setExpanded((value) => !value)}
+                >
+                    <span>{expanded ? "Close toolkit" : "More tools"}</span>
+                    <span className="bento-tool-count">+{extraCount}</span>
+                    <ChevronDown aria-hidden="true" size={14} />
+                </button>
+            </BentoCard>
+
+            <div
+                id={panelId}
+                className="bento-tool-drawer col-span-12"
+                data-open={expanded}
+                aria-hidden={!expanded}
+                inert={!expanded}
+            >
+                <div className="bento-tool-clip">
+                    <div className="bento-tool-content">
+                        <div className="bento-tool-heading">
+                            <h3>More of my toolkit</h3>
+                            <span>{extraCount} tools across {remainingStack.length} areas</span>
+                        </div>
+                        <dl className="bento-tool-groups">
+                            {remainingStack.map(({ category, techs }) => (
+                                <div key={category}>
+                                    <dt>{category}</dt>
+                                    <dd>
+                                        <ul>
+                                            {techs.map((tech) => <li key={tech} className="site-chip">{tech}</li>)}
+                                        </ul>
+                                    </dd>
+                                </div>
+                            ))}
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </>
     );
 }

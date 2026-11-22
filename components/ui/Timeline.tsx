@@ -3,6 +3,8 @@
 import { useEffect, useId, useRef, type CSSProperties } from "react"
 import { twMerge } from "tailwind-merge"
 import ImageCarousel from "./ImageCarousel"
+import Link from "next/link"
+import { ArrowUpRight } from "lucide-react"
 import "./Timeline.css"
 
 export default function Timeline({
@@ -137,17 +139,24 @@ export default function Timeline({
                     <li key={item.title} ref={(element) => { entriesRef.current[index] = element }} className="om-timeline-entry">
                         <span ref={(element) => { dotsRef.current[index] = element }} className="om-timeline-dot" aria-hidden="true" />
                         <div className="om-timeline-entry-heading">
-                            <h2 className="text-lg font-semibold text-black dark:text-white">{item.title}</h2>
-                            {item.date && <p className="text-sm text-neutral-600 dark:text-neutral-400">{item.date}</p>}
+                            <h2>{item.title}</h2>
+                            {item.date && <p>{item.date}</p>}
                         </div>
-                        {item.image && <ImageCarousel images={item.image} />}
-                        <div>
-                            <p className="text-sm font-semibold text-black dark:text-white">{item.content}</p>
-                            {item.summaryPoints && (
-                                <ul className="mt-2 space-y-1 text-sm text-neutral-600 dark:text-neutral-400">
-                                    {item.summaryPoints.map((point) => <li key={point} className="om-timeline-point">{point}</li>)}
-                                </ul>
-                            )}
+                        <div className="om-timeline-card">
+                            {item.image && <div className="om-timeline-photo"><ImageCarousel images={item.image} /></div>}
+                            <div className="om-timeline-story">
+                                <p className="om-timeline-role">{item.content}</p>
+                                {item.summaryPoints && (
+                                    <ul>
+                                        {item.summaryPoints.map((point) => <li key={point} className="om-timeline-point">{point}</li>)}
+                                    </ul>
+                                )}
+                                {item.title === "Freelancer" && (
+                                    <Link href="/projects" prefetch={false} className="site-link">
+                                        Explore client work <ArrowUpRight aria-hidden="true" size={14} />
+                                    </Link>
+                                )}
+                            </div>
                         </div>
                     </li>
                 ))}

@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { Root as Tabs, List as TabList, Trigger as Tab, Content as TabPanel } from "@radix-ui/react-tabs";
-import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, Code2, LayoutTemplate, ListTree, Maximize2, Play } from "lucide-react";
+import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, Code2, Globe2, LayoutTemplate, ListTree, Maximize2, Play } from "lucide-react";
 import { getBentoProject } from "@/constant/BentoProjects";
 import { projectsData } from "@/constant/ProjectsData";
 import BentoCard from "./BentoCard";
@@ -108,6 +108,18 @@ export default function ProjectsCard() {
                         {index === position && (
                             <section className="showcase-panel" style={{ "--project-hue": artwork.hue } as CSSProperties}>
                                 <div className="showcase-stage">
+                                    <div className="showcase-browser-chrome">
+                                        <span className="showcase-window-controls" aria-hidden="true"><i /><i /><i /></span>
+                                        <span className="showcase-address">
+                                            <Globe2 aria-hidden="true" size={11} />
+                                            <span>{hostname || project.name}</span>
+                                        </span>
+                                        {liveUrl ? (
+                                            <a className="showcase-open-site" href={liveUrl} target="_blank" rel="noreferrer" aria-label={`Open ${project.name} live site`}>
+                                                <ArrowUpRight aria-hidden="true" size={14} />
+                                            </a>
+                                        ) : <span className="showcase-open-site" aria-hidden="true" />}
+                                    </div>
                                     <div className="showcase-toolbar">
                                         {artwork.story && canPreview ? (
                                             <div className="showcase-view-switch" role="group" aria-label="Project view">
@@ -121,7 +133,9 @@ export default function ProjectsCard() {
                                         ) : (
                                             <span className="showcase-view-label">{showBuild ? "How it works" : "Preview"}</span>
                                         )}
-                                        {hostname && <span className="showcase-host">{hostname}</span>}
+                                        <span className="showcase-position" aria-label={`Project ${index + 1} of ${projectsData.length}`}>
+                                            {String(index + 1).padStart(2, "0")} <span>/ {String(projectsData.length).padStart(2, "0")}</span>
+                                        </span>
                                     </div>
 
                                     <div key={`${project.name}-${showBuild}`} className="showcase-visual">

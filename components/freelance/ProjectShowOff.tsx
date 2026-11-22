@@ -1,35 +1,60 @@
+"use client";
+
+import { useState } from "react";
+import { Root as Tabs, List as TabList, Trigger as Tab, Content as TabPanel } from "@radix-ui/react-tabs";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { getBentoProject } from "@/constant/BentoProjects";
 
-const clientProjects = ["Trio EV", "Pagz", "Eduents"];
+const work = [
+    { name: "Trio EV", category: "EV fleet & charging", hostname: "trioev.com" },
+    { name: "Pagz", category: "Custom printing & commerce", hostname: "pagz.in" },
+    { name: "Eduents", category: "Education & assessment", hostname: "eduents.com" },
+];
 
 export default function ProjectShowOff() {
-    return (
-        <section className="freelance-section" aria-labelledby="client-work-heading">
-            <div className="freelance-section-header">
-                <h2 id="client-work-heading" className="section-heading">Client work</h2>
-                <Link className="site-link" href="/projects" prefetch={false}>All projects <ArrowUpRight aria-hidden="true" size={14} /></Link>
-            </div>
-            <div className="freelance-projects">
-                {clientProjects.map((name) => {
-                    const project = getBentoProject(name);
-                    if (!project.screen || !project.story) return null;
+    const [selected, setSelected] = useState("0");
 
+    return (
+        <section id="freelance-work" className="freelance-section freelance-work" aria-labelledby="client-work-heading">
+            <header className="freelance-section-header">
+                <h2 id="client-work-heading">Ideas turned into <em>real things.</em></h2>
+                <Link className="site-link" href="/projects" prefetch={false}>All projects <ArrowUpRight aria-hidden="true" size={14} /></Link>
+            </header>
+            <Tabs value={selected} onValueChange={setSelected} className="freelance-work-gallery">
+                {work.map((item, index) => {
+                    const project = getBentoProject(item.name);
                     return (
-                        <Link key={name} className="freelance-project site-card" href={`/posts/${project.story.slug}`} prefetch={false}>
-                            <div className="freelance-project-image">
-                                <Image src={project.screen.src} alt={project.screen.alt} fill sizes="(max-width: 480px) 90vw, (max-width: 639px) 45vw, 210px" unoptimized />
-                            </div>
-                            <div className="freelance-project-copy">
-                                <h3>{name}<ArrowRight aria-hidden="true" size={14} /></h3>
-                                <p>{project.summary}</p>
-                            </div>
-                        </Link>
+                        <TabPanel key={item.name} value={String(index)} className="freelance-work-panel">
+                            {selected === String(index) && project.screen && project.story && (
+                                <article className="freelance-work-product">
+                                    <Link className="freelance-work-screen" href={`/posts/${project.story.slug}`} prefetch={false} aria-label={`Read the ${item.name} case study`}>
+                                        <Image src={project.screen.src} alt={project.screen.alt} fill sizes="(max-width: 767px) 92vw, 680px" unoptimized />
+                                        <span className="freelance-work-open" aria-hidden="true"><ArrowUpRight size={19} /></span>
+                                    </Link>
+                                    <div className="freelance-work-caption">
+                                        <div><p>{item.category}</p><h3>{item.name}</h3></div>
+                                        <p>{project.summary}</p>
+                                        <Link href={`/posts/${project.story.slug}`} prefetch={false} className="site-link">Read case study <ArrowRight aria-hidden="true" size={15} /></Link>
+                                    </div>
+                                </article>
+                            )}
+                        </TabPanel>
                     );
                 })}
-            </div>
+                <TabList className="freelance-work-picker" aria-label="Client projects">
+                    {work.map((item, index) => {
+                        const project = getBentoProject(item.name);
+                        return (
+                            <Tab key={item.name} value={String(index)} className="freelance-work-choice">
+                                {project.screen && <span className="freelance-work-thumbnail"><Image src={project.screen.src} alt="" fill sizes="96px" unoptimized /></span>}
+                                <span>{item.name}<small>{item.hostname}</small></span>
+                            </Tab>
+                        );
+                    })}
+                </TabList>
+            </Tabs>
         </section>
     );
 }
