@@ -20,8 +20,8 @@ const initialGithubStats: GithubStatsProps = {
     error: null
 }
 
-type ActionType = 
-    | { type: 'FETCH_GITHUB_START'}
+type ActionType =
+    | { type: 'FETCH_GITHUB_START' }
     | { type: 'FETCH_GITHUB_SUCCESS'; payload: Partial<GithubStatsProps> }
     | { type: 'FETCH_GITHUB_ERROR'; payload: string }
 
@@ -39,7 +39,7 @@ const githubReducer = (state: GithubStatsProps, action: ActionType) => {
     switch (action.type) {
         case 'FETCH_GITHUB_START':
             return { ...state, loading: true, error: null }
-        case 'FETCH_GITHUB_SUCCESS': 
+        case 'FETCH_GITHUB_SUCCESS':
             return { ...state, ...action.payload, loading: false }
         case 'FETCH_GITHUB_ERROR':
             return { ...state, loading: false, error: action.payload }
@@ -51,8 +51,8 @@ export const GithubProvider = ({ children }: { children: ReactNode }) => {
     const [state, dispatch] = useReducer(githubReducer, initialGithubStats)
 
     return (
-        <GithubContext.Provider value={{state, dispatch}}>
-            { children }
+        <GithubContext.Provider value={{ state, dispatch }}>
+            {children}
         </GithubContext.Provider>
     )
 }

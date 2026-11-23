@@ -1,26 +1,20 @@
-import React from 'react';
-import { NAV_ITEMS, myColors } from '@/constant/NavItems';
-import NeonUnderline from '@/components/ui/NeonUnderline';
-import Link from 'next/link';
+import { NAV_ITEMS } from "@/constant/NavItems";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-export const DesktopNav = () => {
+export function DesktopNav() {
+    const pathname = usePathname();
 
     return (
-        <div className="hidden md:flex items-center justify-center space-x-12 mt-4">
-            {NAV_ITEMS.map(item => (
-                <NeonUnderline
-                    key={item.name}
-                    colors={myColors}
-                    width="100%"
-                >
-                    <Link
-                        href={item.href}
-                        className="text-gray-100 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors justify-self-center"
-                    >
-                        {item.name}
+        <div className="portfolio-nav-links">
+            {NAV_ITEMS.map(({ name, href }) => {
+                const active = pathname === href || pathname.startsWith(href + "/");
+                return (
+                    <Link key={href} href={href} prefetch={false} aria-current={active ? "page" : undefined}>
+                        {name}
                     </Link>
-                </NeonUnderline>
-            ))}
+                );
+            })}
         </div>
     );
-};
+}

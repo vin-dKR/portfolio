@@ -1,44 +1,84 @@
-import React from 'react'
-import Link from 'next/link'
-import { getBlogPosts } from '@/lib/blogs'
+import Link from "next/link";
+import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
+import HomeFooter from "@/components/blocks/HomeFooter";
+import { getBlogPosts } from "@/lib/blogs";
+import { getPostArtwork } from "./artwork";
+import "./Writing.css";
 
-export default async function BlogListPage() {
-    const posts = await getBlogPosts()
+const published = new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
 
-    if (!posts) return <div className='size-14 mt-40'>No Blogs yet..</div>
-
+function ArticleVisual({ post, featured = false }: { post: BlogPost; featured?: boolean }) {
+    const artwork = getPostArtwork(post);
     return (
-        <div className="w-full max-w-2xl px-4 sm:px-6 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-24 md:pb-8 sm:pb-12 lg:pb-16 mx-auto">
-            <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-gray-800 dark:text-white">blogs</h1>
-
-            <div className="grid gap-4 sm:gap-6">
-                {posts.map((post) => (
-                    <Link
-                        key={post.frontmatter.slug}
-                        href={`/posts/${post.frontmatter.slug}`}
-                        className="block"
-                    >
-                        <div className="dark:bg-white/2 bg-black/10 border border-black/4 dark:border-white/4 rounded-2xl p-4 sm:p-6 hover:shadow-xl transition-all cursor-pointer">
-                            <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 text-gray-800 dark:text-white">
-                                {post.frontmatter.title}
-                            </h2>
-                            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-4">
-                                {post.frontmatter.description}
-                            </p>
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-                                <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                                    {new Date(post.frontmatter.date).toLocaleDateString()}
-                                </span>
-                                <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                                    {post.frontmatter.readingTime} min read
-                                </span>
-                            </div>
-                        </div>
-                    </Link>
-                ))}
-            </div>
+        <div className="writing-visual">
+            {artwork.screen ? (
+                <Image
+                    src={artwork.screen.src}
+                    alt={artwork.screen.alt}
+                    fill
+                    sizes={featured ? "(max-width: 639px) 90vw, 648px" : "(max-width: 639px) 90vw, 312px"}
+                    unoptimized={artwork.screen.src.startsWith("/")}
+                    className={post.frontmatter.slug === "cross-component-in-recoil" ? "writing-diagram" : "writing-screen"}
+                />
+            ) : artwork.steps ? (
+                <ol className="writing-build-map" aria-label="Topics in this article">
+                    {artwork.steps.map((step) => <li key={step.title}><span aria-hidden="true" /><strong>{step.title}</strong></li>)}
+                </ol>
+            ) : null}
         </div>
-    )
+    );
 }
 
-export const dynamic = 'force-static'
+export default async function BlogListPage() {
+    const posts = await getBlogPosts();
+    const [featured, ...rest] = posts;
+
+    return (
+        <main id="main-content" className="page-frame writing-page">
+            <header>
+                <div className="page-heading"><h1 className="page-title">Writing</h1></div>
+                <p className="page-intro">The decisions, problems, and implementation details behind my projects.</p>
+            </header>
+
+            {featured && (
+                <article className="writing-feature">
+                    <Link href={`/posts/${featured.frontmatter.slug}`} prefetch={false} className="writing-feature-link">
+                        <ArticleVisual post={featured} featured />
+                        <div className="writing-feature-copy">
+                            <div className="writing-entry-meta">
+                                <time dateTime={new Date(featured.frontmatter.date).toISOString().slice(0, 10)}>{published.format(new Date(featured.frontmatter.date))}</time>
+                                <span>{featured.frontmatter.readingTime} min read</span>
+                            </div>
+                            <h2>{featured.frontmatter.title}<ArrowUpRight aria-hidden="true" size={20} /></h2>
+                            <p>{featured.frontmatter.description}</p>
+                            <span className="writing-read">Read the story <ArrowUpRight aria-hidden="true" size={14} /></span>
+                        </div>
+                    </Link>
+                </article>
+            )}
+
+            <div className="writing-list">
+                {rest.map((post) => (
+                    <article key={post.frontmatter.slug}>
+                        <Link href={`/posts/${post.frontmatter.slug}`} prefetch={false} className="writing-entry">
+                            <ArticleVisual post={post} />
+                            <div className="writing-entry-copy">
+                                <div className="writing-entry-meta">
+                                    <time dateTime={new Date(post.frontmatter.date).toISOString().slice(0, 10)}>{published.format(new Date(post.frontmatter.date))}</time>
+                                    <span>{post.frontmatter.readingTime} min read</span>
+                                </div>
+                                <h2>{post.frontmatter.title}<ArrowUpRight aria-hidden="true" size={16} /></h2>
+                                <p>{post.frontmatter.description}</p>
+                            </div>
+                        </Link>
+                    </article>
+                ))}
+                {posts.length === 0 && <p className="writing-empty">I&apos;m working on my next write-up. In the meantime, explore my <Link href="/projects">projects</Link>.</p>}
+            </div>
+            <HomeFooter />
+        </main>
+    );
+}
+
+export const dynamic = "force-static";

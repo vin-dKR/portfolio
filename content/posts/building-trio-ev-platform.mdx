@@ -43,8 +43,6 @@ Behind both: a shared API, a content system the client runs themselves, and an a
 
 This post is not a code tour. It is the short list of problems that actually cost me time, and what I changed so they would not come back.
 
-> 📸 IMAGE: Hero shot - the Trio marketing site homepage with the animated India network map mid-pulse, beside the admin dashboard KPI row.
-
 ## Keeping validation honest across apps
 
 **The problem.** Several frontends and one API all validate the same things - an inquiry, a login, a blog post. The default outcome is that each one grows its own copy of the rules. They drift. <span className="squiggly">The version you find out about is the one a customer hits at 11pm, where the form accepted something the server rejected</span>.
@@ -89,8 +87,6 @@ My most expensive debugging session, and the one I would re-tell in an interview
 **The real fix.** I stopped fighting the browser and <span className="underline-em">removed the cross-origin condition entirely</span>, routing API traffic so it is same-origin from the app's point of view. Every one of the three problems evaporated, and the pre-flight round trips went with them.
 
 **The lesson.** I spent days fixing symptoms one at a time. All three shared a root cause I had accepted as a given - *the app and its API live at different addresses*. **When three unrelated-looking bugs cluster, question the assumption underneath them instead of patching each one.**
-
-> 🎥 VIDEO: 20-second screen capture - DevTools Network tab showing a write rejected with the header missing, then the same write succeeding after the fix. Clearest possible before/after.
 
 ## When a green pipeline is shipping nothing
 

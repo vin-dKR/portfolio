@@ -1,265 +1,204 @@
 "use client"
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { twMerge } from 'tailwind-merge';
-import "./Timeline.css";
-import ImageCarousel from './ImageCarousel';
+import { useEffect, useId, useRef, type CSSProperties } from "react"
+import { twMerge } from "tailwind-merge"
+import ImageCarousel from "./ImageCarousel"
+import Link from "next/link"
+import { ArrowUpRight } from "lucide-react"
+import "./Timeline.css"
 
-const sanitizeHtml = (html: string) => {
-    return { __html: html };
-};
+type Point = { x: number; y: number }
+type Anchor = Point & { top: number; bottom: number }
 
-const Timeline: React.FC<TimelineProps> = ({
+function threadPath(anchors: Anchor[], height: number) {
+    const turns = anchors.slice(0, -1).map((anchor, index) => ({
+        x: (anchor.x + anchors[index + 1].x) / 2,
+        y: (anchor.bottom + anchors[index + 1].top) / 2,
+    }))
+    const handles = anchors.map((anchor, index) => Math.max(0, Math.min(
+        anchor.y - (turns[index - 1]?.y ?? 0),
+        (turns[index]?.y ?? height) - anchor.y,
+    )))
+    const first = anchors[0]
+    let path = `M ${first.x},0 C ${first.x},${first.y / 3} ${first.x},${first.y - handles[0]} ${first.x},${first.y}`
+
+    turns.forEach((middle, index) => {
+        const anchor = anchors[index]
+        const next = anchors[index + 1]
+        const horizontal = (next.x - anchor.x) / 4
+        // Both halves share a horizontal derivative here; their node ends share vertical derivatives.
+        path += ` C ${anchor.x},${anchor.y + handles[index]} ${middle.x - horizontal},${middle.y} ${middle.x},${middle.y}`
+        path += ` C ${middle.x + horizontal},${middle.y} ${next.x},${next.y - handles[index + 1]} ${next.x},${next.y}`
+    })
+
+    const last = anchors[anchors.length - 1]
+    return `${path} C ${last.x},${last.y + handles[handles.length - 1]} ${last.x},${height - (height - last.y) / 3} ${last.x},${height}`
+}
+
+export default function Timeline({
     data,
     styleClass,
-    entriesGap,
-    entryGap,
-    titleGap,
-    pathWidth,
-    titleMaxWidth,
-    pathColor = '#e2e8f0',
-    gradientColors = ['#3b82f6', '#7f00ff'],
-}) => {
-    const wrapperRef = useRef<HTMLDivElement>(null);
-    const entriesRefs = useRef<(HTMLDivElement | null)[]>(Array(data.length).fill(null))
-    const timelineSvgRef = useRef<SVGSVGElement>(null);
-    const timelinePathRef = useRef<SVGPathElement>(null);
-    const timelineGradientPathRef = useRef<SVGPathElement>(null);
-    const circleRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-    const [scrollableParent, setScrollableParent] = useState<HTMLElement | Window>(window);
-
-    const customStyles: React.CSSProperties = {
-        '--om-timeline-entries-gap': entriesGap || '5rem',
-        '--om-timeline-entry-gap': entryGap || '4rem',
-        '--om-timeline-entry-title-gap': titleGap || '2rem',
-        '--om-timeline-path-width': pathWidth || '2px',
-        '--om-timeline-entry-title-max-width': titleMaxWidth || '20rem',
-        '--om-timeline-path-color': pathColor,
-        '--om-timeline-gradient-start': gradientColors[0],
-        '--om-timeline-gradient-end': gradientColors[1],
-    } as React.CSSProperties;
-
-    const updateSvgPathAndCircles = useCallback((wrapperRect: DOMRect) => {
-        if (!timelineSvgRef.current || !timelinePathRef.current || !timelineGradientPathRef.current) return;
-
-        const { path, circlePositions } = calculateSvgPathAndCircles(wrapperRect);
-        timelineSvgRef.current.setAttribute('width', `${wrapperRect.width}`);
-        timelineSvgRef.current.setAttribute('height', `${wrapperRect.height}`);
-        timelinePathRef.current.setAttribute('d', path);
-        timelineGradientPathRef.current.setAttribute('d', path);
-
-        circleRefs.current.forEach((circle, index) => {
-            if (circle && circlePositions[index]) {
-                const { x, y } = circlePositions[index];
-                circle.style.left = `${x - 20}px`;
-                circle.style.top = `${y - 20}px`;
-            }
-        });
-    }, [])
-
-    const updateTimelineLine = useCallback(() => {
-        if (!wrapperRef.current || !timelineGradientPathRef.current) return;
-
-        const rect = wrapperRef.current.getBoundingClientRect();
-        const scrollHeight =
-            scrollableParent === window
-                ? window.innerHeight
-                : (scrollableParent as HTMLElement).clientHeight;
-
-        const scrollTop =
-            scrollableParent === window
-                ? window.scrollY
-                : (scrollableParent as HTMLElement).scrollTop;
-
-        const topPosition = scrollTop - (rect.top + window.scrollY) + 160;
-        const totalHeight = rect.height + 320;
-
-        let progress = topPosition / (totalHeight - scrollHeight);
-        progress = Math.max(0, Math.min(1, progress));
-
-        const length = timelineGradientPathRef.current.getTotalLength();
-        timelineGradientPathRef.current.style.strokeDasharray = `${length}`;
-        timelineGradientPathRef.current.style.strokeDashoffset = `${length * (1 - progress)}`;
-    }, [scrollableParent]);
-
-
-    const setHeight = useCallback(() => {
-        if (!wrapperRef.current) return;
-
-        const rect = wrapperRef.current.getBoundingClientRect();
-        updateSvgPathAndCircles(rect);
-        updateTimelineLine();
-    }, [updateTimelineLine, updateSvgPathAndCircles]);
-
+    entriesGap = "8rem",
+    entryGap = "1.1rem",
+    titleGap = "0.35rem",
+    pathWidth = "1.5px",
+    titleMaxWidth = "20rem",
+    pathColor,
+    gradientColors = ["#429b87", "#8370ae"],
+}: TimelineProps) {
+    const wrapperRef = useRef<HTMLDivElement>(null)
+    const entriesRef = useRef<(HTMLLIElement | null)[]>([])
+    const cardsRef = useRef<(HTMLDivElement | null)[]>([])
+    const dotsRef = useRef<(HTMLSpanElement | null)[]>([])
+    const stopsRef = useRef<(SVGStopElement | null)[]>([])
+    const svgRef = useRef<SVGSVGElement>(null)
+    const trackRef = useRef<SVGPathElement>(null)
+    const gradientRef = useRef<SVGLinearGradientElement>(null)
+    const progressRef = useRef<SVGRectElement>(null)
+    const gradientId = useId()
+    const pathId = useId()
+    const clipId = useId()
+    const colors = [gradientColors[1] ?? "#8370ae", "#5c83b7", gradientColors[0] ?? "#429b87"]
 
     useEffect(() => {
-        const determineScrollContext = () => {
-            let parent = wrapperRef.current?.parentElement;
+        const wrapper = wrapperRef.current
+        const svg = svgRef.current
+        const track = trackRef.current
+        const gradient = gradientRef.current
+        const progress = progressRef.current
+        if (!wrapper || !svg || !track || !gradient || !progress) return
 
-            while (parent && parent !== document.body) {
-                const overflowY = window.getComputedStyle(parent).overflowY;
-                if (overflowY === 'auto' || overflowY === 'scroll') {
-                    setScrollableParent(parent);
-                    break;
-                }
-                parent = parent.parentElement;
-            }
-        };
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
+        let measureFrame = 0
+        let scrollFrame = 0
+        let height = 0
+        let anchors: Anchor[] = []
+        let disposed = false
 
-        determineScrollContext();
-        setHeight();
+        const updateProgress = () => {
+            scrollFrame = 0
+            const { top } = wrapper.getBoundingClientRect()
+            const viewport = window.innerHeight
+            const remaining = Math.max(0, document.documentElement.scrollHeight - window.scrollY - viewport)
+            const reveal = reduceMotion.matches ? height : Math.min(height, Math.max(0, viewport - Math.min(viewport * .18, remaining) - top))
+            progress.setAttribute("height", String(reveal))
 
-        const handleScroll = () => updateTimelineLine();
-        const handleResize = () => setHeight();
+            anchors.forEach((anchor, index) => {
+                const entry = entriesRef.current[index]
+                if (!entry) return
+                entry.dataset.passed = String(reduceMotion.matches || reveal >= anchor.y)
+                if (reduceMotion.matches || anchor.top + top < viewport * .94) entry.dataset.visible = "true"
+            })
+        }
 
-        scrollableParent.addEventListener('scroll', handleScroll);
-        window.addEventListener('resize', handleResize);
+        const measure = () => {
+            measureFrame = 0
+            const bounds = wrapper.getBoundingClientRect()
+            height = bounds.height
+            anchors = data.flatMap((_, index) => {
+                const card = cardsRef.current[index]
+                const dot = dotsRef.current[index]
+                if (!card || !dot) return []
+                const surface = card.getBoundingClientRect()
+                const marker = dot.getBoundingClientRect()
+                return [{
+                    x: marker.left + marker.width / 2 - bounds.left,
+                    y: marker.top + marker.height / 2 - bounds.top,
+                    top: surface.top - bounds.top,
+                    bottom: surface.bottom - bounds.top,
+                }]
+            })
+            if (!anchors.length || !height) return
+
+            anchors.forEach((anchor, index) => {
+                stopsRef.current[index]?.setAttribute("offset", `${anchor.y / height * 100}%`)
+            })
+            track.setAttribute("d", threadPath(anchors, height))
+            svg.setAttribute("viewBox", `0 0 ${bounds.width} ${height}`)
+            gradient.setAttribute("y2", String(height))
+            progress.setAttribute("width", String(bounds.width))
+            updateProgress()
+            wrapper.dataset.enhanced = "true"
+        }
+
+        const scheduleMeasure = () => {
+            if (!measureFrame) measureFrame = window.requestAnimationFrame(measure)
+        }
+        const scheduleProgress = () => {
+            if (!scrollFrame) scrollFrame = window.requestAnimationFrame(updateProgress)
+        }
+        const observer = new ResizeObserver(scheduleMeasure)
+        observer.observe(wrapper)
+        cardsRef.current.forEach((card) => { if (card) observer.observe(card) })
+        dotsRef.current.forEach((dot) => { if (dot) observer.observe(dot) })
+        window.addEventListener("scroll", scheduleProgress, { passive: true })
+        window.addEventListener("resize", scheduleMeasure)
+        reduceMotion.addEventListener("change", scheduleProgress)
+        document.fonts.addEventListener("loadingdone", scheduleMeasure)
+        void document.fonts.ready.then(() => { if (!disposed) scheduleMeasure() })
+        measure()
 
         return () => {
-            scrollableParent.removeEventListener('scroll', handleScroll);
-            window.removeEventListener('resize', handleResize);
-        };
-    }, [scrollableParent, data, setHeight, updateTimelineLine]);
+            disposed = true
+            observer.disconnect()
+            window.removeEventListener("scroll", scheduleProgress)
+            window.removeEventListener("resize", scheduleMeasure)
+            reduceMotion.removeEventListener("change", scheduleProgress)
+            document.fonts.removeEventListener("loadingdone", scheduleMeasure)
+            window.cancelAnimationFrame(measureFrame)
+            window.cancelAnimationFrame(scrollFrame)
+            delete wrapper.dataset.enhanced
+        }
+    }, [data])
 
-
-
-
-    const calculateSvgPathAndCircles = (wrapperRect: DOMRect): { path: string; circlePositions: { x: number; y: number }[] } => {
-        const entries = entriesRefs.current.filter(Boolean) as HTMLDivElement[];
-        if (entries.length === 0) return { path: '', circlePositions: [] };
-
-        let path = '';
-        const circlePositions: { x: number; y: number }[] = [];
-        const isMobile = window.innerWidth <= 1000;
-        const curveExtension = isMobile ? 200 : 500;
-        const padding = 80;
-
-        entries.forEach((entry, i) => {
-            const entryRect = entry.getBoundingClientRect();
-            const startX = i % 2 === 0 ? padding : wrapperRect.width - padding;
-            const endX = i % 2 === 0 ? wrapperRect.width - padding : padding;
-            const startY = entryRect.top - wrapperRect.top + 20;
-            const endY = i % 2 === 0 ? 550 : 1600
-            // const endY = entryRect.bottom - wrapperRect.top;
-
-            circlePositions.push({ x: startX, y: startY });
-
-            if (i === 0) {
-                path += `M${startX},${startY - 160}`;
-            }
-
-            const extendedY = endY + 10;
-            path += ` L${startX},${extendedY}`;
-
-            if (i < entries.length - 1) {
-                const nextEntryRect = entries[i + 1].getBoundingClientRect();
-                const nextStartY = nextEntryRect.top - wrapperRect.top + 60;
-                const controlPointY1 = extendedY + curveExtension;
-                const controlPointY2 = nextStartY - curveExtension;
-                path += ` C${startX},${controlPointY1} ${endX},${controlPointY2} ${endX},${nextStartY}`;
-            } else {
-                path += ` L${startX},${endY + 160}`;
-            }
-        });
-
-        return { path, circlePositions };
-    };
+    const customStyles = {
+        "--timeline-entries-gap": entriesGap,
+        "--timeline-entry-gap": entryGap,
+        "--timeline-title-gap": titleGap,
+        "--timeline-path-width": pathWidth,
+        "--timeline-title-max-width": titleMaxWidth,
+        "--timeline-path-color": pathColor,
+    } as CSSProperties
 
     return (
-        <div
-            ref={wrapperRef}
-            className={twMerge('om-timeline w-full relative switch', styleClass)}
-            style={customStyles}
-        >
-            <div className="om-timeline-entries relative flex flex-col gap-[--om-timeline-entries-gap] max-w-full">
+        <div ref={wrapperRef} className={twMerge("om-timeline", styleClass)} style={customStyles}>
+            <svg ref={svgRef} className="om-timeline-svg" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                <defs>
+                    <linearGradient id={gradientId} ref={gradientRef} gradientUnits="userSpaceOnUse" x1="0" x2="0" y1="0" y2="1">
+                        {data.map((item, index) => <stop key={item.title} ref={(element) => { stopsRef.current[index] = element }} offset={`${index / Math.max(1, data.length - 1) * 100}%`} stopColor={colors[Math.min(index, colors.length - 1)]} />)}
+                    </linearGradient>
+                    <clipPath id={clipId}><rect ref={progressRef} width="100%" height="0" /></clipPath>
+                    <path id={pathId} ref={trackRef} className="om-timeline-geometry" />
+                </defs>
+                <g stroke={`url(#${gradientId})`}>
+                    <use href={`#${pathId}`} className="om-timeline-path" />
+                    <use href={`#${pathId}`} className="om-timeline-fill" clipPath={`url(#${clipId})`} />
+                </g>
+            </svg>
+
+            <ol className="om-timeline-entries" aria-label="Career timeline">
                 {data.map((item, index) => (
-                    <div
-                        key={index}
-                        ref={(el) => {
-                            if (el !== null) {
-                                entriesRefs.current[index] = el;
-                            }
-                        }}
-                        className={twMerge(
-                            'om-timeline-entry flex items-end pt-5 gap-[--om-timeline-entry-gap]',
-                            index % 2 !== 0 ? 'right-side flex-row-reverse justify-end' : 'left-side justify-start'
-                        )}
-                    >
-                        <div
-                            className={twMerge(
-                                'om-timeline-entry-header sticky top-40 z-40 flex items-center gap-[--om-timeline-entry-title-gap] relative',
-                                index % 2 !== 0 ? 'flex-row-reverse' : 'flex-row mr-auto md:mr-0'
-                            )}
-                        >
-                            <div
-                                ref={(el) => {
-                                    if (el !== null) {
-                                        circleRefs.current[index] = el
-                                    }
-                                }}
-                                className="om-timeline-circle h-10 w-10 rounded-full bg-black flex items-center justify-center flex-shrink-0"
-                                style={{ position: 'sticky', top: '2rem', right: '60px' }} // Match header sticky
-                            >
-                                <div className="om-timeline-inner-circle h-4 w-4 rounded-full bg-gray-800 border border-gray-600"></div>
-                            </div>
-
-                            <div className={index % 2 !== 0 ? 'mr-12 text-right' : 'ml-12 text-left'}>
-                                <div
-                                    className="om-timeline-entry-title text-lg text-black dark:text-white font-semibold"
-                                    dangerouslySetInnerHTML={sanitizeHtml(item.title)}
-                                />
-                                {item.date && <div className="text-sm text-gray-500">{item.date}</div>}
+                    <li key={item.title} ref={(element) => { entriesRef.current[index] = element }} className="om-timeline-entry" style={{ "--timeline-node-color": colors[Math.min(index, colors.length - 1)] } as CSSProperties}>
+                        <span ref={(element) => { dotsRef.current[index] = element }} className="om-timeline-dot" aria-hidden="true" />
+                        <div ref={(element) => { cardsRef.current[index] = element }} className="om-timeline-card">
+                            <div className="om-timeline-card-inner">
+                                {item.image && <div className="om-timeline-photo"><ImageCarousel images={item.image} /></div>}
+                                <div className="om-timeline-story">
+                                    <header className="om-timeline-entry-heading">
+                                        <h2>{item.title}</h2>
+                                        {item.date && <p>{item.date}</p>}
+                                    </header>
+                                    <p className="om-timeline-role">{item.content}</p>
+                                    {item.summaryPoints && (
+                                        <ul>{item.summaryPoints.map((point) => <li key={point} className="om-timeline-point">{point}</li>)}</ul>
+                                    )}
+                                    {item.title === "Freelancer" && <Link href="/projects" prefetch={false} className="site-link">Explore client work <ArrowUpRight aria-hidden="true" size={14} /></Link>}
+                                </div>
                             </div>
                         </div>
-
-                        <div
-                            className={twMerge(
-                                'om-timeline-entry-content flex-1 max-w-full',
-                                index % 2 !== 0 ? "text-right flex flex-col items-end " : ""
-                            )}>
-                            {item.image && (
-                                <ImageCarousel images={item.image} />
-                            )}
-                            <div className="text-black dark:text-white font-bold text-sm" dangerouslySetInnerHTML={sanitizeHtml(item.content)} />
-                            {item.summaryPoints && (
-                                <ul className="list-disc mt-2">
-                                    {item.summaryPoints.map((point, i) => (
-                                        <li key={i} className="text-sm md:text-md text-gray-700 list-none">{point}</li>
-                                    ))}
-                                </ul>
-                            )}
-                        </div>
-                    </div>
+                    </li>
                 ))}
-
-            </div>
-            <div className="om-timeline-line-wrapper absolute top-0 w-full h-full pointer-events-none">
-                <svg
-                    ref={timelineSvgRef}
-                    className="om-timeline-svg absolute"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <defs>
-                        <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" style={{ stopColor: 'transparent', stopOpacity: 1 }} />
-                            <stop offset="10%" style={{ stopColor: gradientColors[1], stopOpacity: 1 }} />
-                            <stop offset="90%" style={{ stopColor: gradientColors[0], stopOpacity: 1 }} />
-                            <stop offset="100%" style={{ stopColor: 'transparent', stopOpacity: 1 }} />
-                        </linearGradient>
-                        <linearGradient id="gradientBg" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" style={{ stopColor: 'transparent', stopOpacity: 1 }} />
-                            <stop offset="10%" style={{ stopColor: pathColor, stopOpacity: 1 }} />
-                            <stop offset="90%" style={{ stopColor: pathColor, stopOpacity: 1 }} />
-                            <stop offset="100%" style={{ stopColor: 'transparent', stopOpacity: 1 }} />
-                        </linearGradient>
-                    </defs>
-                    <path ref={timelinePathRef} className="om-timeline-path" />
-                    <path ref={timelineGradientPathRef} className="om-timeline-gradient-path" />
-                </svg>
-            </div>
+            </ol>
         </div>
     )
 }
-
-export default Timeline

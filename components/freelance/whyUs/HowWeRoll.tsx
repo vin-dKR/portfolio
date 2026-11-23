@@ -1,53 +1,25 @@
-"use client";
+import { FileText, PenTool, Send } from "lucide-react";
 
-// Define interface for type safety
-interface HowWeRollStep {
-    id: number;
-    text: string;
-}
+const process = [
+    { title: "The first conversation", icon: FileText, description: "Share your idea, existing screens, or a rough brief. We decide the scope, deliverables, and timeline together." },
+    { title: "Make, share, refine", icon: PenTool, description: "You see the design and the build as they take shape. Your feedback gets worked in before the final handoff." },
+    { title: "Ready for the real world", icon: Send, description: "You get the final files and code, with full rights to use the work. Deployment support follows your chosen service." },
+];
 
-import { howWeRoll } from "@/constant/HowWeRoll";
-
-const HowWeRoll = () => {
+export default function HowWeRoll() {
     return (
-        <div className="w-full max-w-[90vw] backdrop-blur-md sm:max-w-[600px] mx-auto p-4 my-8 font-lenia mt-40">
-            <div className="text-center text-black dark:text-white mb-4">
-                <div className="text-3xl sm:text-4xl font-lenia">
-                    {howWeRoll.title.split(" at ")[0]}
-                </div>
-                <div className="text-2xl sm:text-3xl font-instrui">
-                    @ Vinnetic Media
-                </div>
-            </div>
-
-            <div className="grid gap-4">
-                {howWeRoll.steps.map((step: HowWeRollStep, index) => (
-                    <div key={index}>
-                        <div className="relative flex justify-center items-center w-full">
-                            <div className='absolute top-[10px] bg-gradient-to-br from-white to-purple-500 filter blur-lg w-10 h-10 z-0' />
-                            {/* Background layer */}
-                            <div className="absolute h-10 w-10 bg-gradient-to-br from-white to-purple-950 rounded-[20px] overflow-hidden z-0">
-                                <div className="absolute inset-[2px] bg-gradient-to-tr from-white to-purple-500 filter blur-xs rounded-[7px] z-0" />
-                            </div>
-                            <div className="relative flex justify-center items-center w-10 h-10 text-black rounded-full z-50">
-                                {index + 1}
-                            </div>
-                        </div>
-                        <div
-                            key={step.id}
-                            className="bg-gradient-to-br from-white/10 to-purple-800/20 dark:from-gray-800/20 dark:to-purple-600/10 p-4 rounded-xl shadow-md border border-white/4 transition-all hover:shadow-lg"
-                        >
-                            <p className="text-gray-700 dark:text-gray-300">
-                                {step.text.split(" ").map((word, index) => (
-                                    <span key={index}>{word} </span>
-                                ))}
-                            </p>
-                        </div>
-                    </div>
+        <section className="freelance-section freelance-process-section" aria-labelledby="freelance-process-heading">
+            <header className="freelance-section-header"><h2 id="freelance-process-heading">Good work starts with <em>a conversation.</em></h2></header>
+            <ol className="freelance-process">
+                {process.map(({ title, description, icon: Icon }) => (
+                    <li key={title}>
+                        <span className="freelance-process-glyph"><Icon aria-hidden="true" size={18} strokeWidth={1.5} /></span>
+                        <h3>{title}</h3>
+                        <p>{description}</p>
+                    </li>
                 ))}
-            </div>
-        </div>
+            </ol>
+            <a className="site-link freelance-call-link" href="https://cal.com/vinod-kr/30min" target="_blank" rel="noreferrer">Talk it through on a 30 min call <span aria-hidden="true">↗</span></a>
+        </section>
     );
-};
-
-export default HowWeRoll;
+}

@@ -43,8 +43,6 @@ Before ATARI, around 700 KVKs each kept their own records in Excel, paper, and U
 
 It exposes <span className="underline-em">180+ form modules</span> across farm trials, training programs, achievements, performance indicators, infrastructure, awards, publications, meetings, and digital outreach. It produces <span className="underline-em">40+ aggregated reports</span> in PDF, DOCX, and XLSX, and the same templates feed all three formats.
 
-> 📸 IMAGE: Hero shot - the ATARI dashboard showing the 6-level org tree on the left, a form list in the middle, and a small chart of completion rates. Sets the scene.
-
 ## Who uses it (the six-level hierarchy)
 
 ```
@@ -59,8 +57,6 @@ ICAR  (super admin)
 Six organizational levels. Ten role names. <span className="underline-em">A user at any level can only see and act on data inside their own subtree</span>. A district admin cannot read another district. A KVK staff member cannot edit another KVK. The hierarchy is encoded in `roleHierarchy.ts` (10 numeric levels) and mirrored in the backend permission resolver.
 
 Admins can only create the roles below them. The map of "who can create what" lives in one constant - `CREATABLE_ROLES_MAP` - and every role-creation route checks it.
-
-> 🖼️ IMAGE: A clean version of the hierarchy tree above, plus arrows showing which roles can create which. Helps a non-technical reader hold the model in their head.
 
 ## The shape of the system
 
@@ -81,8 +77,6 @@ A few decisions worth calling out:
 - **Permission resolver as the single source of truth.** `permissionResolverService` hydrates `req.user` with `permissionsByModule`, scoped IDs, and role metadata, backed by Redis with DB fallback. Controllers do not roll their own checks.
 - **Multi-file Prisma schema** (146 files) split into `prisma/superadmin/` (users, roles, permissions, geographic masters) and `prisma/kvk/` (per-KVK operational data). Prisma 7 globs the directory.
 
-> 🖼️ IMAGE: A simple architecture diagram - Browser → Express → Prisma → Postgres, with Redis and S3 on the side, and Puppeteer/docx/exceljs as a "reports" branch. Use Excalidraw or draw.io.
-
 ## Permissions are the hard part
 
 The hardest piece of any platform like this is not the forms. It is permissions. <span className="squiggly">A zone admin who creates a state user must be able to grant only the actions they themselves were granted, and only inside their own geography</span>.
@@ -100,8 +94,6 @@ Geographic IDs (`zoneId`, `stateId`, `districtId`, `orgId`, `kvkId`) travel with
 The resolver is cached in Redis at versioned keys (`perm:role:{roleId}:v1`, `perm:user:{userId}:role:{roleId}:v1`) with a 1-hour TTL. Mutations explicitly invalidate both keys. Sub-millisecond p99 on permission checks.
 
 I did not use a third-party authz service. Government compliance, deploy simplicity, and "the rules are stable" all pointed to keeping it in-house.
-
-> 📸 IMAGE: A diagram of the permission flow - Role ceiling × User override × Geographic scope = effective permission. Three boxes intersecting.
 
 ## The config-driven UI bet
 
@@ -179,8 +171,6 @@ The same templates also feed DOCX (`docx`) and XLSX (`exceljs`) exports. One tem
 
 Aggregated report data is cached in Redis. `reportCacheInvalidationService` watches form mutations and invalidates the right keys. <span className="squiggly">No customer ever waits 30 seconds for a national-level roll-up</span> because we did not just compute it on demand.
 
-> 📸 IMAGE: Three screenshots side by side - the same report as PDF, DOCX, and XLSX. Sells the "one template, three formats" idea.
-
 ## S3 migration as five staged PRs
 
 The legacy app stored attachments in mixed places - local disk on one server, an old bucket on another, a few in the database itself. <span className="underline-em">Moving 20+ modules to a unified S3 setup at once would have been one giant unreviewable PR</span>.
@@ -209,8 +199,6 @@ I built a custom `ColumnFilter` popover with:
 - **Per-column reset** plus a global "Reset All" that clears column filters and the global search
 
 Every form table gets it. Built on `@tanstack/react-table` plus `@radix-ui/react-popover`.
-
-> 🎥 VIDEO: 15-second screen recording. Open a form table with 200 rows, click a column header, type a search, uncheck two values, drag the popover, hit "Reset All". Strong visual proof of the Excel parity.
 
 ## Bugs and lessons
 

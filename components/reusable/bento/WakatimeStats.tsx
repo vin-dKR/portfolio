@@ -1,11 +1,17 @@
 "use client"
 
-import React, { useEffect } from "react"
-import { motion } from "framer-motion"
-import { ArrowUpRight, Clock, RefreshCw, Zap } from "lucide-react"
+import { useCallback, useEffect, useId, useRef, useState } from "react"
+import { ArrowUpRight, Clock, RefreshCw } from "lucide-react"
+import { motion, useReducedMotion } from "motion/react"
+import { getWakatimeStats } from "@/actions/wakatime"
+import type { WakatimeStats as WakatimeStatsData } from "@/lib/wakatimeClient"
 import BentoCard from "./BentoCard"
-import { useWakatime } from "@/context/WakatimeContext"
-import Link from "next/link"
+import { Flow } from "@/components/ui/Flow"
+import "./ActivityCards.css"
+
+const profileUrl = "https://wakatime.com/@fb861e4c-0eee-42a3-8d54-a65ccab34573"
+const hoursFormatter = new Intl.NumberFormat("en", { maximumFractionDigits: 1 })
+const formatUsageHours = (hours: number) => hours > 0 && hours < .1 ? "<0.1" : hoursFormatter.format(hours)
 
 const langColors: Record<string, string> = {
     TypeScript: "#3178c6",
@@ -30,136 +36,207 @@ const langColors: Record<string, string> = {
 const colorFor = (name: string) => langColors[name] || "#a1a1aa"
 
 const WakatimeStats = () => {
-    const { wakatimeStats, isLoading, errors, refreshStats } = useWakatime()
+    const highlightId = useId()
+    const reduceMotion = useReducedMotion()
+    const cardContent = useRef<HTMLDivElement>(null)
+    const refreshInProgress = useRef(false)
+    const [stats, setStats] = useState<WakatimeStatsData | null>(null)
+    const [isLoading, setIsLoading] = useState(false)
+    const [hasError, setHasError] = useState(false)
+    const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null)
+    const [hoveredLanguage, setHoveredLanguage] = useState<string | null>(null)
+    const [focusedLanguage, setFocusedLanguage] = useState<string | null>(null)
+    const [refreshMessage, setRefreshMessage] = useState("")
+    const [refreshTurns, setRefreshTurns] = useState(0)
+
+    const refreshStats = useCallback(async (announce = false) => {
+        if (refreshInProgress.current) return
+        refreshInProgress.current = true
+        setIsLoading(true)
+        setHasError(false)
+        if (announce) {
+            setRefreshMessage("Refreshing coding stats.")
+            setRefreshTurns((turns) => turns + 1)
+        }
+
+        try {
+            const data = await getWakatimeStats()
+            if (data) {
+                setStats(data)
+                if (announce) setRefreshMessage("Coding stats refreshed.")
+            } else {
+                setHasError(true)
+                if (announce) setRefreshMessage("Coding stats could not refresh. Try again.")
+            }
+        } catch {
+            setHasError(true)
+            if (announce) setRefreshMessage("Coding stats could not refresh. Try again.")
+        } finally {
+            refreshInProgress.current = false
+            setIsLoading(false)
+        }
+    }, [])
 
     useEffect(() => {
-        refreshStats()
-        const id = setInterval(refreshStats, 3600000)
-        return () => clearInterval(id)
+        const target = cardContent.current
+        if (!target) return
+
+        let timer: ReturnType<typeof setInterval> | undefined
+        const observer = new IntersectionObserver(([entry]) => {
+            if (!entry.isIntersecting) return
+            observer.disconnect()
+            void refreshStats()
+            timer = setInterval(refreshStats, 3600000)
+        }, { rootMargin: "160px" })
+
+        observer.observe(target)
+        return () => {
+            observer.disconnect()
+            clearInterval(timer)
+        }
     }, [refreshStats])
 
-    const avgPerDay = wakatimeStats.totalHours > 0
-        ? Math.round((wakatimeStats.totalHours / 7) * 10) / 10
-        : 0
+    const languages = stats?.languages ?? []
+    const committedLanguage = languages.find(({ name }) => name === selectedLanguage) ?? languages[0]
+    const inspectedLanguage = hoveredLanguage ?? focusedLanguage
+    const currentLanguage = languages.find(({ name }) => name === inspectedLanguage) ?? committedLanguage
+    let cursor = 0
+    const segments = languages.map(({ name, percentage }) => {
+        const start = cursor
+        const share = Math.min(100 - cursor, Math.max(0, percentage))
+        cursor += share
+        return { name, start, share }
+    })
+
+    function selectLanguage(name: string) {
+        setSelectedLanguage(name)
+        setFocusedLanguage(null)
+    }
 
     return (
-        <BentoCard className="relative col-span-4 sm:col-span-2 group/wakatime h-full relative overflow-hidden">
-            {/* gradient halo */}
-            <div className="pointer-events-none absolute -top-20 -right-16 w-48 h-48 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/15 blur-3xl opacity-70" />
-            <div className="pointer-events-none absolute -bottom-20 -left-16 w-44 h-44 rounded-full bg-gradient-to-tr from-purple-500/15 to-pink-500/10 blur-3xl opacity-50" />
-
-            <div className="relative">
-                <div className="flex items-center justify-between mb-3">
-                    <div className="flex gap-2 items-center">
-                        <Clock className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
-                        <h3 className="text-sm font-medium bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-500 bg-clip-text text-transparent">
-                            Coding Time
-                        </h3>
+        <BentoCard className="bento-activity activity-rich wakatime-card col-span-12 sm:col-span-6">
+            <div ref={cardContent} className="wakatime-card-content" aria-busy={isLoading}>
+                <div className="activity-header mb-2">
+                    <h3><Clock aria-hidden="true" size={16} /> <span className="activity-gradient-title">Coding time</span></h3>
+                    <div className="flex shrink-0 items-center gap-0.5">
+                        <button type="button" className="wakatime-refresh" data-refreshing={isLoading} onClick={() => { void refreshStats(true) }} disabled={isLoading} aria-label="Refresh coding stats" title={isLoading ? "Refreshing stats…" : "Refresh coding stats"}>
+                            <motion.span
+                                aria-hidden="true"
+                                className="wakatime-refresh-glyph"
+                                initial={false}
+                                animate={{ rotate: refreshTurns * 360 }}
+                                transition={reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 140, damping: 24 }}
+                            >
+                                <RefreshCw aria-hidden="true" size={14} />
+                            </motion.span>
+                        </button>
+                        <a className="wakatime-profile" href={profileUrl} target="_blank" rel="noreferrer" aria-label="View WakaTime profile">
+                            <ArrowUpRight aria-hidden="true" size={15} />
+                        </a>
                     </div>
-                    <button
-                        onClick={() => refreshStats()}
-                        disabled={isLoading}
-                        title="Refresh stats"
-                        className="opacity-50 hover:opacity-100 transition-opacity"
-                    >
-                        <RefreshCw className={`w-3.5 h-3.5 text-zinc-700 dark:text-zinc-300 ${isLoading ? "animate-spin" : ""}`} />
-                    </button>
                 </div>
 
-                {errors ? (
-                    <div className="flex justify-center items-center h-32 text-red-500 text-xs">
-                        Couldn&apos;t load WakaTime data
-                    </div>
-                ) : (
+                <span role="status" className="sr-only">{refreshMessage}</span>
+
+                {stats ? (
                     <>
-                        {/* Big hours card */}
-                        <Link
-                            href="https://wakatime.com/@fb861e4c-0eee-42a3-8d54-a65ccab34573"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block rounded-xl border border-black/5 dark:border-white/5 bg-black/[0.03] dark:bg-white/[0.04] backdrop-blur-sm px-3 py-2.5 mb-3"
-                        >
-                            <div className="flex items-end justify-between gap-2">
-                                <div className="min-w-0">
-                                    <motion.div
-                                        initial={{ scale: 0.9, opacity: 0 }}
-                                        animate={{ scale: 1, opacity: 1 }}
-                                        transition={{ type: "spring", stiffness: 120 }}
-                                        className="flex items-baseline"
-                                    >
-                                        <span className="text-2xl sm:text-3xl font-bold bg-gradient-to-b from-blue-400 to-purple-600 bg-clip-text text-transparent leading-none">
-                                            {wakatimeStats.totalHours}
-                                        </span>
-                                        <span className="ml-1 text-xs sm:text-sm font-medium text-blue-500 dark:text-blue-300">hrs</span>
-                                    </motion.div>
-                                    <p className="text-[9px] uppercase tracking-wide text-zinc-500 dark:text-zinc-400 mt-0.5">
-                                        last 7 days
-                                    </p>
-                                </div>
-                                <div className="flex flex-col items-end gap-0.5 shrink-0">
-                                    <span className="text-[10px] font-mono text-blue-600 dark:text-blue-300">
-                                        ~{avgPerDay}h/day
-                                    </span>
-                                    <span className="flex items-center gap-1 text-[10px] font-mono text-purple-600 dark:text-purple-300">
-                                        <Zap className="w-3 h-3 fill-current" />
-                                        {wakatimeStats.languages.length} langs
-                                    </span>
-                                </div>
-                            </div>
-                        </Link>
-
-                        {/* Per-language bars with real lang colors */}
-                        <div className="space-y-1.5">
-                            {wakatimeStats.languages.slice(0, 5).map((lang, index) => {
-                                const c = colorFor(lang.name)
-                                return (
-                                    <motion.div
-                                        key={lang.name}
-                                        initial={{ x: -8, opacity: 0 }}
-                                        animate={{ x: 0, opacity: 1 }}
-                                        transition={{ delay: index * 0.05 }}
-                                    >
-                                        <div className="flex justify-between text-[10px] mb-0.5">
-                                            <div className="flex items-center gap-1.5">
-                                                <span
-                                                    className="w-1.5 h-1.5 rounded-full"
-                                                    style={{ background: c }}
-                                                />
-                                                <span className="text-zinc-800 dark:text-zinc-200 font-medium">{lang.name}</span>
-                                            </div>
-                                            <span className="text-zinc-500 dark:text-zinc-400 font-mono">{lang.percentage}%</span>
-                                        </div>
-                                        <div className="h-1.5 bg-black/5 dark:bg-white/5 rounded-full overflow-hidden">
-                                            <motion.div
-                                                initial={{ width: 0 }}
-                                                animate={{ width: `${lang.percentage}%` }}
-                                                transition={{ delay: index * 0.05 + 0.1, duration: 0.8 }}
-                                                className="h-full rounded-full"
-                                                style={{ background: c }}
-                                            />
-                                        </div>
-                                    </motion.div>
-                                )
-                            })}
-
-                            {wakatimeStats.languages.length === 0 && !isLoading && (
-                                <div className="text-center text-xs text-zinc-500 py-4">
-                                    No coding activity yet
-                                </div>
+                        <dl className="activity-figures activity-inset">
+                            <div><dt>{stats.rangeLabel}</dt><dd><Flow value={stats.totalHours} format={hoursFormatter.format} /> <small>hrs</small></dd></div>
+                            {stats.dailyAverageHours !== null && (
+                                <div><dt>Daily avg.</dt><dd><Flow value={stats.dailyAverageHours} format={hoursFormatter.format} /> <small>hrs</small></dd></div>
                             )}
-                        </div>
-                    </>
-                )}
+                        </dl>
 
-            </div>
-            <div className="absolute bottom-2 right-2 opacity-50 group-hover/wakatime:opacity-100 transition-opacity duration-300">
-                <Link
-                    href="https://wakatime.com/@fb861e4c-0eee-42a3-8d54-a65ccab34573"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <ArrowUpRight className="w-4 h-4 text-black dark:text-white" />
-                </Link>
+                        {languages.length > 0 ? (
+                            <>
+                                <div className="wakatime-chart-heading">
+                                    <p className="activity-section-label">Coding time by language</p>
+                                    <span className="wakatime-chart-hint">{isLoading ? "Refreshing…" : hasError ? "Showing saved stats" : "Select a language"}</span>
+                                </div>
+                                <div className="wakatime-chart">
+                                    <div className="wakatime-ring" data-inspecting={Boolean(inspectedLanguage)}>
+                                        <svg className="wakatime-ring-svg" viewBox="0 0 132 132" aria-hidden="true">
+                                            <circle className="wakatime-ring-track" cx="66" cy="66" r="60" />
+                                            {segments.map(({ name, start, share }) => share > 0 && (
+                                                <circle
+                                                    key={name}
+                                                    aria-hidden="true"
+                                                    className="wakatime-arc"
+                                                    cx="66" cy="66" r="60"
+                                                    pathLength="100"
+                                                    stroke={colorFor(name)}
+                                                    strokeDasharray={`${share} ${100 - share}`}
+                                                    strokeDashoffset={-start}
+                                                    transform="rotate(-180 66 66)"
+                                                    data-active={currentLanguage.name === name}
+                                                    data-language={name}
+                                                    onPointerEnter={(event) => { if (event.pointerType !== "touch") setHoveredLanguage(name) }}
+                                                    onPointerMove={(event) => { if (event.pointerType !== "touch" && hoveredLanguage !== name) setHoveredLanguage(name) }}
+                                                    onPointerLeave={() => setHoveredLanguage(null)}
+                                                    onClick={() => selectLanguage(name)}
+                                                />
+                                            ))}
+                                        </svg>
+                                        <div className="wakatime-ring-center" aria-hidden="true">
+                                            <strong><Flow value={currentLanguage.percentage} /> <small>%</small></strong>
+                                            <span key={currentLanguage.name} className="wakatime-language-label">{currentLanguage.name}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ul className="wakatime-mix" aria-label="Inspect a coding language">
+                                    {languages.map(({ name, percentage }) => (
+                                        <li key={name}>
+                                            <button
+                                                type="button"
+                                                aria-label={`${name}, ${percentage}% of coding time`}
+                                                aria-pressed={committedLanguage.name === name}
+                                                data-active={currentLanguage.name === name}
+                                                onPointerEnter={(event) => { if (event.pointerType !== "touch") setHoveredLanguage(name) }}
+                                                onPointerMove={(event) => { if (event.pointerType !== "touch" && hoveredLanguage !== name) setHoveredLanguage(name) }}
+                                                onPointerLeave={() => setHoveredLanguage(null)}
+                                                onFocus={() => { setHoveredLanguage(null); setFocusedLanguage(name) }}
+                                                onBlur={() => setFocusedLanguage(null)}
+                                                onClick={() => selectLanguage(name)}
+                                            >
+                                                <span className="wakatime-dot" aria-hidden="true" style={{ backgroundColor: colorFor(name) }} />
+                                                <span>{name === "Other languages" ? "Other" : name}</span>
+                                                {currentLanguage.name === name && (
+                                                    <motion.span
+                                                        aria-hidden="true"
+                                                        className="wakatime-row-highlight"
+                                                        layoutId={`${highlightId}-language`}
+                                                        initial={false}
+                                                        transition={reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 42 }}
+                                                    />
+                                                )}
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+
+                            </>
+                        ) : <p className="activity-empty">No language breakdown available for this period.</p>}
+
+                        {(stats.topEditor || stats.topOperatingSystem) && (
+                            <dl className="wakatime-environment" aria-label={`${stats.rangeLabel} editor and system activity`}>
+                                {[{ label: "Top editor", usage: stats.topEditor }, { label: "Main system", usage: stats.topOperatingSystem }].map(({ label, usage }) => usage && (
+                                    <div key={label}>
+                                        <dt>{label}</dt>
+                                        <dd><span title={usage.name}>{usage.name}</span><span className="wakatime-usage-hours"><Flow value={usage.hours} format={formatUsageHours} /> <small>hrs</small></span></dd>
+                                    </div>
+                                ))}
+                            </dl>
+                        )}
+                        <p className="wakatime-total wakatime-card-foot">
+                            <span>{stats.languageCount > 0 ? <><Flow value={stats.languageCount} /> languages tracked</> : "WakaTime activity"}</span>
+                            {stats.activeDays != null && <span><Flow value={stats.activeDays} /> active days</span>}
+                        </p>
+                    </>
+                ) : (
+                    <p role="status" className="activity-empty">
+                        {hasError ? "Coding stats are temporarily unavailable." : "Loading coding activity…"}
+                    </p>
+                )}
             </div>
         </BentoCard>
     )

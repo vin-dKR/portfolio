@@ -1,5 +1,3 @@
-"use client"
-
 import React from "react";
 import HomeHeader from "./HomeHeader";
 import HomeBio from "./Bio";
@@ -11,7 +9,7 @@ type Props = {
 
 const HomePage = ({ blogPreviews = [] }: Props) => {
     return (
-        <div className="flex flex-col items-center w-full">
+        <div>
             <HomeHeader />
             <HomeBio />
             <BentoGrid blogPreviews={blogPreviews} />

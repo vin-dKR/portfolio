@@ -1,0 +1,244 @@
+.home-tech-stack {
+    container-name: home-tech;
+    container-type: inline-size;
+    padding: 1.1rem;
+}
+
+.home-tech-heading {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin: 0 0 .75rem;
+    color: var(--bento-ink);
+    font-size: .875rem;
+    font-weight: 500;
+    letter-spacing: -.02em;
+    line-height: 1.25;
+}
+
+.home-tech-heading svg {
+    flex: none;
+    color: var(--bento-accent);
+}
+
+.home-tech-quadrants {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 1rem -.1rem .75rem;
+}
+
+.home-tech-group {
+    min-width: 0;
+    padding: .85rem .75rem;
+}
+
+.home-tech-group:nth-child(odd) {
+    padding-left: 0;
+    border-right: 1px solid var(--bento-rule);
+}
+
+.home-tech-group:nth-child(even) {
+    padding-right: 0;
+}
+
+.home-tech-group:nth-child(n+3) {
+    border-top: 1px solid var(--bento-rule);
+}
+
+.home-tech-group h4 {
+    margin: 0 0 .6rem;
+    color: var(--bento-muted);
+    font-size: .75rem;
+    font-weight: 400;
+    letter-spacing: -.01em;
+    line-height: 1.35;
+}
+
+.home-tech-logos,
+.home-tech-extra-logos {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.home-tech-tool {
+    display: inline-grid;
+    position: relative;
+    flex: none;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.75rem;
+    padding: .65rem .55rem;
+    border: 0;
+    border-radius: .5rem;
+    background: transparent;
+    color: var(--bento-muted);
+    font: inherit;
+    cursor: pointer;
+}
+
+.home-tech-tool:is(:hover, :focus-visible, [aria-pressed="true"]) {
+    color: var(--bento-ink);
+    background: var(--bento-inset);
+}
+
+.home-tech-tool[aria-pressed="true"]::after {
+    content: "";
+    position: absolute;
+    inset: auto .9rem .25rem;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--bento-accent);
+}
+
+.home-tech-tool:focus-visible,
+.home-tech-toggle:focus-visible {
+    outline: 2px solid var(--bento-accent);
+    outline-offset: 2px;
+}
+
+.home-tech-brand {
+    display: block;
+    width: 1.4rem;
+    height: 1.4rem;
+    flex: none;
+    fill: currentColor;
+}
+
+.home-tech-brand[data-brand-kind="symbol"] {
+    fill: none;
+}
+
+.home-tech-readout {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: .3rem .65rem;
+    min-height: 2.6rem;
+    padding: .75rem .1rem .6rem;
+    border-top: 1px solid var(--bento-rule);
+    color: var(--bento-ink);
+    line-height: 1.4;
+}
+
+.home-tech-readout-name {
+    font-size: .8rem;
+    font-weight: 500;
+}
+
+.home-tech-readout-category {
+    color: var(--bento-muted);
+    font-size: .68rem;
+}
+
+.home-tech-toggle {
+    margin-top: .15rem;
+}
+
+.home-tech-drawer {
+    container-name: home-tech-drawer;
+    container-type: inline-size;
+}
+
+.home-tech-extra-groups {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    margin: 0;
+}
+
+.home-tech-drawer .bento-tool-content {
+    padding-block: .35rem;
+}
+
+.home-tech-extra-group {
+    display: grid;
+    grid-template-columns: 6.75rem minmax(0, 1fr);
+    align-items: start;
+    gap: .65rem;
+    min-width: 0;
+    padding-block: .6rem;
+}
+
+.home-tech-extra-group + .home-tech-extra-group {
+    border-top: 1px solid var(--bento-rule);
+}
+
+.home-tech-extra-group dt {
+    padding-top: .6rem;
+    color: var(--bento-muted);
+    font-size: .7rem;
+    line-height: 1.45;
+}
+
+.home-tech-extra-group dd {
+    margin: 0;
+}
+
+.home-tech-extra-logos {
+    gap: .2rem .35rem;
+}
+
+.home-tech-tool-labelled {
+    display: inline-flex;
+    align-items: center;
+    justify-content: start;
+    gap: .4rem;
+    width: auto;
+    min-height: 2.25rem;
+    height: 2.25rem;
+    padding: .35rem .45rem;
+}
+
+.home-tech-tool-labelled .home-tech-brand {
+    width: 1.05rem;
+    height: 1.05rem;
+}
+
+.home-tech-tool-name {
+    color: inherit;
+    font-size: .6875rem;
+    font-weight: 400;
+    line-height: 1.25;
+    white-space: nowrap;
+    text-align: left;
+}
+
+@container home-tech (max-width: 17rem) {
+    .home-tech-group {
+        padding-inline: .45rem;
+    }
+
+    .home-tech-tool {
+        width: 2.15rem;
+        padding-inline: .35rem;
+    }
+
+    .home-tech-brand {
+        width: 1.3rem;
+        height: 1.3rem;
+    }
+}
+
+@container home-tech-drawer (max-width: 26rem) {
+    .home-tech-extra-group {
+        grid-template-columns: minmax(0, 1fr);
+        gap: .3rem;
+        padding-block: .65rem;
+    }
+
+    .home-tech-extra-group dt {
+        padding-top: .1rem;
+    }
+
+    .home-tech-tool-labelled {
+        min-height: 2.75rem;
+        height: 2.75rem;
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .home-tech-tool {
+        transition: background-color 200ms var(--site-spring, ease), color 200ms var(--site-spring, ease);
+    }
+}

@@ -6,10 +6,10 @@ export const useGithubData = (username: string) => {
     const { state, dispatch } = useGithub();
 
     useEffect(() => {
-        if (username && (state.username !== username || state.error)) {
+        if (username) {
             githubFetchUser(username, dispatch)
         }
-    },[username, dispatch, state.username, state.error])
+    },[username, dispatch])
 
     return state
 }

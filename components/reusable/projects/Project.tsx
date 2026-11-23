@@ -1,162 +1,95 @@
-"use client"
+"use client";
 
-import React, { useState } from "react";
-import ProjectModal from "./ProjectModal";
-import { getTechIconSvg } from "@/constant/ProjectsData";
-import { GithubIcon, Globe } from "lucide-react";
+import { useState, type CSSProperties } from "react";
+import dynamic from "next/dynamic";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, ArrowUpRight, Maximize2, Play } from "lucide-react";
+import { getBentoProject } from "@/constant/BentoProjects";
+import "./Projects.css";
 
-const Project = (props: ProjectsData) => {
-    const { name, desc, timeline, techStacks, video, sourceCode, liveOn } = props;
+const ProjectModal = dynamic(() => import("./ProjectModal"));
+
+type Props = ProjectsData & { featured?: boolean };
+
+export default function Project({ featured = false, ...project }: Props) {
     const [showModal, setShowModal] = useState(false);
-    const [videoError, setVideoError] = useState(false);
-
-    const handleCardClick = () => {
-        setShowModal(true);
-    };
-
-    const handleCloseModal = () => {
-        setShowModal(false);
-    };
+    const [imageFailed, setImageFailed] = useState(false);
+    const artwork = getBentoProject(project.name);
+    const screen = imageFailed ? undefined : artwork.screen;
+    const liveUrl = artwork.siteUnavailable ? "" : project.liveOn;
+    const hostname = liveUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
+    const Icon = artwork.icon;
 
     return (
         <>
-            <div className={`flex flex-col gap-0 font-lenia items-stretch dark:bg-white/2 bg-black/10 border border-black/4 dark:border-white/4 rounded-xl shadow-lg hover:shadow-xl overflow-hidden`}>
-                {/* Project Image with Mac-style frame */}
-                <div className="w-full p-4 sm:p-6 relative">
-                    <div
-                        className="relative p-1 overflow-hidden border border-white/5 rounded-lg bg-white/10 shadow-xl transition-all duration-300 hover:shadow-2xl group cursor-pointer transform hover:-translate-y-1"
-                        onClick={handleCardClick}
-                    >
-                        <div className="flex flex-row w-full justify-between items-center ">
-                            {/* Mac-style header */}
-
-                            <div className="absolute flex space-x-2 z-10">
-                                <div className="w-2 h-2 rounded-full bg-red-500" />
-                                <div className="w-2 h-2 rounded-full bg-yellow-500" />
-                                <div className="w-2 h-2 rounded-full bg-green-500" />
-                            </div>
-
-                            <div className="mx-auto bg-black/70 dark:bg-black/30 text-white dark:text-gray-200 w-1/3 text-center text-[10px] px-4 rounded-sm mb-1 z-10 relative">{name}</div>
-                        </div>
-                        <div className="relative rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 min-h-[200px] flex items-center justify-center">
-                            {!videoError ? (
-                                <video
-                                    src={video}
-                                    autoPlay
-                                    muted
-                                    loop
-                                    playsInline
-                                    preload="metadata"
-                                    className="w-full object-cover rounded-lg"
-                                    onError={() => setVideoError(true)}
-                                    onLoadStart={() => setVideoError(false)}
-                                />
-                            ) : (
-                                <div className="flex flex-col items-center justify-center p-8 text-center">
-                                    <div className="w-16 h-16 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center mb-4">
-                                        <svg className="w-8 h-8 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                        </svg>
-                                    </div>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">{name}</p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">Video unavailable</p>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Image */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-20 dark:opacity-60 pt-8"></div>
-                    </div>
-                </div>
-
-                {/* Project Details */}
-                <div
-                    className="w-full space-y-2 sm:space-y-3 p-4 sm:p-6 transition-all cursor-pointer flex flex-col"
-                    onClick={handleCardClick}
+            <article
+                className={`project-list-entry project-plate ${featured ? "project-plate-featured" : ""}`}
+                style={{ "--plate-hue": artwork.hue } as CSSProperties}
+            >
+                <button
+                    type="button"
+                    className="project-list-media"
+                    aria-label={`Open ${project.name} project`}
+                    aria-haspopup="dialog"
+                    onClick={() => setShowModal(true)}
                 >
-                    <h2 className="text-2xl font-bold text-gray-800 dark:text-white">{name}</h2>
+                    <span className="project-plate-chrome">
+                        <span className="project-window-dots" aria-hidden="true"><i /><i /><i /></span>
+                        <span className="project-plate-address">{hostname || "How it works"}</span>
+                        <Maximize2 aria-hidden="true" size={12} />
+                    </span>
+                    <span className="project-plate-stage">
+                        {screen ? (
+                            <Image
+                                src={screen.src}
+                                alt={screen.alt}
+                                fill
+                                sizes={featured ? "(max-width: 767px) 90vw, 648px" : "(max-width: 639px) 90vw, 320px"}
+                                unoptimized
+                                className="project-plate-screen"
+                                onError={() => setImageFailed(true)}
+                            />
+                        ) : (
+                            <span className="project-list-process">
+                                {artwork.story ? artwork.story.steps.map((step) => (
+                                    <span key={step.title}>
+                                        <span className="project-process-node" aria-hidden="true" />
+                                        <span><strong>{step.title}</strong><small>{step.detail}</small></span>
+                                    </span>
+                                )) : <Icon aria-hidden="true" size={36} />}
+                            </span>
+                        )}
+                        <span className="project-media-open" aria-hidden="true"><ArrowUpRight size={16} /></span>
+                    </span>
+                </button>
 
-                    <p className="text-gray-600 dark:text-gray-300">{desc}</p>
-
-                    <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                        <span className="flex items-center">
-                            <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd"></path>
-                            </svg>
-                            {timeline}
-                        </span>
+                <div className="project-list-copy">
+                    <div className="project-list-title">
+                        <h2>{project.name}</h2>
+                        <span>{project.timeline}</span>
                     </div>
-
-                    <div className="pt-2">
-                        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Technologies</h3>
-                        <div className="flex flex-wrap gap-2">
-                            {techStacks.map((tech, index) => {
-                                const iconSvg = getTechIconSvg(tech);
-
-                                return (
-                                    <div
-                                        key={index}
-                                        className="flex items-center gap-2 px-3 py-1.5 bg-black/40 dark:bg-black/10 rounded-lg border border-gray-700/50 dark:border-gray-600/30 cursor-default transition-all hover:bg-gray-700/50 dark:hover:bg-gray-600/40"
-                                    >
-                                        {iconSvg ? (
-                                            <div 
-                                                className="w-4 h-4 flex-shrink-0 flex items-center justify-center fill-white dark:fill-white"
-                                                dangerouslySetInnerHTML={{ __html: iconSvg }}
-                                            />
-                                        ) : (
-                                            <div className="w-5 h-5 rounded bg-black/40 dark:bg-white/10 flex items-center justify-center text-[8px] font-bold text-white">
-                                                {tech.charAt(0).toUpperCase()}
-                                            </div>
-                                        )}
-                                        <span className="text-xs font-medium text-gray-200 dark:text-gray-300">
-                                            {tech}
-                                        </span>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                    <div className="pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                        <div className="flex flex-wrap gap-2">
-                            {sourceCode && (
-                                <a
-                                    href={sourceCode}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-gray-800 to-gray-900 dark:from-gray-700 dark:to-gray-800 rounded-lg border border-gray-600/50 dark:border-gray-500/30 hover:from-gray-700 hover:to-gray-800 dark:hover:from-gray-600 dark:hover:to-gray-700 transition-all text-xs sm:text-sm font-semibold text-white shadow-md hover:shadow-lg"
-                                >
-                                    <GithubIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                                    <span>Source Code</span>
-                                </a>
-                            )}
-
-                            {liveOn && (
-                                <a
-                                    href={liveOn}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-500 dark:to-blue-600 rounded-lg border border-blue-500/30 dark:border-blue-400/30 hover:from-blue-500 hover:to-blue-600 dark:hover:from-blue-400 dark:hover:to-blue-500 transition-all text-xs sm:text-sm font-semibold text-white shadow-md hover:shadow-lg"
-                                >
-                                    <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                                    <span>Live Demo</span>
-                                </a>
-                            )}
-                        </div>
-                        <span 
-                            className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 cursor-pointer"
-                            onClick={handleCardClick}
-                        >
-                            View Details
-                            <span className="font-ltserif">→</span>
-                        </span>
+                    <p>{artwork.summary ?? project.desc}</p>
+                    <ul className="project-list-tech" aria-label={`${project.name} technologies`}>
+                        {project.techStacks.map((tech) => <li key={tech}>{tech}</li>)}
+                    </ul>
+                    <div className="project-list-links">
+                        {artwork.story ? (
+                            <Link href={`/posts/${artwork.story.slug}`} prefetch={false}>
+                                Read case study <ArrowRight aria-hidden="true" size={14} />
+                            </Link>
+                        ) : (
+                            <button type="button" onClick={() => setShowModal(true)} aria-haspopup="dialog">
+                                {project.video ? "Watch walkthrough" : "Project notes"}
+                                {project.video ? <Play aria-hidden="true" size={13} /> : <ArrowRight aria-hidden="true" size={14} />}
+                            </button>
+                        )}
+                        {liveUrl && <a href={liveUrl} target="_blank" rel="noreferrer">Live site <ArrowUpRight aria-hidden="true" size={13} /></a>}
+                        {project.sourceCode && <a href={project.sourceCode} target="_blank" rel="noreferrer">Source <ArrowUpRight aria-hidden="true" size={13} /></a>}
                     </div>
                 </div>
-                {showModal && <ProjectModal project={props} onClose={handleCloseModal} />}
-            </div>
+            </article>
+            {showModal && <ProjectModal project={project} onClose={() => setShowModal(false)} />}
         </>
     );
-};
-
-export default Project;
+}

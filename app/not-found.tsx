@@ -1,12 +1,10 @@
 import React from "react"
 import Link from "next/link"
-import Navbar from "@/components/blocks/Navbar"
 import HomeFooter from "@/components/blocks/HomeFooter"
 
 export default function Page() {
     return (
-        <div className="dark:bg-purple-500/5 bg-white h-screen content flex flex-1 flex-col items-center justify-center pb-24 md:pb-0">
-            <Navbar />
+        <div className="theme-surface dark:bg-purple-500/5 bg-white h-screen content flex flex-1 flex-col items-center justify-center pb-24 md:pb-0">
 
             <div className="m-auto">
                 <h1 className="mb-3 font-extrabold text-3xl text-gray-800 sm:mb-4 sm:text-4xl dark:text-gray-100">

@@ -1,75 +1,37 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import SwitchTheme from '../reusable/SwitchTheme';
-import Image from 'next/image';
-import { useTheme } from 'next-themes';
-import { DesktopNav } from '../reusable/navbar/DesktopNav';
-import MobileBottomNav from '../reusable/navbar/MobileBottomNav';
-import Link from 'next/link';
+import { useEffect, useState } from "react";
+import SwitchTheme from "../reusable/SwitchTheme";
+import Image from "next/image";
+import { DesktopNav } from "../reusable/navbar/DesktopNav";
+import MobileBottomNav from "../reusable/navbar/MobileBottomNav";
+import Link from "next/link";
+import "./Navbar.css";
 
-const Navbar = () => {
-    const { resolvedTheme } = useTheme();
-    const [mounted, setMounted] = useState(false);
-    const [isScrolled, setIsScrolled] = useState(false);
-
-    const { scrollY } = useScroll();
-    const width = useTransform(scrollY, [0, 100], ['44rem', '40rem']);
-    const opacity = useTransform(scrollY, [0, 100], [0.5, 0.8]);
-    const scale = useTransform(scrollY, [0, 100], [1, 0.95]);
+export default function Navbar() {
+    const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
-        const updateScroll = () => {
-            setIsScrolled(window.scrollY > 20);
-        };
-        setMounted(true);
-        window.addEventListener('scroll', updateScroll);
-
-        return () => window.removeEventListener('scroll', updateScroll);
+        const update = () => setScrolled(window.scrollY > 24);
+        update();
+        window.addEventListener("scroll", update, { passive: true });
+        return () => window.removeEventListener("scroll", update);
     }, []);
 
-    if (!mounted) return <div className='size-14' />;
-
-    const expandedHeight = isScrolled ? 52 : 80;
-
     return (
-        <div className="fixed top-0 left-0 right-0 flex justify-center z-[99]">
-            <motion.nav
-                style={{
-                    width,
-                    height: expandedHeight,
-                    scale,
-                    transformOrigin: "top center"
-                }}
-                animate={{
-                    height: expandedHeight
-                }}
-                className={`transition-all duration-300 ${isScrolled ? 'backdrop-blur-md bg-black/30' : 'backdrop-blur-sm bg-black/20'
-                    } rounded-b-2xl w-1/3 flex flex-col overflow-hidden`}
-            >
-                <motion.div
-                    style={{ opacity }}
-                    className={`flex items-center justify-between px-8 z-[101] ${isScrolled ? 'h-[52px]' : 'h-20'}`}
-                >
-                    <Link href={"/"}>
-                        <Image
-                            src={resolvedTheme === "light" ? "/images/logo-dark.svg" : "/images/logo-light.svg"}
-                            alt="logo image"
-                            width={110}
-                            height={56}
-                            className={`z-[200]! h-auto transition-all duration-300 ${isScrolled ? 'w-[65px]' : 'w-[90px] sm:w-[100px]'}`}
-                        />
+        <>
+            <a href="#main-content" className="skip-link">Skip to content</a>
+            <div className="portfolio-nav-frame">
+                <nav aria-label="Main navigation" className={`portfolio-nav ${scrolled ? "is-scrolled" : ""}`}>
+                    <div aria-hidden="true" className="portfolio-aurora"><span /></div>
+                    <Link href="/" prefetch={false} aria-label="Vinod KR home" className="portfolio-signature">
+                        <Image src="/images/logo-dark.svg" alt="" width={72} height={44} loading="eager" className="dark:invert" />
                     </Link>
                     <DesktopNav />
-                    <div className='flex items-center justify-center space-x-4'>
-                        <SwitchTheme />
-                    </div>
-                </motion.div>
-            </motion.nav>
+                    <SwitchTheme />
+                </nav>
+            </div>
             <MobileBottomNav />
-        </div>
+        </>
     );
-};
-
-export default Navbar
+}

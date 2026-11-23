@@ -1,73 +1,57 @@
-import Image from 'next/image';
-import React, { useState } from 'react';
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import Image from "next/image"
+import { useState } from "react"
 
-const ImageCarousel: React.FC<CarouselProps> = ({ images }) => {
-    // State to track current image index
-    const [currentIndex, setCurrentIndex] = useState<number>(0);
+export default function ImageCarousel({ images }: CarouselProps) {
+    const [currentIndex, setCurrentIndex] = useState(0)
+    const currentImage = images[currentIndex] ?? images[0]
+    if (!currentImage) return null
 
-    // Handler for previous image
-    const handlePrevious = (): void => {
-        setCurrentIndex((prevIndex) =>
-            prevIndex === 0 ? images.length - 1 : prevIndex - 1
-        );
-    };
+    const buttonClass = "absolute top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-full bg-black/65 text-white transition-colors hover:bg-black/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
 
-    // Handler for next image
-    const handleNext = (): void => {
-        setCurrentIndex((prevIndex) =>
-            prevIndex === images.length - 1 ? 0 : prevIndex + 1
-        );
-    };
-
-    // If no images, return null
-    if (images.length === 0) {
-        return null;
+    const move = (step: number) => {
+        setCurrentIndex((index) => (index + step + images.length) % images.length)
     }
 
     return (
-        <div className="relative w-[200px] md:w-[250px] ">
-            {/* Main Image Display */}
-            <div className="h-auto overflow-hidden relative">
+        <div className="w-56 max-w-full sm:w-64">
+            <div className="relative aspect-[3/4] overflow-hidden rounded-xl bg-black/5 ring-1 ring-inset ring-black/10 dark:bg-white/5 dark:ring-white/15">
                 <Image
-                    src={images[currentIndex].src}
-                    alt={images[currentIndex].alt}
-                    width={200}
-                    height={200}
-                    className="w-[200px] md:w-[250px] max-w-xs mb-4 rounded-lg transition-transform duration-300"
+                    src={currentImage.src}
+                    alt={currentImage.alt}
+                    fill
+                    sizes="(min-width: 640px) 256px, (min-width: 360px) 224px, calc(100vw - 96px)"
+                    className="object-cover"
                 />
 
-                {/* Previous Button */}
-                <button
-                    onClick={handlePrevious}
-                    className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full opacity-50"
-                >
-                    ←
-                </button>
-
-                {/* Next Button */}
-                <button
-                    onClick={handleNext}
-                    className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full opacity-50"
-                >
-                    →
-                </button>
+                {images.length > 1 && (
+                    <>
+                        <button type="button" onClick={() => move(-1)} className={`${buttonClass} left-2`} aria-label="Previous photo">
+                            <ChevronLeft aria-hidden="true" size={18} />
+                        </button>
+                        <button type="button" onClick={() => move(1)} className={`${buttonClass} right-2`} aria-label="Next photo">
+                            <ChevronRight aria-hidden="true" size={18} />
+                        </button>
+                    </>
+                )}
             </div>
 
-            {/* Thumbnail Navigation */}
-            <div className="flex justify-center space-x-2 mb-2">
-                {images.map((image, index) => (
-                    <button
-                        key={image.id}
-                        onClick={() => setCurrentIndex(index)}
-                        className={`w-1 h-1 sm:w-2 sm:h-2 rounded-full ${index === currentIndex
-                            ? 'bg-blue-500'
-                            : 'bg-gray-300'
-                            }`}
-                    />
-                ))}
-            </div>
+            {images.length > 1 && (
+                <div className="mt-1 flex justify-center" aria-label="Choose a photo">
+                    {images.map((image, index) => (
+                        <button
+                            key={image.id}
+                            type="button"
+                            onClick={() => setCurrentIndex(index)}
+                            className="grid size-7 place-items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-1"
+                            aria-label={`Show photo ${index + 1} of ${images.length}`}
+                            aria-current={index === currentIndex ? "true" : undefined}
+                        >
+                            <span className={`size-1.5 rounded-full ${index === currentIndex ? "bg-blue-600 dark:bg-blue-400" : "bg-neutral-400 dark:bg-neutral-600"}`} />
+                        </button>
+                    ))}
+                </div>
+            )}
         </div>
-    );
+    )
 }
-
-export default ImageCarousel

@@ -1,140 +1,167 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import { createPortal } from 'react-dom'
-import Image from 'next/image'
-import { cn } from '@/lib/utils'
+import { useEffect, useId, useRef, useState, type ReactNode, type VideoHTMLAttributes } from "react";
+import { createPortal } from "react-dom";
+import Image, { type ImageProps } from "next/image";
+import { Maximize2, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export const VideoWithLightbox = ({ src, className, ...rest }: React.VideoHTMLAttributes<HTMLVideoElement>) => {
-    const [isOpen, setIsOpen] = useState(false)
-    const [mounted, setMounted] = useState(false)
-
-    useEffect(() => { setMounted(true) }, [])
+function MediaDialog({ title, children, onClose }: {
+    title: string;
+    children: ReactNode;
+    onClose: () => void;
+}) {
+    const dialogRef = useRef<HTMLDialogElement>(null);
+    const titleId = useId();
 
     useEffect(() => {
-        if (isOpen) document.body.style.overflow = 'hidden'
-        else document.body.style.overflow = 'unset'
-        return () => { document.body.style.overflow = 'unset' }
-    }, [isOpen])
+        const dialog = dialogRef.current;
+        if (!dialog) return;
+        dialog.showModal();
+        return () => dialog.close();
+    }, []);
 
-    if (!src) return null
+    function close() {
+        dialogRef.current?.close();
+        onClose();
+    }
 
-    const modalContent = isOpen && mounted ? createPortal(
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 backdrop-blur-sm bg-black/80"
-            onClick={() => setIsOpen(false)}
+    return createPortal(
+        <dialog
+            ref={dialogRef}
+            aria-labelledby={titleId}
+            className="article-media-dialog"
+            onCancel={(event) => {
+                event.preventDefault();
+                close();
+            }}
+            onClick={(event) => {
+                if (event.target === event.currentTarget) close();
+            }}
         >
-            <div className="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center">
-                <button
-                    onClick={() => setIsOpen(false)}
-                    className="absolute top-2 right-2 sm:top-4 sm:right-4 text-white hover:text-gray-300 transition-colors z-10 bg-black/50 rounded-full p-1.5 sm:p-2"
-                    aria-label="Close video"
-                >
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+            <div className="article-media-dialog-frame">
+                <header>
+                    <h2 id={titleId}>{title}</h2>
+                    <button type="button" onClick={close} aria-label="Close media preview">
+                        <X aria-hidden="true" size={19} />
+                    </button>
+                </header>
+                <div className="article-media-dialog-body">{children}</div>
+            </div>
+        </dialog>,
+        document.body,
+    );
+}
+
+export function VideoWithLightbox({ src, className, ...rest }: VideoHTMLAttributes<HTMLVideoElement>) {
+    const [isOpen, setIsOpen] = useState(false);
+    const inlineVideo = useRef<HTMLVideoElement>(null);
+    if (!src && !rest.children) return null;
+
+    function expand() {
+        inlineVideo.current?.pause();
+        setIsOpen(true);
+    }
+
+    return (
+        <>
+            <span className="article-media-frame">
                 <video
+                    {...rest}
+                    ref={inlineVideo}
                     src={src}
                     controls
-                    autoPlay
                     playsInline
-                    className="max-w-full max-h-full object-contain rounded-2xl px-2"
-                    onClick={(e) => e.stopPropagation()}
+                    preload="none"
+                    autoPlay={false}
+                    aria-label={rest["aria-label"] ?? "Project video"}
+                    className={cn("article-inline-video", className)}
                 />
-            </div>
-        </div>,
-        document.body
-    ) : null
-
-    return (
-        <>
-            <span className="block my-3 sm:my-4 rounded-2xl overflow-hidden shadow-md bg-gray-100 dark:bg-white/5">
-                <video
-                    src={src}
-                    autoPlay
-                    muted
-                    playsInline
-                    preload="metadata"
-                    className={cn(
-                        "rounded-2xl cursor-pointer hover:opacity-90 transition-opacity w-full h-auto block",
-                        className
-                    )}
-                    onClick={() => setIsOpen(true)}
-                    {...rest}
-                />
+                <button
+                    type="button"
+                    className="article-video-expand"
+                    aria-haspopup="dialog"
+                    onClick={expand}
+                >
+                    <Maximize2 aria-hidden="true" size={14} />
+                    Expand video
+                </button>
             </span>
-            {modalContent}
+            {isOpen && (
+                <MediaDialog title="Video preview" onClose={() => setIsOpen(false)}>
+                    <video
+                        {...rest}
+                        src={src}
+                        controls
+                        playsInline
+                        preload="none"
+                        autoPlay={false}
+                        aria-label={rest["aria-label"] ?? "Expanded project video"}
+                        className={cn("article-dialog-video", className)}
+                    />
+                </MediaDialog>
+            )}
         </>
-    )
+    );
 }
 
-type ImageWithLightboxProps = {
-    src?: string
-    alt?: string
-    width?: number
-    height?: number
-    className?: string
-}
+type ImageWithLightboxProps = Omit<ImageProps, "src" | "alt"> & {
+    src?: string;
+    alt?: string;
+};
 
-export const ImageWithLightbox = ({ src, alt, width, height, className }: ImageWithLightboxProps) => {
-    const [isOpen, setIsOpen] = useState(false)
-    const [mounted, setMounted] = useState(false)
-
-    useEffect(() => { setMounted(true) }, [])
+export function ImageWithLightbox({ src, alt = "", width, height, className, ...rest }: ImageWithLightboxProps) {
+    const frame = useRef<HTMLSpanElement>(null);
+    const [canEnlarge, setCanEnlarge] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
-        if (isOpen) document.body.style.overflow = 'hidden'
-        else document.body.style.overflow = 'unset'
-        return () => { document.body.style.overflow = 'unset' }
-    }, [isOpen])
+        setCanEnlarge(!frame.current?.closest("a"));
+    }, []);
 
-    if (!src) return null
+    if (!src) return null;
 
-    const modalContent = isOpen && mounted ? createPortal(
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 backdrop-blur-sm bg-black/80"
-            onClick={() => setIsOpen(false)}
-        >
-            <div className="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center">
-                <button
-                    onClick={() => setIsOpen(false)}
-                    className="absolute top-2 right-2 sm:top-4 sm:right-4 text-white hover:text-gray-300 transition-colors z-10 bg-black/50 rounded-full p-1.5 sm:p-2"
-                    aria-label="Close image"
-                >
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-                <Image
-                    src={src}
-                    alt={alt || ''}
-                    width={width || 1200}
-                    height={height || 900}
-                    className="max-w-full max-h-full object-contain rounded-2xl px-2"
-                    onClick={(e) => e.stopPropagation()}
-                />
-            </div>
-        </div>,
-        document.body
-    ) : null
+    const preview = (
+        <Image
+            {...rest}
+            src={src}
+            alt={alt}
+            width={width ?? 800}
+            height={height ?? 600}
+            className={cn("article-inline-image", className)}
+        />
+    );
 
     return (
         <>
-            <span className="block my-3 sm:my-4 rounded-2xl overflow-hidden shadow-md bg-gray-100 dark:bg-white/5">
-                <Image
-                    src={src}
-                    alt={alt || ''}
-                    width={width || 800}
-                    height={height || 600}
-                    className={cn(
-                        "rounded-2xl object-cover cursor-pointer hover:opacity-90 transition-opacity w-full h-auto block",
-                        className
-                    )}
-                    onClick={() => setIsOpen(true)}
-                />
+            <span ref={frame} className="article-media-frame">
+                {canEnlarge ? (
+                    <button
+                        type="button"
+                        className="article-image-open"
+                        aria-label={`Enlarge ${alt || "image"}`}
+                        aria-haspopup="dialog"
+                        onClick={(event) => {
+                            if (!event.defaultPrevented) setIsOpen(true);
+                        }}
+                    >
+                        {preview}
+                        <span className="article-image-expand-icon" aria-hidden="true"><Maximize2 size={16} /></span>
+                    </button>
+                ) : preview}
             </span>
-            {modalContent}
+            {isOpen && (
+                <MediaDialog title={alt || "Image preview"} onClose={() => setIsOpen(false)}>
+                    <Image
+                        {...rest}
+                        src={src}
+                        alt={alt}
+                        width={width ?? 1200}
+                        height={height ?? 900}
+                        className={cn("article-dialog-image", className)}
+                    />
+                </MediaDialog>
+            )}
         </>
-    )
+    );
 }

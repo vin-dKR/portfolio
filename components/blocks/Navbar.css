@@ -1,0 +1,275 @@
+.portfolio-aurora {
+    position: absolute;
+    z-index: -1;
+    inset: 0 5% -2.2rem;
+    overflow: clip;
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse 60% 78% at 50% 32%, black 15%, transparent 82%);
+}
+
+.portfolio-aurora span {
+    position: absolute;
+    inset: -20% -15% 14%;
+    background: linear-gradient(108deg, #fa6b83 11%, #ffba75 25%, #a5e364 41%, #62c9ef 55%, #777ff5 72%, #ba69ed 90%);
+    filter: blur(22px);
+    opacity: 0.26;
+    transition: opacity 400ms ease;
+}
+
+.dark .portfolio-aurora span {
+    opacity: 0.38;
+}
+
+.portfolio-nav:hover .portfolio-aurora span,
+.portfolio-nav:focus-within .portfolio-aurora span {
+    opacity: 0.48;
+}
+
+.portfolio-theme-toggle {
+    display: grid;
+    flex: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    place-items: center;
+    border-radius: 0.75rem;
+    color: var(--site-secondary);
+    background: var(--site-well);
+    cursor: pointer;
+}
+
+.portfolio-theme-toggle:hover {
+    background: color-mix(in srgb, var(--site-well), var(--site-ink) 6%);
+}
+
+.dark .portfolio-theme-toggle {
+    color: var(--site-secondary);
+    background: var(--site-well);
+}
+
+.dark .portfolio-theme-toggle:hover {
+    background: color-mix(in srgb, var(--site-well), var(--site-ink) 8%);
+}
+
+.portfolio-theme-toggle:focus-visible {
+    outline: 2px solid #8b5cf6;
+    outline-offset: 3px;
+}
+
+.portfolio-theme-toggle svg {
+    grid-area: 1 / 1;
+    width: 1.05rem;
+    height: 1.05rem;
+    pointer-events: none;
+}
+
+.portfolio-theme-sun,
+.dark .portfolio-theme-moon {
+    transform: rotate(-35deg) scale(0.72);
+    opacity: 0;
+}
+
+.dark .portfolio-theme-sun {
+    transform: rotate(0) scale(1);
+    opacity: 1;
+}
+
+/* Both themes remain visible until the edge of the mask crosses them. */
+
+:root.theme-revealing::view-transition {
+    pointer-events: none;
+}
+
+:root.theme-revealing::view-transition-group(root),
+:root.theme-revealing::view-transition-old(root),
+:root.theme-revealing::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
+:root.theme-revealing::view-transition-new(root) {
+    mask: url("/images/batman.svg") center / 0px auto no-repeat;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .portfolio-aurora span {
+        animation: portfolio-aurora-drift 11s ease-in-out infinite alternate both;
+    }
+    .portfolio-theme-toggle svg {
+        transition: transform 230ms ease, opacity 180ms ease;
+    }
+}
+
+@keyframes portfolio-aurora-drift {
+    from {
+        transform: translate3d(-12%, 4%, 0) scaleX(1);
+    }
+    to {
+        transform: translate3d(12%, -6%, 0) scaleX(1.12);
+    }
+}
+
+.portfolio-nav-frame {
+    position: fixed;
+    z-index: 99;
+    inset: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    padding-inline: .8rem;
+    pointer-events: none;
+}
+
+.portfolio-nav {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    width: 100%;
+    max-width: 44rem;
+    height: 4.6rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-inline: 1.25rem;
+    border-radius: 0 0 1rem 1rem;
+    background: var(--site-card);
+    box-shadow: 0 0 0 1px var(--site-rule), 0 1px 2px rgb(12 8 20 / .04);
+    pointer-events: auto;
+}
+
+.portfolio-nav.is-scrolled {
+    max-width: 42rem;
+    height: 3.6rem;
+}
+
+.portfolio-nav::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    border-radius: inherit;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23808080' filter='url(%23n)' opacity='.55' d='M0 0h160v160H0z'/%3E%3C/svg%3E");
+    opacity: 0.075;
+    pointer-events: none;
+    content: "";
+}
+
+.portfolio-nav::after {
+    position: absolute;
+    inset: auto 8% 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #cf94b8, #cbbf91, #a6c7bb, #9aa6db, transparent);
+    opacity: .4;
+    pointer-events: none;
+    content: "";
+}
+
+.portfolio-signature {
+    flex: none;
+    border-radius: .25rem;
+}
+
+.portfolio-signature img {
+    width: 4.25rem;
+    height: auto;
+}
+
+.portfolio-nav.is-scrolled .portfolio-signature img {
+    width: 3.6rem;
+}
+
+.portfolio-nav-links {
+    display: none;
+    align-items: center;
+    gap: .15rem;
+}
+
+.portfolio-nav-links a {
+    position: relative;
+    display: flex;
+    min-height: 2.5rem;
+    align-items: center;
+    padding-inline: .7rem;
+    border-radius: .5rem;
+    color: var(--site-secondary);
+    font-size: .8125rem;
+}
+
+.portfolio-nav-links a:hover {
+    color: var(--site-ink);
+}
+
+.portfolio-nav-links a[aria-current="page"] {
+    color: var(--site-ink);
+}
+
+.portfolio-nav-links a[aria-current="page"]::after {
+    position: absolute;
+    inset: auto .7rem .2rem;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--site-accent);
+    content: "";
+}
+
+.portfolio-mobile-nav {
+    position: fixed;
+    z-index: 99;
+    inset: auto 0 0;
+    display: flex;
+    justify-content: center;
+    padding: .6rem .8rem max(.8rem, env(safe-area-inset-bottom));
+    pointer-events: none;
+}
+
+.portfolio-mobile-nav > div {
+    display: grid;
+    width: 100%;
+    max-width: 25rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding: .35rem;
+    border-radius: 1.1rem;
+    background: var(--site-card);
+    box-shadow: 0 0 0 1px var(--site-rule), 0 4px 20px -10px rgb(12 8 20 / .28);
+    pointer-events: auto;
+}
+
+.portfolio-mobile-nav a {
+    display: flex;
+    min-height: 3.3rem;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: .2rem;
+    border-radius: .75rem;
+    color: var(--site-muted);
+    font-size: .625rem;
+}
+
+.portfolio-mobile-nav a[aria-current="page"] {
+    color: var(--site-ink);
+    background: var(--site-well);
+}
+
+.portfolio-mobile-nav a[aria-current="page"] svg {
+    color: var(--site-accent);
+}
+
+.portfolio-mobile-nav a:hover {
+    color: var(--site-ink);
+}
+
+@media (min-width: 768px) {
+    .portfolio-nav-links {
+        display: flex;
+    }
+    .portfolio-mobile-nav {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .portfolio-nav {
+        transition: max-width 480ms var(--site-spring), height 480ms var(--site-spring);
+    }
+    .portfolio-signature img {
+        transition: width 480ms var(--site-spring);
+    }
+}
